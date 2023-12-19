@@ -1,0 +1,20 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <td class="medium"><a href="{{url_for('core.table_data',t='domainusers', id=row[0].id)}}">{{row[0].user}}</a></td>
+    <td class="medium"><a href="{{url_for('core.table_data',t='domain', id=row[0].domain)}}">{{row[0].domain}}</a></td>
+    {% if row[1].plain%}
+    <td class="medium">Plain text</td>
+    <td class="medium">{{row[1].plain}}</td>
+    {% else %}
+    <td class="medium">Hash</td>
+    <td class="medium">{{row[1].ntlm}}</td>
+    {% endif %}
+    <td class="medium">{{row[0].date}}</td>
+
+</tr>
+{% endfor %}
+{% endblock %}

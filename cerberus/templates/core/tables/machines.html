@@ -1,0 +1,16 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <!-- -->
+    <td class="short">{{row.hostname}}</td>
+    <td class="short"><a href="{{url_for('core.table_data',t='domain', id=row.domain)}}">{{row.domain}}</a></td>
+    <td class="large">{{row.ntlm}}</td>
+    <td class="large">{{row.aes256}}</td>
+    <td class="medium">{{row.date}}</td>
+
+</tr>
+{% endfor %}
+{% endblock %}

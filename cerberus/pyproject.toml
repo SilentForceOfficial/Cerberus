@@ -1,0 +1,10 @@
+[project]
+name = "cerberus"
+version = "1.0.0"
+dependencies = [
+    "flask",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

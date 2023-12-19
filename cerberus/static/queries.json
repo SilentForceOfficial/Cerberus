@@ -1,0 +1,57 @@
+{
+    "kerberoast":{
+        "description": "Find all Kerberoastable Users",
+        "query": "MATCH (n:User)WHERE n.hasspn=true RETURN n",
+        "required": []
+    },
+    "kerberoastToDA":{
+        "description": "Kerberoastable Users with a path to DA",
+        "query": "MATCH (u:User {hasspn:true}) MATCH (g:Group) WHERE g.name CONTAINS 'DOMAIN ADMINS GROUP' MATCH p = shortestPath( (u)-[*1..]->(g) ) RETURN p",
+        "required": ["dagroup"]
+    },
+    "unconstraint":{
+        "description": "Find all computers with Unconstrained Delegation",
+        "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",
+        "required": []
+    },
+    "unsopportedOS":{
+        "description": "Find unsupported OSs",
+        "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '(?i).*(2000|2003|2008|xp|vista|me|7).*' RETURN H",
+        "required": []
+    },
+    "asproasting":{
+        "description": "Find users that doesn't require kerberos pre-authentication (AS-REP Roasting)",
+        "query": "MATCH (u:User {dontreqpreauth: true}) RETURN u",
+        "required": []
+    },
+    "DomainAdmins":{
+        "description": "Find all Domain Admins",
+        "query": "MATCH (n:User),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+        "required": ["dagroup"]
+    },
+    "SQLSPN":{
+        "description": "Find SPNs with keyword SQL",
+        "query": "MATCH (u:User) WHERE ANY (x IN u.serviceprincipalnames WHERE toUpper(x) CONTAINS 'SQL')RETURN u",
+        "required": []
+    },
+    "GPOs":{
+        "description": "Find GPOs",
+        "query": "MATCH (n:GPO) RETURN n",
+        "required": []
+    },
+    "adminGroups":{
+        "description": "Find all Groups that contains the word 'admin'",
+        "query": "Match (n:Group) WHERE n.name CONTAINS 'ADMIN' return n",
+        "required": []
+    },
+    "spDAGfromPC":{
+        "description": "Shortest paths to Domain Admins group from computers excluding potential DCs",
+        "query":"WITH '(?i)ldap/.*' as regex_one WITH '(?i)gc/.*' as regex_two MATCH (n:Computer) WHERE NOT ANY(item IN n.serviceprincipalnames WHERE item =~ regex_two OR item =~ regex_two ) MATCH(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+        "required": ["dagroup"]
+    },
+    "spDAGfromNPG":{
+        "description": "Shortest paths to Domain Admins group from non-privileged groups (AdminCount=false)  ",
+        "query": "MATCH (n:Group {admincount:false}),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+        "required": ["dagroup"]
+    }
+}

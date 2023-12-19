@@ -1,0 +1,7 @@
+**/__pycache__/
+instance/cerberus.sqlite
+cerberus/static/uploads/*
+!cerberus/static/uploads/.gitkeep
+
+cerberus/static/projects/*
+!cerberus/static/projects/demo.db

@@ -1,0 +1,106 @@
+
+    <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>neo4j display</title>
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.css" type="text/css" />
+      <!--<link rel="stylesheet" href="style.css" type="text/css" />-->
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"> </script>
+
+      <style>
+          {{style}}
+      </style>
+    </head>
+    <body data-gr-c-s-loaded="true">
+
+    <div class="empty-container" id="empty-container">
+      <p>Network is empty... </p>
+    </div>
+
+    <div id="mynetwork">
+        <div class="vis-network" tabindex="900">
+            <canvas class="vis-network" width="1200" height="800">
+            </canvas>
+        </div>
+    </div>
+    <div id="loadingBarContainer">
+        <div id="loadingBar">
+            <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                    <div id="bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+      <table id="info-table">
+      </table>
+    </div>
+
+    <script type="text/javascript">
+      // create an array with nodes
+      var nodes = new vis.DataSet(
+        {{nodes}}
+      );
+
+      // create an array with edges
+      var edges = new vis.DataSet(
+        {{edges}}
+      );
+
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var data = {
+        nodes: nodes,
+        edges: edges
+      };
+      var options = {{options}}
+      ;
+      var network = new vis.Network(container, data, options);
+      network.on("click", function (params) {
+        params.event = "[original event]";
+        let node = this.getNodeAt(params.pointer.DOM);
+        content = "";
+        if (node !== undefined) {
+          content += "<tr>\n";
+          content += " <th></th>\n";
+          content += " <th></th>\n";
+          content += "</tr>\n";
+          for (var [key, value] of Object.entries(nodes.get(node))) {
+           content += "<tr>\n";
+           content += " <td>" + key + "</td>\n";
+           content += " <td>" + value + "</td>\n";
+           content += "</tr>\n";
+          }
+        }
+        document.getElementById("info-table").innerHTML = content;
+      });
+      network.on("stabilizationProgress", function (params) {
+          var maxWidth = 496;
+          var minWidth = 20;
+          var widthFactor = params.iterations / params.total;
+          var width = Math.max(minWidth, maxWidth * widthFactor);
+
+          document.getElementById("bar").style.width = width + "px";
+          document.getElementById("text").innerText =
+              Math.round(widthFactor * 100) + "%";
+      });
+      network.once("stabilizationIterationsDone", function () {
+          document.getElementById("text").innerText = "100%";
+          document.getElementById("bar").style.width = "496px";
+          document.getElementById("loadingBar").style.opacity = 0;
+          // really clean the dom element
+          setTimeout(function () {
+              document.getElementById("loadingBarContainer").style.display = "none";
+          }, 500);
+      });
+
+      if (nodes.length == 0 && edges.length == 0) {
+        document.getElementById("loadingBar").style.opacity = 0;
+        document.getElementById("loadingBarContainer").style.display = "none";
+        document.getElementById("empty-container").style.display = "block";
+      }
+    </script>
+
+    </body></html>

@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+<!-- {% block styles %}<script type="text/javascript" src="{{url_for('static',filename='scripts/uploads_drop.js')}}"></script>{% endblock %} -->
+{% block content %}
+
+<!-- Cabecera -->
+<h1>Import data</h1>
+<div class="row">
+    <!-- Tarjeta modulos -->
+    <div class="col-md-4">
+        <!-- Formulario de subida de ficheros -->
+        <form action="/import/tickets" method="POST" enctype="multipart/form-data">
+
+            <!-- Tarjeta formulario con subida de fichero -->
+            <div class="tarjeta-import card shadow mb-4 h-100 tarjeta-import">
+                <div class="chart-title">
+                    <h4>Tickets</h4>
+                </div>
+                <!-- Description -->
+                <p class="styled-p">Upload here the different tickets obtained before importing tickets outputs</p>
+                <br>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileTickets" name="dataFileTickets" multiple="multiple" hidden>
+                    <label for="dataFileTickets" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-tickets">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-tickets"></span>
+                        </div>
+                    </label>
+                </div>
+                <!-- Boton upload -->
+                <!-- <div class="container d-flex justify-content-center pt-4 pb-2"> -->
+                <button class="popupbtn import-button" type="submit">Upload</button>
+                <!-- </div> -->
+            </div>
+
+        </form>
+    </div>
+    <!-- Tarjeta modulos -->
+    <div class="col-md-4">
+        <!-- Formulario de subida de ficheros -->
+        <form action="/import/upload" method="POST" enctype="multipart/form-data">
+
+            <!-- Tarjeta formulario con subida de fichero -->
+            <div class="tarjeta-import card shadow mb-4 h-100">
+                <div class="chart-title">
+                    <h4>Modules outputs</h4>
+                </div>
+                <!-- Description -->
+                <p class="styled-p">Upload here the different outputs obtained</p>
+                <!-- Options -->
+                <div class="container-import">
+                    <select class="w-75 styled-select" name="dataType" id="dataType">
+                        {% for data_type in data_types %}
+                        <option value="{{ data_type }}">{{ data_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileModules" name="dataFileModules" hidden>
+                    <label for="dataFileModules" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-modules">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-modules"></span>
+                        </div>
+                    </label>
+                </div>
+                <!-- Boton upload -->
+                <button class="popupbtn import-button" type="submit">Upload</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Tarjeta dump AD -->
+    <div class="col-md-4">
+        <!-- Formulario de subida de ficheros -->
+        <form action="/import/graph" method="POST" enctype="multipart/form-data">
+
+            <!-- Tarjeta formulario con subida de fichero -->
+            <div class="tarjeta-import card shadow mb-4 h-100">
+                <div class="chart-title">
+                    <h4>Active Directory Dump</h4>
+                </div>
+                <!-- Description -->
+                <p class="styled-p">Upload here the Active Directory dump</p>
+                <!-- Options -->
+                <div class="container-import">
+                    <select class="w-75 styled-select" name="fileType" id="fileType">
+                        {% for file_type in file_types %}
+                        <option value="{{ file_type }}">{{ file_type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileDump" name="dataFileDump" multiple="multiple" hidden>
+                    <label for="dataFileDump" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-dump">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-dump"></span>
+                        </div>
+                    </label>
+                </div>
+                <!-- Boton upload -->
+                <button class="popupbtn import-button" type="submit">Upload</button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+<script src="{{url_for('static',filename='scripts/uploads_drop.js')}}"></script>
+
+{% endblock %}

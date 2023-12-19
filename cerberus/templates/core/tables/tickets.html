@@ -1,0 +1,171 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+
+{% block botones %}
+<div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    <button type="button" id="newtgs" class="btn">New TGS</button>
+    <button type="button" id="newtgt" class="btn">New TGT</button>
+</div>
+{% endblock %}
+
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <td class="medium"><a href="{{url_for('core.table_data',t='domainusers', id=row[1].id)}}">{{row[1].domain}}\{{row[1].user}}</a></td>
+    <td class="short">{{row[0].ticket_type}}</td>
+    <td class="large">{{row[0].ticket_name}}</td>
+
+    <!-- <td style="max-width: 20%;">{{row[0].ticket_data}}</td> -->
+
+    <td class="medium">
+        {% if row[0].ticket_data %}
+        <p style="display: none;">{{ row[0].ticket_data }}</p>
+        <button class="copy-button" onclick="copyToClipboard(this)" title="Copy to clipboard">
+            <img class="copy-icon" src="{{ url_for('static', filename='img/copy.svg') }}" alt="Copiar al portapapeles"
+                class="copy-icon" />
+        </button>
+        <a href="{{ url_for('core.download_file', id=row[0].id, tipo='kirbi') }}" class="copy-button icono"
+            title="Download kirbi ticket">
+            <img class="copy-icon" src="{{ url_for('static', filename='img/download.svg') }}" alt="Descargar kirbi"
+                class="copy-icon" />
+        </a>
+        <a href="{{ url_for('core.download_file', id=row[0].id, tipo='ccache') }}" class="copy-button"
+            title="Download ccache ticket">
+            <img class="copy-icon" src="{{ url_for('static', filename='img/download.svg') }}" alt="Descargar ccache"
+                class="copy-icon" />
+        </a>
+
+
+        {% else %}
+        None
+        {% endif %}
+
+    </td>
+
+    <td class="medium">{{row[0].start_time}}</td>
+    <td class="medium">{{row[0].end_time}}</td>
+    <td class="medium">{{row[0].renew_time}}</td>
+
+</tr>
+{% endfor %}
+{% endblock %}
+
+
+{% block popups %}
+<!-- codigo del POPUP de tgs -->
+<div id="tgsPopup" class="popup">
+    <span class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">New TGS</p>
+    <div class="popup-content">
+        <form action="{{url_for('core.new_tgs')}}" method="POST" enctype="multipart/form-data">
+            <div class="box1">
+                <label for="spn">SPN:</label>
+                <br>
+                <input type="text" id="spn" name="spn" style="background-color: #fff!important;color: black!important;"
+                    pattern="[a-zA-Z\.]+/[a-zA-Z\.\-]+" required>
+            </div>
+            <div class="box1">
+                <label for="domain">Domain:</label>
+                <br>
+                <input type="text" id="domain" name="domain"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9\-\.]{1,63}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="domain-sid">Domain SID:</label>
+                <br>
+                <input type="text" id="domain-sid" name="domain-sid"
+                    style="background-color: #fff!important;color: black!important;" pattern="S(?:-\d+){6}" required>
+            </div>
+            <div class="box1">
+                <label for="nthash">NTHash:</label>
+                <br>
+                <input type="text" id="nthash" name="nthash"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9]{32}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="target">Target:</label>
+                <br>
+                <input type="text" id="target" name="target"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9_\-]{1,30}$"
+                    required>
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+<!-- FIN POPUP tgs -->
+
+
+<!-- codigo del POPUP de tgt -->
+<div id="tgtPopup" class="popup">
+    <span class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">New TGT</p>
+    <div class="popup-content">
+        <form action="{{url_for('core.new_tgt')}}" method="POST" enctype="multipart/form-data">
+            <div class="box1">
+                <label for="domain">Domain:</label>
+                <br>
+                <input type="text" id="domain" name="domain"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9\-\.]{1,63}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="domain-sid">Domain SID:</label>
+                <br>
+                <input type="text" id="domain-sid" name="domain-sid"
+                    style="background-color: #fff!important;color: black!important;" pattern="S(?:-\d+){6}" required>
+            </div>
+            <div class="box1">
+                <label for="nthash">NTHash:</label>
+                <br>
+                <input type="text" id="nthash" name="nthash"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9]{32}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="target">Target:</label>
+                <br>
+                <input type="text" id="target" name="target"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9_\-]{1,30}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="duration">Duration:</label>
+                <br>
+                <input type="text" id="duration" name="duration"
+                    style="background-color: #fff!important;color: black!important;" pattern="[0-9]{1,6}"
+                    required>
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+<!-- FIN POPUP tgt -->
+
+
+
+<script>
+    // New TGS
+    const popupContainerTgs = document.getElementById('tgsPopup');
+    const openTgsPopupButton = document.getElementById('newtgs');
+    openTgsPopupButton.addEventListener('click', () => {
+        popupContainerTgs.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+    // New TGT
+    const popupContainerTgt = document.getElementById('tgtPopup');
+    const openTgtPopupButton = document.getElementById('newtgt');
+    openTgtPopupButton.addEventListener('click', () => {
+        popupContainerTgt.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+
+</script>
+{% endblock %}

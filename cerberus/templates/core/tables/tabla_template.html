@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Data{% endblock %}
+{% block styles %}
+<!-- <link href='https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css' rel='stylesheet'> -->
+<link href="{{url_for('static',filename='external_modules/front/dataTables.bootstrap5.min.css')}} " rel='stylesheet'>
+
+
+{% endblock %}
+{% block scripts %}
+<script type='text/javascript' src="{{url_for('static',filename='external_modules/front/jquery.dataTables.min.js')}} "></script>
+<script type='text/javascript' src="{{url_for('static',filename='external_modules/front/dataTables.bootstrap5.min.js')}} "></script>
+<!-- <script type='text/javascript' src='https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js'></script>
+<script type='text/javascript' src='https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js'></script> -->
+
+{% endblock %}
+
+{% block content %}
+
+<h1>{% block titulo_h1 %}{% endblock %}</h1>
+{% block botones %}{% endblock %}
+
+{% block contenido %}
+<div class="table-responsive">
+    <table id="example" class="table-striped nowrap datatable">
+
+        <thead>
+            <tr>
+                {% for h in headers %}
+                <th>{{h}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% block filas %}
+            {% endblock %}
+        </tbody>
+        <tfoot>
+            <tr>
+                {% for h in headers %}
+                <th>{{h}}</th>
+                {% endfor %}
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        new DataTable('#example', {
+            initComplete: function () {
+                this.api()
+                    .columns()
+                    .every(function () {
+                        let column = this;
+                        let title = column.footer().textContent;
+
+                        // Create input element
+                        let input = document.createElement('input');
+                        input.placeholder = title;
+                        column.footer().replaceChildren(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });
+                    });
+            }
+        });
+    });
+</script>
+{% block popups %}{% endblock %}
+
+{% endblock %}
+{% endblock %}

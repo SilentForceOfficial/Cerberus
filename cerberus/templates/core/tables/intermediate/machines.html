@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block title %}Upload{% endblock %}
+
+{% block recursos %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/uploads.css') }}">
+<!-- <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/dashboard.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/base.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+    <h4 class="title-card"
+        style="display: flex; align-items: center;font-size: 25px; justify-content: left;padding-top: 1rem; padding-bottom: 1rem;">
+        Machine information
+    </h4>
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold" style="display: flex; align-items: center;font-size: larger;">
+            <span style="width: 100%;">General information</span>
+        </h6>
+    </div>
+
+    <div class="card-body row" style="margin:0px!important;">
+        <div style="margin-bottom: 4rem;">
+            <table class="table-striped nowrap datatable" id="webresources" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Hostname</th>
+                        <th>Domain</th>
+                        <th>SID</th>
+                        <th>NTLM</th>
+                        <th>AES128</th>
+                        <th>AES256</th>
+                        <th>DES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class='medium'>{{ data[0].hostname }}</td>
+                        <td class='medium'><a href="{{url_for('core.table_data',t='domain', id=data[0].domain)}}">{{ data[0].domain}}</a></td>
+                        <td class='medium'>{{ data[0].sid }}</td>
+                        <td class='medium'>{{ data[0].ntlm }}</td>
+                        <td class='medium'>{{ data[0].aes128 }}</td>
+                        <td class='medium'>{{ data[0].aes256 }}</td>
+                        <td class='medium'>{{ data[0].des }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold" style="display: flex; align-items: center;font-size: larger;">
+                <span style="width: 100%;">Users on the machine</span>
+            </h6>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <table class="table-striped nowrap datatable" id="webresources1" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>SID</th>
+                        <!-- <th>Date</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in data[1] %}
+                    <tr>
+                        <td class='medium'><a href="{{url_for('core.table_data',t='localusers', id=user[2])}}">{{ user[0] }}</a></td>
+                        <td class='medium'>{{ user[1] }}</td>
+                        <!-- <td class='medium'>{{ data[0][2] }}</td> -->
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+<script>
+    $(document).ready(function () {
+        var table = $('#webresources').DataTable();
+
+        $('.export-button').on('click', function () {
+            var format = $(this).text().trim().toLowerCase();
+
+            if (format === 'exportar a csv') {
+                var headers = [];
+                table.columns().every(function () {
+                    headers.push(this.header().textContent);
+                });
+
+                var data = table.data().toArray();
+                var cleanData = removeHtmlTags(data);
+
+                cleanData.unshift(headers); // Agregar las cabeceras al principio de los datos
+
+                var csv = Papa.unparse(cleanData);
+                var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                var csvURL = URL.createObjectURL(csvData);
+                var link = document.createElement('a');
+                link.href = csvURL;
+                link.download = 'datos-Cerberus.csv';
+                link.click();
+            } else if (format === 'exportar a excel') {
+                var wb = XLSX.utils.table_to_book(document.getElementById('webresources'), { sheet: 'Sheet 1' });
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                var excelData = new Blob([wbout], { type: 'application/octet-stream' });
+                var excelURL = URL.createObjectURL(excelData);
+                var link = document.createElement('a');
+                link.href = excelURL;
+                link.download = 'datos-Cerberus.xlsx';
+                link.click();
+            }
+        });
+
+        function removeHtmlTags(data) {
+            var cleanData = [];
+            for (var i = 0; i < data.length; i++) {
+                var rowData = [];
+                for (var j = 0; j < data[i].length; j++) {
+                    var cellData = stripTags(data[i][j]);
+                    rowData.push(cellData);
+                }
+                cleanData.push(rowData);
+            }
+            return cleanData;
+        }
+
+        function stripTags(html) {
+            var temporalDivElement = document.createElement('div');
+            temporalDivElement.innerHTML = html;
+            return temporalDivElement.textContent || temporalDivElement.innerText || '';
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var table = $('#webresources1').DataTable();
+
+        $('.export-button').on('click', function () {
+            var format = $(this).text().trim().toLowerCase();
+
+            if (format === 'exportar a csv') {
+                var headers = [];
+                table.columns().every(function () {
+                    headers.push(this.header().textContent);
+                });
+
+                var data = table.data().toArray();
+                var cleanData = removeHtmlTags(data);
+
+                cleanData.unshift(headers); // Agregar las cabeceras al principio de los datos
+
+                var csv = Papa.unparse(cleanData);
+                var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                var csvURL = URL.createObjectURL(csvData);
+                var link = document.createElement('a');
+                link.href = csvURL;
+                link.download = 'datos-Cerberus.csv';
+                link.click();
+            } else if (format === 'exportar a excel') {
+                var wb = XLSX.utils.table_to_book(document.getElementById('webresources1'), { sheet: 'Sheet 1' });
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                var excelData = new Blob([wbout], { type: 'application/octet-stream' });
+                var excelURL = URL.createObjectURL(excelData);
+                var link = document.createElement('a');
+                link.href = excelURL;
+                link.download = 'datos-Cerberus.xlsx';
+                link.click();
+            }
+        });
+
+        function removeHtmlTags(data) {
+            var cleanData = [];
+            for (var i = 0; i < data.length; i++) {
+                var rowData = [];
+                for (var j = 0; j < data[i].length; j++) {
+                    var cellData = stripTags(data[i][j]);
+                    rowData.push(cellData);
+                }
+                cleanData.push(rowData);
+            }
+            return cleanData;
+        }
+
+        function stripTags(html) {
+            var temporalDivElement = document.createElement('div');
+            temporalDivElement.innerHTML = html;
+            return temporalDivElement.textContent || temporalDivElement.innerText || '';
+        }
+    });
+</script>
+
+{% endblock %}

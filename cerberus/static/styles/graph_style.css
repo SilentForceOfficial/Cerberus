@@ -1,0 +1,331 @@
+  /* https://stackoverflow.com/questions/28455100/how-to-center-div-vertically-inside-of-absolutely-positioned-parent-div */
+  /* .valign {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  } */
+
+  .empty-container {
+    display: none;
+    padding-top: 1em;
+    text-align: center;
+    font-family: Verdana;
+    font-size: 2rem;
+    height: 100%;
+    width: 100%;
+    background-color: #444444;
+    /* color: #000000; */
+  }
+  .empty-container > p{
+    color: #FFFFFF;
+  }
+
+  .container_graph{
+    /* border: 2px solid black; */
+    position: relative;
+    height: calc(100vH - var(--header-height) - 3rem);
+    overflow: hidden;
+    border-radius: 5px;
+  }
+  .container_graph_extended{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    border: 2px solid black;
+    height: calc(100vH);
+    width: 100vW;
+    overflow: hidden;
+  }
+  #mynetwork {
+    
+    /* background-color: rgba(68,68,68,0.8); */
+    background-color: #444444;
+    height: 143%;
+
+   
+  }
+  canvas{
+
+  }
+  
+  .vis-network {
+    position: relative;
+    overflow: hidden;
+
+    touch-action: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    
+
+  }
+  .vis-network >canvas {
+    position: relative;
+  }
+
+  #loadingBarContainer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(200, 200, 200, 0.8);
+  }
+
+  #loadingBar {
+    /*position: relative;*/
+    width: 100%;
+    /*height: 902px;*/
+    vertical-align: middle;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    opacity: 1;
+  }
+
+
+  #text {
+    position: absolute;
+    top: 8px;
+    left: 518px;
+    width: 30px;
+    height: 50px;
+    margin: auto auto auto auto;
+    font-size: 22px;
+    color: #000000;
+  }
+
+  div.outerBorder {
+    position: relative;
+    top: 400px;
+    width: 570px;
+    height: 44px;
+    margin: auto auto auto auto;
+    /*border: 8px solid rgba(0, 0, 0, 0.1);*/
+    background: rgb(252, 252, 252);
+    /* Old browsers */
+    background: -moz-linear-gradient(top,
+        rgba(252, 252, 252, 1) 0%,
+        rgba(237, 237, 237, 1) 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear,
+        left top,
+        left bottom,
+        color-stop(0%, rgba(252, 252, 252, 1)),
+        color-stop(100%, rgba(237, 237, 237, 1)));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,
+        rgba(252, 252, 252, 1) 0%,
+        rgba(237, 237, 237, 1) 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,
+        rgba(252, 252, 252, 1) 0%,
+        rgba(237, 237, 237, 1) 100%);
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,
+        rgba(252, 252, 252, 1) 0%,
+        rgba(237, 237, 237, 1) 100%);
+    /* IE10+ */
+    background: linear-gradient(to bottom,
+        rgba(252, 252, 252, 1) 0%,
+        rgba(237, 237, 237, 1) 100%);
+    /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ededed', GradientType=0);
+    /* IE6-9 */
+    border-radius: 72px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  #border {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 500px;
+    height: 23px;
+    margin: auto auto auto auto;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+
+  #bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 20px;
+    height: 20px;
+    margin: auto auto auto auto;
+    border-radius: 11px;
+    border: 2px solid rgba(30, 30, 30, 0.05);
+    background: rgb(0, 173, 246);
+    /* Old browsers */
+    box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.4);
+  }
+
+
+
+  #info-table {
+    /* width: 500px;
+    max-height: 300px; */
+    /* position:relative; */
+    /* left: 15rem;
+    top: 6rem; */
+    height: 100%;
+    color: white;
+    /* border-collapse: collapse;
+    background-color: #333;
+    color: white;
+    border-radius: 10px;
+    padding-right: 10px;
+    padding-left: 10px; */
+    /* border: 0.5px solid black; */
+    /* margin: 2rem 0 0 2rem; Ajusta los márgenes superior e izquierdo según tus preferencias */
+  }
+
+
+  #info-table th,
+  #info-table td {
+    border: 1px solid #444;
+    padding: 12px;
+    text-align: left;
+  }
+
+  #info-table th {
+    background-color: #1e1e1e;
+  }
+  
+
+  #info-table tr:nth-child(even) {
+    background-color: #2e2e2e;
+  }
+
+  #info-table tr:hover {
+    background-color: #444;
+  }
+
+
+  .active {
+    display: none;
+  }
+
+
+
+
+  /* Menu lateral */
+
+  .botones_graph{
+    color: white;
+    position: absolute;
+    z-index: 88;
+    font-size: 25px;
+  }
+  .left_boton{
+    left: 20px;
+  }
+  .rigth_boton{
+    right: 20px;
+  }
+  /* Boton abrir */
+  #botonn{
+    top: 17px;
+  }
+  /* Boton abrir */
+  #boton_maximizar{
+    top: 20px;
+  }
+  /* Boton sync */
+  #boton_sync{
+    top: 70px;
+  }
+  #boton_upload{
+    top: 110px;
+  }
+/* Tabla info */
+  #info {
+    background-color: #333;
+    width: 500px;
+    height: 90%;
+    position: absolute;
+    top: 5px;
+    padding: 5px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /* overflow-x: hidden; */
+    z-index: 87;
+    margin-left: 5px;
+    border-radius: 5px;
+    /* font-size: 25px; */
+  }
+  #botones {
+    position: sticky;
+    padding-bottom: 5px;
+  }
+  #info_table_div{
+    position: absolute;
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 98%;
+    height: 93%;
+  }
+  #enlaces{
+    position: absolute;
+    overflow-y: auto;
+    box-sizing: border-box;
+    width: 98%;
+    height: 93%;
+  }
+  /* Div botones queries y node */
+  #info > #botones{
+    display: flex;
+    width: 400px;
+    margin-left: 20px;
+    justify-content:
+    space-between;
+  }
+  #info > #botones button{
+    color: white;
+    flex: 1;
+    margin: 0 50px;
+    margin-bottom: 10px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+  }
+/* Enlaces */
+  #enlaces {
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #enlaces a {    
+    background-color: #212121;
+    width: 100%;
+    padding-top: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    text-align: center;  
+    border: 1px solid #444;
+    padding: 12px;
+  }
+
+  /* Enlaces */
+  #dominios_box {
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  #dominios_box a {    
+    background-color: #212121;
+    width: 100%;
+    padding-top: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    text-align: center;  
+    border: 1px solid #444;
+    padding: 12px;
+  }

@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block styles %}
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.css" type="text/css" /> -->
+<link rel="stylesheet" href="{{ url_for('static', filename='external_modules/front/vis.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/graph_style.css') }}">
+
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.js"> </script> -->
+<script type="text/javascript" src="{{url_for('static',filename='external_modules/front/vis-network.min.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container_graph">
+    <!-- div grafo -->
+    <div id="mynetwork">
+        <div class="vis-network" tabindex="900">
+            <canvas class="vis-network2"></canvas>
+        </div>
+    </div>
+    <!-- FIN div grafo -->
+
+    <!-- div loading bar -->
+    <div id="loadingBarContainer">
+        <div id="loadingBar">
+            <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                    <div id="bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FIN div loading bar -->
+
+    <!-- div empty container -->
+    <div class="empty-container" id="empty-container">
+        <p>Network is empty... </p>
+    </div>
+    <!-- FIN div empty container -->
+
+    <!-- codigo del POPUP de select domain admins group-->
+    <div id="dagroupsPopup" class="popup">
+        <!-- <span class="close-button button-popup-close">&times;</span> -->
+        <p class="popuptitle">Select Domain Admins Group</p>
+        <div class="popup-content">
+            <div class="box1" id="dominios_box">
+                <!-- Aqui van los grupos de dominio -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function get_domain_admin_groups(query) {
+            // console.log(query);
+
+            // Obtener el elemento que deseas mostrar
+            const popupContainerTgs = document.getElementById('dagroupsPopup');
+
+            // Suponiendo que da_group es una lista de objetos
+            var da_group = '{{da_group}}';
+
+            var datosLista = JSON.parse('[' + da_group.replace(/&#39;/g, '"') + ']');
+
+            const contenedor = document.getElementById('dominios_box') // Puedes ajustar el selector según tu estructura
+            var links = '<br>';
+            for (var i = 0; i < datosLista[0].length; i++) {
+                // console.log(datosLista[0][i])
+                links += '<a href="' + query + '?da_group=' + datosLista[0][i] + '">' + datosLista[0][i] + '</a><br>';
+            }
+            contenedor.innerHTML = links;
+            // Cambiar el estilo para mostrar el elemento
+            popupContainerTgs.style.display = 'block';
+
+            // También puedes agregar el código para mostrar overlay si es necesario
+            // const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block';
+
+        }
+
+    </script>
+    <!-- FIN codigo del POPUP de select domain admins group-->
+
+    <!-- Botones dentro del grafo -->
+    <i id="botonn" class="bx bx-menu-alt-right botones_graph left_boton"></i>
+    <i id="boton_maximizar" class='bx bx-expand botones_graph rigth_boton'></i>
+    <a href="{{ url_for('core.sync_neo4j') }}"><i id="boton_sync" class='bx bx-sync  botones_graph rigth_boton'></i></a>
+    <i id="boton_upload" class='bx bx-upload botones_graph rigth_boton'></i>
+    <!-- FIN Botones dentro del grafo -->
+
+    <!-- div tabla datos y queries -->
+    <div id="info" class="active">
+        <div id="botones">
+            <button id="boton_queries">Queries</button>
+            <button id="boton_info">Node info</button>
+        </div>
+
+        <div id="enlaces">
+            {% for i in links %}
+            {% if links[i]['required'] == [] %}
+            <a href="{{ i }}">{{ links[i]['description'] }}</a>
+            {% else %}
+            {% for j in links[i]['required'] %}
+            {% if j == 'dagroup' %}
+            <a href="#" class="" onclick="get_domain_admin_groups('{{i}}')">{{ links[i]['description'] }}</a>
+            {% else %}
+            <a href="{{ i }}">{{ links[i]['description'] }}</a>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            <!-- <a href="{{ i }}">{{ links[i]['description'] }}</a> -->
+            {% endfor %}
+        </div>
+        <div id="info_table_div">
+            <div id="table-container">
+                <table id="info-table"></table>
+            </div>
+        </div>
+
+    </div>
+    <!-- FIN div tabla datos y queries -->
+
+    <!-- script botones -->
+    <script>
+        // Boton de la tabla general
+        const menuBtn = document.querySelector("#botonn");
+
+        // Boton de queries
+        const btnQueries = document.querySelector("#boton_queries");
+        // Boton de info de un nodo
+        const btnNode = document.querySelector("#boton_info");
+
+        // div de las queries
+        const enlaces = document.getElementById("enlaces");
+        // div de la info de un nodo
+        const info_node = document.querySelector("#info_table_div");
+
+        // click en el boton de info de un nodo
+        btnNode.addEventListener("click", () => {
+            enlaces.hidden = "true";
+            info_node.hidden = "";
+        });
+        // click en el boton de queries
+        btnQueries.addEventListener("click", () => {
+            enlaces.hidden = "";
+            info_node.hidden = "true";
+        });
+
+        // div tabla general
+        const info = document.querySelector("#info");
+        //click en el boton de la tabla general
+        menuBtn.addEventListener("click", () => {
+
+            info.classList.toggle("active");
+            if (menuBtn.classList.contains("bx-menu-alt-right")) {
+                menuBtn.classList.remove("bx-menu-alt-right");
+                menuBtn.classList.add("bx-x");
+                menuBtn.style.color = "white";
+            } else {
+                // Si tiene "clase2", quítala y agrega "clase1"
+                menuBtn.classList.remove("bx-x");
+                menuBtn.classList.add("bx-menu-alt-right");
+                // menuBtn.style.color = "black";
+            }
+        });
+        // Boton de maximizar
+        const btnMax = document.querySelector("#boton_maximizar");
+        //div grafo
+        const div_principal = document.querySelector(".container_graph");
+        // click en el boton de maximizar
+        btnMax.addEventListener("click", () => {
+            if (btnMax.classList.contains("bx-expand")) {
+                div_principal.className = "container_graph_extended";
+                btnMax.classList.remove("bx-expand");
+                btnMax.classList.add("bx-collapse");
+            } else {
+                div_principal.className = "container_graph";
+                btnMax.classList.remove("bx-collapse");
+                btnMax.classList.add("bx-expand");
+            }
+        });
+
+
+
+    </script>
+    <!-- FIN script botones -->
+
+    <!-- script render grafo -->
+    <script type="text/javascript">
+        // Arreglo ya que estos valores vienen sin comillas en el diccionario
+        var True = 'True';
+        var False = 'False';
+        // create an array with nodes
+        var nodes = new vis.DataSet(
+            {{ nodes | safe}}
+        );
+
+        // create an array with edges
+        var edges = new vis.DataSet(
+            {{ edges | safe}}
+        );
+
+        // create a network
+        var container = document.getElementById('mynetwork');
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {{ options | safe}}
+        ;
+        detailedNodes = {{ detailedNodes | safe }}
+        // console.log(options);
+        var network = new vis.Network(container, data, options);
+        network.on("click", function (params) {
+            params.event = "[original event]";
+            let node = this.getNodeAt(params.pointer.DOM);
+            content = "";
+            if (node !== undefined) {
+                
+                nodeID = Object.entries(nodes.get(node))[0][1]
+                detailedNode = undefined
+
+                for(let i = 0; i < detailedNodes.length; i++)
+                    if(detailedNodes[i].nodeID === nodeID)
+                        detailedNode = detailedNodes[i]
+                
+                console.log(Object.entries(detailedNode))
+
+                for(let [sectionKey, sectionValue] of Object.entries(detailedNode)){
+
+                    // Omitimos el ID
+                    if(sectionKey === "nodeID") continue;
+
+                    // Para cada sección, recorremos sus elementos y los introducimos
+                    content += `<table class="mb-2" id="info-table">\n<thead>\n<tr>\n<th colspan="2">${sectionValue.display}</th>\n</tr>\n</thead>\n`;
+                    for(let i = 0; i < sectionValue.elements.length; i++){
+                        sectionElement = sectionValue.elements[i];
+                        content += `<tr>\n<td style="word-wrap: break-word;min-width: 200px;max-width: 200px;white-space:normal;">${sectionElement.display}</td>\n<td style="word-wrap: break-word;min-width: 280px;max-width: 280px;white-space:normal;">${sectionElement.value}</td>\n</tr>\n`;
+                    }
+                    content += "</table>\n"
+
+                }
+
+                // Abrir menu
+                document.getElementById("info").classList.remove("active");
+                // Cambiar icono
+                document.getElementById("botonn").classList.remove("bx-menu-alt-right");
+                document.getElementById("botonn").classList.add("bx-x");
+
+                // Cambiar color boton
+                // document.getElementById("botonn").style.color = "white";
+                // hidden al apartado de queries
+                document.getElementById("enlaces").hidden = "true";
+                // Mostrar tabla
+                document.getElementById("info_table_div").hidden = "";
+
+                // Cambiar contenido de la tabla
+                document.getElementById("table-container").innerHTML = content;
+                document.getElementById("enlaces").hidden = "true";
+            }
+
+        });
+        network.on("stabilizationProgress", function (params) {
+            var maxWidth = 496;
+            var minWidth = 20;
+            var widthFactor = params.iterations / params.total;
+            var width = Math.max(minWidth, maxWidth * widthFactor);
+
+            document.getElementById("bar").style.width = width + "px";
+            document.getElementById("text").innerText =
+                Math.round(widthFactor * 100) + "%";
+        });
+        network.once("stabilizationIterationsDone", function () {
+            document.getElementById("text").innerText = "100%";
+            document.getElementById("bar").style.width = "496px";
+            document.getElementById("loadingBar").style.opacity = 0;
+
+            // Quitar fisicas al grafo
+            network.physics.physicsEnabled=false;
+
+            // Quitamos el fixed a los nodos
+            network.body.nodeIndices.forEach(function(num) {
+                delete network.body.nodes[num].options.fixed;
+            });
+
+            // really clean the dom element
+            setTimeout(function () {
+                document.getElementById("loadingBarContainer").style.display = "none";
+            }, 500);
+        });
+
+        if (nodes.length == 0 && edges.length == 0) {
+            document.getElementById("loadingBar").style.opacity = 0;
+            document.getElementById("loadingBarContainer").style.display = "none";
+            document.getElementById("mynetwork").style.display = "none";
+            document.getElementById("empty-container").style.display = "block";
+        }
+    </script>
+    <!-- FIN script render grafo -->
+</div>
+
+<!-- codigo del POPUP de upload dump-->
+<div id="uploadDumpPopup" class="popup">
+    <span id="closeuploadDumpPopup" class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">Import dump</p>
+    <div class="popup-content" style="width: auto; text-align: center;">
+        <form action="/import/graph" method="POST" enctype="multipart/form-data">
+            <div class="box1">
+                <!-- <label>File:</label> -->
+                <br>
+                <!-- Options -->
+                <div class="container-import">
+                    <select class="w-75 styled-select" name="fileType" id="fileType">
+
+                        <option value=".zip / .json">.zip / .json</option>
+                        <option value=".dat">.dat</option>
+
+                    </select>
+                </div>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileDump" name="dataFileDump" hidden>
+                    <label for="dataFileDump" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-hashcat">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-dump"></span>
+                        </div>
+                    </label>
+                </div>
+
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Import</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // New cred
+    const popupUploadDump = document.getElementById('uploadDumpPopup');
+    const openUploadDumpPopupButton = document.getElementById('boton_upload');
+    openUploadDumpPopupButton.addEventListener('click', () => {
+        popupUploadDump.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+    const closeButton = document.getElementById('closeuploadDumpPopup');
+    closeButton.addEventListener('click', () => {
+        popupUploadDump.style.display = 'none';
+        overlay.style.display = 'none';
+    });
+
+</script>
+<!-- FIN codigo del POPUP de upload dump-->
+{% endblock %}

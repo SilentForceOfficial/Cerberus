@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+<script src="{{url_for('static',filename='external_modules/front/chart.js')}}"></script>
+
+
+
+<div class="row justify-content-around mb-4">
+    <div class="col-md-6">
+        <div class="chart-container card shadow mb-4 h-100">
+            <div class="chart-title">Local users vs domain users
+            </div>
+            <canvas id="usersChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+        <div class="chart-container card shadow mb-4 h-100">
+            <div class="chart-title">Assets count
+            </div>
+            <canvas id="assetsChart" ></canvas>
+        </div>
+    </div>
+</div>
+
+
+<!-- Segunda fila de gráficos -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-container card shadow mb-4 h-100">
+            <div class="chart-title">Credentials type
+            </div>
+            <canvas id="credentialsChart"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-container card shadow mb-4 h-100">
+            <div class="chart-title">Neo4j Information
+            </div>
+            <canvas id="neo4jChart"></canvas>
+            <div id="neo4jChartError" style="display: none; text-align: center; padding: 20px;">
+                <h3 style="color: red;">Error loading Neo4j information</h3>
+                <p>Sorry, the information could not be uploaded at this time. Connect with Neo4j.</p>
+            </div>    
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    new Chart("usersChart", {
+        type: 'doughnut',
+        data: {
+            labels: ["Local Users", "Domain Users"],
+            datasets: [{
+                backgroundColor: ["#A00026", "#FF5010"],
+                data: [{{ data['localusers']}}, {{ data['domainusers']}}],
+            }],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: "75%",
+            // radius: "100",
+            plugins: {
+                legend: {
+                    position: 'left',
+                    labels: {
+                        color: '#fff',
+                    },
+                },
+            },
+        },
+    });
+</script>
+<script>
+    var barColors = [
+        "#A00026",
+        "#FF5010",
+        "#005889",
+        "#66CCCC",
+    ];
+
+    new Chart("assetsChart", {
+        type: 'bar',
+        responsive: true,
+        data: {
+            labels: ['Local Users', 'Domain Users', 'Machines', 'Tickets'],
+            datasets: [{
+                backgroundColor: barColors,
+                data: [{{ data['localusers'] }}, {{ data['domainusers'] }}, {{ data['machines'] }}, {{ data['tickets'] }}],
+                barPercentage: 0.2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                x: {
+                    display: true,
+                },
+                y: {
+                    display: true,
+                }
+            }
+        },
+
+    });
+</script>
+<script>
+    var barColors = [
+        "#0075BE",
+        "#FF9000",
+        "#66CCCC",        
+    ];
+
+    new Chart("credentialsChart", {
+        type: 'bar',
+        responsive: true,
+        data: {
+            labels: ['Clear Passwords', 'Hash Passwords', 'Tickets'],
+            datasets: [{
+                backgroundColor: barColors,
+                data: [{{ data['cleartextpass'] }}, {{ data['hashpass'] }}, {{ data['tickets'] }}],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                x: {
+                    min:0,
+                },
+                y: {
+                    min:0,
+                }
+            }
+        },
+
+    });
+</script>
+
+<script>
+    // Verificar si hay un error
+    if ({{ data['resultNeo4j'] }} == 1) {
+        // No hay error, mostrar el gráfico
+        new Chart("neo4jChart", {
+            type: 'doughnut',
+            responsive: true,
+            data: {
+                labels: ['User', 'Groups', 'Computers', 'OUs', 'GPOs', 'Domains'],
+                datasets: [{
+                    backgroundColor: ["#FF9000", "#FF5010", "#66CCCC", "#0075BE", "#A00026", "#005889"],
+                    data: [{{ data['userCount'] }}, {{ data['groupCount'] }}, {{ data['computerCount'] }}, {{ data['ouCount'] }}, {{ data['gpoCount'] }}, {{ data['domainCount'] }}],
+                }]
+            },
+            options: {
+                maintainAspectRatio: true,
+                cutout: "75%",
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            color: '#fff',
+                        },
+                    },
+                },
+            },
+        });
+    } else {
+        // Hay un error, ocultar el gráfico y mostrar el mensaje de error
+        document.getElementById('neo4jChart').style.display = 'none';
+        document.getElementById('neo4jChartError').style.display = 'block';
+    }
+</script>
+
+
+{% endblock %}
