@@ -58,7 +58,12 @@ This functionality is currently under development, which means that there may be
 Use of a virtual environment is recommended
 ### Creating and Activating a Python Virtual Environment
 
-A virtual environment is a self-contained Python environment that allows you to install and manage packages separately from your system-wide Python installation. It helps keep your project dependencies organized and isolated. Here's how you can create and activate a Python virtual environment:
+A virtual environment is a self-contained Python environment that allows you to install and manage packages separately from your system-wide Python installation. It helps keep your project dependencies organized and isolated.
+In order to create virtual environments it is necessary to install python3.11-venv with the following command:
+```bash
+apt install python3.11-venv
+```
+Once installed, you can create the virtual environment following these steps
 
 #### Step 1: Create a virtual environment
 To create a virtual environment, navigate to the directory where you want to create it and run the following command:
@@ -97,6 +102,11 @@ flask --app cerberus setup
 If you want to specify a different username or password, you can indicate it as follows.
 ```bash
 flask --app cerberus setup --user cerberus --password cerberus
+```
+
+If you want to use the graph module, you must have neo4j installed.
+```bash
+apt install neo4j
 ```
 
 ## Usage
