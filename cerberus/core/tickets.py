@@ -9,6 +9,8 @@ from flask import current_app
 
 tickets_upload_path=f"{current_app.root_path}/static/uploads/tickets"
 
+
+
 def parse_tickets(data):
     from cerberus.utils import clean_none, re, copy
     
@@ -55,7 +57,7 @@ def parse_tickets(data):
         d["flags"]=clean_none(data[index+17])
         d["session_key"]=data[index+19].strip()
         d["ticket"]=data[index+21].strip().lstrip("* Saved to file ").rstrip(" !")
-
+        print(d)
         return d
 
 
@@ -107,6 +109,8 @@ def parse_tickets(data):
                     elif op=="tgt":
                         d["tickets"]["tgt"].append(new_ticket(sec,index))
         a.append(d)
+
+    print(a)
     return a
 
 # ----------------------Fin parse_tickets-----------------------------------------
@@ -120,14 +124,10 @@ def parse_tickets(data):
 
 def insert_tickets(data, session):
     import cerberus.models as m
-    # import db
     from cerberus.utils import isLocal, calculate_ntlm, current_datetime
     import base64
     import os
 
-    
-    # print(f"[+] Tickets upload path: {tickets_upload_path}")
-    
     # Leer ticket
     def readTicket(ticket):
         print(f"[+] Reading ticket {ticket}")
@@ -156,7 +156,7 @@ def insert_tickets(data, session):
         if ticket is None:
             # readTicket(t["ticket"])
             ticket=m.Tickets(service = t['service_name'],
-                             domainuser_id = id_user,
+                            domainuser_id = id_user,
                             ticket_type = tipo,
                             ticket_name = t['ticket'],
                             ticket_data = readTicket(t["ticket"]),
@@ -167,10 +167,23 @@ def insert_tickets(data, session):
                             renew_time = t['renew_time'],
                             date = current_datetime()
                             )
-            session.add(ticket)
+            session.add(ticket) 
             session.commit()
         else:
-            # ACTUALIZAR DATOS DEL TICKET
+            #En caso de que ya este creado el ticket actaulizamos sus datos al output de mimi
+            ticket.update(service = t['service_name'],
+                            domainuser_id = id_user,
+                            ticket_type = tipo,
+                            ticket_name = t['ticket'],
+                            ticket_data = readTicket(t["ticket"]),
+                            service_name = t['service_name'],
+                            target_name = t['target_name'],
+                            start_time = t['start_time'],
+                            end_time = t['end_time'],
+                            renew_time = t['renew_time'],
+                            date = current_datetime()
+                            )
+            session.commit()
             pass
 
     
@@ -199,7 +212,16 @@ def insert_tickets(data, session):
                 session.add(user)
                 session.commit()
             else:
-                pass # ACTUALIZAR DATOS
+                user.update(user=section['username'],
+                                domain=section['domain'], 
+                                logon_server=section['logon_server'], 
+                                logon_time=section['logon_time'],
+                                sid=section['sid'],
+                                date=current_datetime()
+                            )
+                
+
+                
             user.update(logon_server=section['logon_server'],
                                  logon_time=section['logon_time'],
                                  sid=section['sid'],
@@ -253,6 +275,13 @@ def insert_tickets(data, session):
 
 # ----------------------Fin insert_tickets-----------------------------------------
 
+
+
+
+
+
+
+
 #############################################
 #                                           #
 #      Función para trasformar tickets      #
@@ -287,12 +316,15 @@ def transform_tickets(input, output):
         print('[*] converting kirbi to ccache...')
         convert_kirbi_to_ccache(input, output)
         print('[+] done')
+        return "toCcache"
     elif is_ccache_file(input):
         print('[*] converting ccache to kirbi...')
         convert_ccache_to_kirbi(input, output)
         print('[+] done')
+        return "toKirbi"
     else:
         print('[X] unknown file format')
+        return "error"
 
 # Esta función trasforma los tickets .ccache a .kirbi y devuelve el contenido del ticket en b64.
 # Despues borra los tickets de la carpeta temporal
@@ -382,6 +414,97 @@ def transform_kirbi_ccache(input, name):
 
 #############################################
 #                                           #
+#           Función subir tickets           #
+#                                           #
+#############################################
+
+def upload_ticket(ticket_path=None,fileName=None,session=None):
+    import os
+    import base64
+    from cerberus.utils import convertir_tiempo
+    from cerberus import models as m
+
+    tmp_path ='cerberus/static/.tmp/'
+    def readTicket(path,ticket):
+        print(f"[+] Reading ticket {ticket}")
+        # get the content of binary file and encode it to base64
+        def get_file_content(filePath):
+            with open(filePath, 'rb') as fp:
+                return base64.b64encode(fp.read()) # encode to base64
+        # Comprobamos si existe la carpeta; si no, la creamos
+        if not os.path.isdir(tickets_upload_path):
+            os.mkdir(tickets_upload_path)
+
+        # Comprobamos si existe el ticket
+        if os.path.basename(ticket) in os.listdir(path):
+            content_bytes = get_file_content(f"{path}{ticket}")
+            aux = content_bytes.decode('utf-8')
+            print(f"[+] Ticket readed successfully")
+            os.remove(f"{path}{ticket}")
+            return aux
+        else:
+            print(f"[!] Ticket not found")
+            return None
+
+   
+    
+    transform_to = transform_tickets(f"{ticket_path}{fileName}", f"{tmp_path}tempTicket")
+
+    ticket_code=""
+    if transform_to == "toKirbi":
+        data = parse_ccache(f"{ticket_path}{fileName}")
+        ticket_code = readTicket(tmp_path,"tempTicket")
+    else:
+        data = parse_ccache(f"{tmp_path}tempTicket")
+        ticket_code = readTicket(ticket_path,fileName) 
+
+    
+
+    if ("$" in data["target"]):
+        user="machine"
+        machine=m.Machines.get(hostname=data["target"])
+        if machine is None:
+            machine=m.Machines(hostname=data["target"],domain=data["domain"])
+            session.add(machine)
+            session.commit()
+    else:
+        user=data["target"]
+
+    u=m.DomainUsers.get(user=user, domain=data["domain"])
+    if u is None:
+        u=m.DomainUsers(user=user, domain=data["domain"],sid='Fake User')
+        session.add(u)
+        session.commit()
+        print(f"[+] Domain user {data['target']} added successfully")
+
+    ticket = m.Tickets.get_by_name(ticket_name=data["ticketName"])
+    if ticket is None:
+        ticket = m.Tickets(
+            service=data["serviceName"],  
+            domainuser_id=u.id,
+            ticket_type=data["type"],
+            ticket_name=data["ticketName"],
+            ticket_data=ticket_code,
+            service_name=data["serviceName"],
+            target_name=data["target"],
+            start_time=data["startTime"],
+            end_time=data["expTime"],
+            renew_time=data["renewTime"],
+        )
+        session.add(ticket)
+        session.commit()
+        print(f"[+] Ticket {data['ticketName']} created successfully")
+    
+
+    
+
+
+# ----------------------Fin upload_tickets----------------------------------------
+
+    
+
+#############################################
+#                                           #
 #        Función para crear tickets         #   
 #             silver y golden               #
 #                                           #
@@ -407,7 +530,7 @@ Return:     0 [String]: ticket[1] devolucion en hexademcimal del ticekt
 def create_ticket(spn=None, domain=None, domain_sid=None, nthash=None, aes_key=None, target=None,duration='87600' ,session=None):
     from cerberus.static.external_modules.impacket.ticketer import TICKETER
     from cerberus import models as m
-    # import db
+    
     from cerberus.utils import convertir_tiempo
 
     ticket_type="None"
@@ -469,6 +592,59 @@ def create_ticket(spn=None, domain=None, domain_sid=None, nthash=None, aes_key=N
     # Formato del input de la función
     # TICKETER(baduser, None, rooted.local, Namespace(target='baduser', spn='CIFS/dc.rooted.local', request=False, domain='rooted.local', domain_sid='S-1-5-21-4001629950-4265076451-4074222949', aesKey=None, nthash='28d2f7b389faac5be02f3ab29eaf989c', keytab=None, groups='513, 512, 520, 518, 519', user_id='500', extra_sid=None, extra_pac=False, old_pac=False, duration='87600', ts=False, debug=False, user=None, password=None, hashes=None, dc_ip=None))
 # ----------------------Fin create_ticket-----------------------------------------
+
+
+
+
+
+def parse_ccache(ticketCcache):
+    import logging
+    import sys
+    import traceback
+    import argparse
+    import datetime
+    import base64
+    from typing import Sequence
+    from cerberus.static.external_modules.impacket.krb5.ccache import CCache
+    ccache = CCache.loadFile(ticketCcache)
+
+    ticket_info={}
+
+    for creds in ccache.credentials:
+        
+        domain=creds['client'].prettyPrint().split(b'@')[1].decode('utf-8')
+        target=creds['client'].prettyPrint().split(b'@')[0].decode('utf-8')
+        spn = creds['server'].prettyPrint().split(b'@')[0].decode('utf-8')
+        spn=spn.replace("/","-")    
+        ticketName=creds['client'].prettyPrint().split(b'@')[0].decode('utf-8')+"@"+spn+".kirbi"
+        startTime=datetime.datetime.fromtimestamp(creds['time']['starttime']).strftime("%d/%m/%Y %H:%M:%S")
+        
+        if datetime.datetime.fromtimestamp(creds['time']['endtime']) < datetime.datetime.now():
+            expTime=datetime.datetime.fromtimestamp(creds['time']['endtime']).strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            expTime=datetime.datetime.fromtimestamp(creds['time']['endtime']).strftime("%d/%m/%Y %H:%M:%S")
+
+        if datetime.datetime.fromtimestamp(creds['time']['renew_till']) < datetime.datetime.now():
+            renewTime=datetime.datetime.fromtimestamp(creds['time']['renew_till']).strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            renewTime=datetime.datetime.fromtimestamp(creds['time']['renew_till']).strftime("%d/%m/%Y %H:%M:%S")
+
+        if(spn.split("-")[0]=="krbtgt"):
+            ticket_info["type"]="tgt"
+            ticket_info["serviceName"]=spn.split("-")[0]
+        else:
+            ticket_info["type"]="tgs"
+            ticket_info["serviceName"]=spn.split("-")[0]
+
+        ticket_info["ticketName"]=ticketName
+        ticket_info["target"]=target
+        ticket_info["domain"]=domain.lower()
+        ticket_info["startTime"]=startTime
+        ticket_info["expTime"]=expTime
+        ticket_info["renewTime"]=renewTime
+
+        return ticket_info
+
 
 
 

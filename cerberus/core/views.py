@@ -172,8 +172,9 @@ def import_upload_data():
             d=parse_lsadump(data)
             insert_lsadump(d, db.session)
         elif dataType=='tickets':
+
             d=parse_tickets(data)
-            
+
             insert_tickets(d, db.session)
 
         elif dataType=='secretsdump':
@@ -191,22 +192,76 @@ def import_upload_data():
 
 @core.route('/import/tickets', methods=['POST'])
 @login_required
+@check_project
 def uploads_tickets_file():
+    import os
+    from cerberus.core.tickets import upload_ticket
+    from cerberus import db2 as db
+    
     try:
+        db.db_link(request.cookies.get('project'))
+        db.db_connect()
+
+        tmpfiles=[]
+
         files = request.files.getlist('dataFileTickets')
 
         #if files are empty then raise error
-    
         if not files[0].filename:
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
             file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+            #Ruta del ticket, nombre del archivo y session en la base de datos
+            upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
+            
+
+
+        db.db_disconnect()
         flash(u'Tickets successfully uploaded', 'success')
         return redirect(url_for('core.import_data'))
-    except:
+    except Exception as e:
         flash(u'Something went wrong', 'error')
         return redirect(url_for('core.import_data'))
+
+@core.route('/import/nmapxml', methods=['POST'])
+@login_required
+@check_project
+@check_neo4j
+def uploads_nmapxml_file():
+    import os
+    from cerberus.core.nmapxml import parseXML,uploadDataNmap
+    from cerberus import db2 as db
+    
+    try:
+        db.db_link(request.cookies.get('project'))
+        db.db_connect()
+
+        
+
+        files = request.files.getlist('dataFileNmaps')
+
+        #if files are empty then raise error
+        if not files[0].filename:
+            flash(u'No files selected', 'warning')
+            return redirect(url_for('core.import_data'))
+        for file in files:
+            file.save(f"{current_app.root_path}/static/.tmp/{file.filename}")
+            data = parseXML(f"{current_app.root_path}/static/.tmp/{file.filename}")
+            uploadDataNmap(data,db.session,file.filename)
+            os.remove(f"{current_app.root_path}/static/.tmp/{file.filename}")
+            
+        
+
+        db.db_disconnect()
+        flash(u'Nmap successfully uploaded', 'success')
+        return redirect(url_for('core.import_data'))
+    except Exception as e:
+        print(e)
+        flash(u'Something went wrong: ' + str(e), 'danger')
+        return redirect(url_for('core.import_data'))
+
+
 
 @core.route('/import/graph', methods=['POST'])
 @login_required
@@ -314,8 +369,10 @@ def hashcat_page():
     db.db_link(request.cookies.get('project'))
     db.db_connect()
     from cerberus import models as m
-    file = request.files['dataFile']
-    if not file:
+    # file = request.files['dataFile']
+    files = request.files.getlist('dataFile')
+
+    if not files[0]:
         flash(u'No file provided', 'warning')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
@@ -324,7 +381,7 @@ def hashcat_page():
     from io import BytesIO
     try:
         # Guarda los datos del archivo en un flujo de bytes en memoria
-        stream = BytesIO(file.read())
+        stream = BytesIO(files[0].read())
 
         # Lee los datos directamente desde el flujo
         data = readFileHashcat(stream)
@@ -332,6 +389,65 @@ def hashcat_page():
             cred=m.Credentials.get(i[0])
             if cred is not None:
                 cred.update(plain=i[1])
+        
+        flash(u'File successfully uploaded', 'success')
+        # cerrar la conexión a la bbdd
+        db.db_disconnect()
+        return redirect(request.referrer)
+    except:
+        flash(u'Error reading file', 'error')
+        # cerrar la conexión a la bbdd
+        db.db_disconnect()
+        return redirect(request.referrer)
+    
+
+@core.route('/import/machines', methods=['POST'])
+@login_required
+@check_project
+def machines_dnsresolver():
+    from cerberus import db2 as db
+    from cerberus.utils import readFileDNSResolver
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+    from cerberus import models as m
+
+    files = request.files.getlist('dataFileDNSrsv')
+
+    if not files[0]:
+        flash(u'No file provided', 'warning')
+        # cerrar la conexión a la bbdd
+        db.db_disconnect()
+        flash(u'No files selected', 'warning')
+        return redirect(request.referrer)
+    
+    from io import BytesIO
+
+    try:
+        # Guarda los datos del archivo en un flujo de bytes en memoria
+        stream = BytesIO(files[0].read())
+
+        # Lee los datos directamente desde el flujo
+        data = readFileDNSResolver(stream)
+        # print(data)
+        for i in data:
+            hostname, dominio = i[0].split('.', 1)
+            # hostname=i[0].split(".")[0].lower()+"$"
+            # domain=i[0].split(".")[1].lower()
+            hostname=hostname.lower()+"$"
+            dominio=dominio.lower()
+            print(hostname)
+            print(dominio)
+            ip = i[1] if i[1] != "Not resolved" else None 
+
+            machine=m.Machines.get(hostname)
+            if machine is not None:
+                machine.update(ip=ip) if ip is not None else None
+                machine.update(domain=dominio) if dominio is not None else None
+            else:
+                new_machine=m.Machines(hostname=hostname, ip=ip, domain=dominio)
+                db.session.add(new_machine)
+                db.session.commit()
+
         
         flash(u'File successfully uploaded', 'success')
         # cerrar la conexión a la bbdd
@@ -396,7 +512,7 @@ def table_data():
             title='Credentials'
         elif tabla=="machines":
             _=m.Machines.getHeaders()
-            headers=[_[1],_[2],_[6],_[8],_[12]]
+            headers=[_[1],_[2],_[5],_[6],_[8],_[12]]
             rows=m.Machines.get_all()
             template='core/tables/machines.html'
             title='Machines'
@@ -608,6 +724,44 @@ def download_file(tipo, id):
 def graph():
     return redirect(url_for('core.get_graph', query='kerberoast'))
 
+@core.route("/graph/markowned", methods=['POST'])
+@login_required
+@check_neo4j
+def graph_mark_owned():
+
+    from cerberus.utils import neo4jNodeAsOwned
+
+    # Obtenemos el usuario y dominio a marcar
+    nodeIDToMark = request.form["nodeID"]
+    ownedStatus = request.form["owned"]
+
+    statusToMark = "true" if ownedStatus == "false" else "false"
+    neo4jNodeAsOwned(nodeID=nodeIDToMark, value=statusToMark)
+    
+    print(f"NODE TO MARK: {nodeIDToMark}")
+    print(f"OWNED: {ownedStatus}")
+
+    return redirect(request.referrer)
+
+@core.route("/graph/markhighvalue", methods=['POST'])
+@login_required
+@check_neo4j
+def graph_mark_high_value():
+
+    from cerberus.utils import nodeAsHighValue
+
+    # Obtenemos el usuario y dominio a marcar
+    nodeIDToMark = request.form["nodeID"]
+    highValueStatus = request.form["highvalue"]
+
+    statusToMark = "true" if highValueStatus == "false" else "false"
+    nodeAsHighValue(nodeID=nodeIDToMark, value=statusToMark)
+    
+    print(f"NODE TO MARK: {nodeIDToMark}")
+    print(f"OWNED: {highValueStatus}")
+        
+    return redirect(request.referrer)
+
 @core.route('/graph/<query>', methods=['GET'])
 @login_required
 @check_neo4j
@@ -627,6 +781,20 @@ def get_graph(query):
                 domains = []
                 for node in nodes:domains.append(node["n.name"])
                 return(domains)
+            
+    def get_nmapFiles():
+        with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
+
+            cql= "MATCH (f:File) RETURN f.fileName"
+            # Execute the CQL query
+
+            with driver.session() as graphDB_Session:
+                nodes = graphDB_Session.run(cql)
+                nmapFile = []
+                for node in nodes:nmapFile.append(node["f.fileName"])
+                
+                return(nmapFile)
+            
     def get_da_group():
         with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
 
@@ -640,6 +808,8 @@ def get_graph(query):
                 return(ad_groups)
     def draw(query):
             
+            from datetime import datetime
+
             with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
                 graph = StyledGraph(driver)
                 graph.options={
@@ -743,7 +913,7 @@ def get_graph(query):
                         "label": node["label"],
                         "name": node["name"] if "name" in node else node["objectid"],
                         "owned": node["owned"] if "owned" in node else False,
-                        "highvalue": node["highvalue"] if "hihvalue" in node else False,
+                        "highvalue": node["highvalue"] if "highvalue" in node else False,
                     })
 
                 # Ordenamos la información y la detallamos
@@ -753,43 +923,53 @@ def get_graph(query):
                         "elements": [
                             {
                                 "name": "displayname",
-                                "display": "Display name"
+                                "display": "Display name",
+                                "isEpoch": False
                             },
                             {
                                 "name": "objectid",
-                                "display": "Object ID"
+                                "display": "Object ID",
+                                "isEpoch": False
                             },
                             {
                                 "name": "email",
-                                "display": "Email"
+                                "display": "Email",
+                                "isEpoch": False
                             },
                             {
                                 "name": "description",
-                                "display": "Description"
+                                "display": "Description",
+                                "isEpoch": False
                             },
                             {
                                 "name": "pwdlastset",
-                                "display": "Password last changed"
+                                "display": "Password last changed",
+                                "isEpoch": True
                             },
                             {
                                 "name": "lastlogon",
-                                "display": "Last logon"
+                                "display": "Last logon",
+                                "isEpoch": True
                             },
                             {
                                 "name": "admincount",
-                                "display": "AdminCount"
+                                "display": "AdminCount",
+                                "isEpoch": False
                             },
                             {
                                 "name": "enabled",
-                                "display": "Enabled"
+                                "display": "Enabled",
+                                "isEpoch": False
                             },
                             {
                                 "name": "pwdneverexpires",
-                                "display": "Password never expires"
+                                "display": "Password never expires",
+                                "isEpoch": False
                             },
                             {
                                 "name": "serviceprincipalnames",
-                                "display": "Service principal names"
+                                "display": "Service principal names",
+                                "isEpoch": False
                             }
                         ]
                     },
@@ -798,39 +978,48 @@ def get_graph(query):
                         "elements": [
                             {
                                 "name": "distinguishedname",
-                                "display": "Distinguished name"
+                                "display": "Distinguished name",
+                                "isEpoch": False
                             },
                             {
                                 "name": "domain",
-                                "display": "Domain"
+                                "display": "Domain",
+                                "isEpoch": False
                             },
                             {
                                 "name": "domainsid",
-                                "display": "Domain SID"
+                                "display": "Domain SID",
+                                "isEpoch": False
                             },
                             {
                                 "name": "passwordnotreqd",
-                                "display": "Password not required"
+                                "display": "Password not required",
+                                "isEpoch": False
                             },
                             {
                                 "name": "samaccountname",
-                                "display": "SAM account name"
+                                "display": "SAM account name",
+                                "isEpoch": False
                             },
                             {
                                 "name": "source",
-                                "display": "Source"
+                                "display": "Source",
+                                "isEpoch": False
                             },
                             {
                                 "name": "trustedoauth",
-                                "display": "Trusted OAuth"
+                                "display": "Trusted OAuth",
+                                "isEpoch": False
                             },
                             {
                                 "name": "unconstraineddelegation",
-                                "display": "Unconstrained delegation"
+                                "display": "Unconstrained delegation",
+                                "isEpoch": False
                             },
                             {
                                 "name": "whencreated",
-                                "display": "When created"
+                                "display": "When created",
+                                "isEpoch": True
                             }
                         ]
                     }
@@ -842,6 +1031,11 @@ def get_graph(query):
                     # Inicializamos el nuevo nodo detallado
                     newDetailedNode = dict()
                     newDetailedNode["nodeID"] = node["id"]
+                    
+                    #newDetailedNode["user"] = node["samaccountname"]
+                    #newDetailedNode["domain"] = node["domain"]
+                    newDetailedNode["owned"] = "true" if "owned" in node and node["owned"] else "false"
+                    newDetailedNode["highvalue"] = "true" if "highvalue" in node and node["highvalue"] else "false"
 
                     # Inicializamos los apartados del nodo
                     for key in detailStructure:
@@ -856,7 +1050,8 @@ def get_graph(query):
                             if element["name"] in node:
                                 newDetailedNode[key]["elements"].append({
                                     "display": element["display"],
-                                    "value": node[element["name"]]
+                                    "value": node[element["name"]],
+                                    "isEpoch": element["isEpoch"]
                                 })
                     
                     # Agregamos el nodo a la lista de nodos detallados
@@ -900,44 +1095,44 @@ def get_graph(query):
                         n["shape"]="image"
                         if "owned" in n and n["owned"] is True:
                             if "highvalue" in n and n["highvalue"] is True:
-                                n["image"]=url_for('static', filename='img/graph_icons/group-ht-owned.svg')
+                                n["image"]=url_for('static', filename='img/graph_icons/group-ht-owned.png')
                             else:
-                                n["image"]=url_for('static', filename='img/graph_icons/group-owned.svg')
+                                n["image"]=url_for('static', filename='img/graph_icons/group-owned.png')
                         else:
                             if "highvalue" in n and n["highvalue"] is True:
-                                    n["image"]=url_for('static', filename='img/graph_icons/group-ht.svg')
+                                    n["image"]=url_for('static', filename='img/graph_icons/group-ht.png')
                             else:
-                                n["image"]=url_for('static', filename='img/graph_icons/group.svg')
+                                n["image"]=url_for('static', filename='img/graph_icons/group.png')
                     elif "User" in n["type"]:
                         n["shape"] = "image"
                         if "owned" in n and n["owned"] is True:
                             if "highvalue" in n and n["highvalue"] is True:
-                                n["image"] = url_for('static', filename='img/graph_icons/user-ht-owned.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/user-ht-owned.png')
                             else:
-                                n["image"] = url_for('static', filename='img/graph_icons/user-owned.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/user-owned.png')
                         else:
                             if "highvalue" in n and n["highvalue"] is True:
-                                n["image"] = url_for('static', filename='img/graph_icons/user-ht.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/user-ht.png')
                             else:
-                                n["image"] = url_for('static', filename='img/graph_icons/user.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/user.png')
                     elif "Computer" in n["type"]:
                         n["shape"] = "image"
                         if "owned" in n and n["owned"] is True:
                             if "highvalue" in n and n["highvalue"] is True:
-                                n["image"] = url_for('static', filename='img/graph_icons/pc-ht-owned.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/pc-ht-owned.png')
                             else:
-                                n["image"] = url_for('static', filename='img/graph_icons/pc-owned.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/pc-owned.png')
                         else:
                             if "highvalue" in n and n["highvalue"] is True:
-                                n["image"] = url_for('static', filename='img/graph_icons/pc-ht.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/pc-ht.png')
                             else:
-                                n["image"] = url_for('static', filename='img/graph_icons/pc.svg')
+                                n["image"] = url_for('static', filename='img/graph_icons/pc.png')
                     elif "GPO" in n["type"]:
                         n["shape"] = "image"
-                        n["image"] = url_for('static', filename='img/graph_icons/gpo.svg')
+                        n["image"] = url_for('static', filename='img/graph_icons/gpo.png')
                     elif "Domain" in n["type"]:
                         n["shape"] = "image"
-                        n["image"] = url_for('static', filename='img/graph_icons/domain.svg')
+                        n["image"] = url_for('static', filename='img/graph_icons/domain.png')
                     else:
                         pass
 
@@ -947,25 +1142,51 @@ def get_graph(query):
 
                 return nodes, edges, options, detailedNodes
     
-    dag=request.args.get('da_group') # domain admins group    
+    dag=request.args.get('da_group') # domain admins group 
+    file=request.args.get('nmapFile')
+    targetNode = request.args.get("targetnode")
     try:
-        domains=get_domains()
+        #domains=get_domains()
         da_group=get_da_group()
+        nmapFile=get_nmapFiles()
+        print("\n\n\n",nmapFile,"\n\n\n")
         if dag is None: dag=da_group[0]
+        
+        if targetNode is None: targetNode = ""
 
         my_dict = json.load(open('cerberus/static/queries.json'))
+        hiddenQueries = json.load(open('cerberus/static/hiddenQueries.json'))
 
+        allQueries = {}
+        queryCategory = ""
 
-        if query in my_dict:
+        for category in list(set([*my_dict] + [*hiddenQueries])):
+            allQueries[category] = {}
+            if category in my_dict:
+                allQueries[category].update(my_dict[category])
+            if category in hiddenQueries:
+                allQueries[category].update(hiddenQueries[category])
             
-            x=my_dict[query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag)
-            n,e,o,d=draw(x)
+            if query in [*allQueries[category]]:
+                queryCategory = category
 
+        if queryCategory is not "":
+            if file is not None:
+                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode).replace("NMAPFILE",file)
+                n,e,o,d=draw(x)
+            else:
+                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode)
+                n,e,o,d=draw(x)
         else:
 
-            x=my_dict[query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag)
-            
-            n,e,o,d=draw(x)
+            if file is not None:
+                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode).replace("NMAPFILE",file)
+                n,e,o,d=draw(x)
+            else:
+                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode)
+                n,e,o,d=draw(x)
+        print (f"\n\n{x}\n\n")
+        n,e,o,d=draw(x)
         return render_template('core/graph_template.html',
                                 projects=projects,
                                 title="Graph",
@@ -974,7 +1195,8 @@ def get_graph(query):
                                 options=o,
                                 detailedNodes=d,
                                 links=my_dict,
-                                da_group=da_group
+                                da_group=da_group,
+                                nmapFile=nmapFile
                                     )
     except Exception as e:
         print(e)
@@ -1001,6 +1223,42 @@ def sync_neo4j():
 
     flash(result[1], result[0])
         
-    return redirect(request.referrer) 
+    return redirect(request.referrer)
+
+@core.route('/graph/get_computers', methods=['GET'])
+@login_required
+@check_neo4j
+def get_computers():
+    from neo4j import GraphDatabase
+    from flask import send_file
+    import io
+    def ejecutar_consulta_y_obtener_resultados(uri, username, password, consulta):
+        # Conexión a la base de datos Neo4j
+        with GraphDatabase.driver(uri, auth=(username, password)) as driver:
+            with driver.session() as session:
+                # Ejecutar la consulta Cypher
+                resultado = session.run(consulta)
+
+                # Crear un objeto io.BytesIO para almacenar los resultados en memoria
+                contenido = io.BytesIO()
+
+                for registro in resultado:
+                    contenido.write(f"{registro['m.name']}\n".encode('utf-8'))
+
+                # Devolver el contenido
+                return contenido.getvalue()
+    # Consulta Cypher
+    consulta = "MATCH (m:Computer) RETURN m.name"
+
+    # Obtener resultados como bytes
+    resultados = ejecutar_consulta_y_obtener_resultados(uri=g.user[3], username=g.user[4], password=g.user[5], consulta=consulta)
+
+    # Devolver los resultados como un archivo descargable
+    return send_file(
+        io.BytesIO(resultados),
+        as_attachment=True,
+        download_name="resultados.txt",
+        mimetype="text/plain"
+    )
 
 # -------------------------------------------------------------------------------------------

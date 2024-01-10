@@ -52,6 +52,17 @@
         </div>
     </div>
 
+    <!-- codigo del POPUP de select nmapFile-->
+    <div id="nampFilesPopup" class="popup">
+        <!-- <span class="close-button button-popup-close">&times;</span> -->
+        <p class="popuptitle">Select Nmap OutPut</p>
+        <div class="popup-content">
+            <div class="box1" id="files_box">
+                <!-- Aqui van los grupos de dominio -->
+            </div>
+        </div>
+    </div>
+
     <script>
         function get_domain_admin_groups(query) {
             // console.log(query);
@@ -61,7 +72,7 @@
 
             // Suponiendo que da_group es una lista de objetos
             var da_group = '{{da_group}}';
-
+            console.log(da_group)
             var datosLista = JSON.parse('[' + da_group.replace(/&#39;/g, '"') + ']');
 
             const contenedor = document.getElementById('dominios_box') // Puedes ajustar el selector según tu estructura
@@ -69,6 +80,32 @@
             for (var i = 0; i < datosLista[0].length; i++) {
                 // console.log(datosLista[0][i])
                 links += '<a href="' + query + '?da_group=' + datosLista[0][i] + '">' + datosLista[0][i] + '</a><br>';
+            }
+            contenedor.innerHTML = links;
+            // Cambiar el estilo para mostrar el elemento
+            popupContainerTgs.style.display = 'block';
+
+            // También puedes agregar el código para mostrar overlay si es necesario
+            // const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block';
+
+        }
+        function get_nmap_files_name(query) {
+            // console.log(query);
+
+            // Obtener el elemento que deseas mostrar
+            const popupContainerTgs = document.getElementById('nampFilesPopup');
+
+            // Suponiendo que da_group es una lista de objetos
+            var nmapFile = '{{nmapFile}}';
+
+            var datosLista = JSON.parse('[' + nmapFile.replace(/&#39;/g, '"') + ']');
+            
+            const contenedor = document.getElementById('files_box') // Puedes ajustar el selector según tu estructura
+            var links = '<br>';
+            for (var i = 0; i < datosLista[0].length; i++) {
+                // console.log(datosLista[0][i])
+                links += '<a href="' + query + '?nmapFile=' + datosLista[0][i] + '">' + datosLista[0][i] + '</a><br>';
             }
             contenedor.innerHTML = links;
             // Cambiar el estilo para mostrar el elemento
@@ -88,6 +125,7 @@
     <i id="boton_maximizar" class='bx bx-expand botones_graph rigth_boton'></i>
     <a href="{{ url_for('core.sync_neo4j') }}"><i id="boton_sync" class='bx bx-sync  botones_graph rigth_boton'></i></a>
     <i id="boton_upload" class='bx bx-upload botones_graph rigth_boton'></i>
+    <a href="{{ url_for('core.get_computers') }}"><i id="boton_download" class='bx bxs-file-export botones_graph rigth_boton'></i></a>
     <!-- FIN Botones dentro del grafo -->
 
     <!-- div tabla datos y queries -->
@@ -99,19 +137,28 @@
 
         <div id="enlaces">
             {% for i in links %}
-            {% if links[i]['required'] == [] %}
-            <a href="{{ i }}">{{ links[i]['description'] }}</a>
+            <div style="width: 100%; margin-top: 20px;">
+                <div style="margin: auto; width: 100%;">
+                    <h5 style="margin: auto; width: 100%; display: flex; justify-content: center;">{{ i }}</h5>
+                </div>
+            </div>
+            {% for k in links[i] %}
+            {% if links[i][k]['required'] == [] %}
+            <a href="{{ k }}">{{ links[i][k]['description'] }}</a>
             {% else %}
-            {% for j in links[i]['required'] %}
+            {% for j in links[i][k]['required'] %}
             {% if j == 'dagroup' %}
-            <a href="#" class="" onclick="get_domain_admin_groups('{{i}}')">{{ links[i]['description'] }}</a>
+            <a href="#" class="" onclick="get_domain_admin_groups('{{k}}')">{{ links[i][k]['description'] }}</a>
+            {% elif j == 'nmapFile' %}
+            <a href="#" class="" onclick="get_nmap_files_name('{{k}}')">{{ links[i][k]['description'] }}</a>
             {% else %}
-            <a href="{{ i }}">{{ links[i]['description'] }}</a>
+            <a href="{{ k }}">{{ links[i][k]['description'] }}</a>
             {% endif %}
             {% endfor %}
             {% endif %}
 
             <!-- <a href="{{ i }}">{{ links[i]['description'] }}</a> -->
+            {% endfor %}
             {% endfor %}
         </div>
         <div id="info_table_div">
@@ -137,6 +184,10 @@
         const enlaces = document.getElementById("enlaces");
         // div de la info de un nodo
         const info_node = document.querySelector("#info_table_div");
+
+        /* const links = {{ links | safe }}
+        const linkCategories = Array.from(new Set(Object.entries(links).map((linkObject) => Object.entries(linkObject[1])[3][1])));
+        console.log(linkCategories); */
 
         // click en el boton de info de un nodo
         btnNode.addEventListener("click", () => {
@@ -227,18 +278,90 @@
                     if(detailedNodes[i].nodeID === nodeID)
                         detailedNode = detailedNodes[i]
                 
-                console.log(Object.entries(detailedNode))
+                // console.log(Object.entries(detailedNode))
+
+                var nodeID = undefined;
+                var nodeOwned = undefined;
+                var nodeHighValue = undefined;
+
+                for(let [sectionKey, sectionValue] of Object.entries(detailedNode)){
+
+                    // Omitimos el ID
+                    if(sectionKey === "nodeID"){
+                        nodeID = sectionValue;
+                        continue;
+                    }
+                    else if (sectionKey === "owned"){
+                        nodeOwned = sectionValue;
+                        continue;
+                    }
+                    else if (sectionKey === "highvalue"){
+                        nodeHighValue = sectionValue;
+                        continue;
+                    }
+
+                }
+
+                // Botones de marcar como Owned y High Value
+                content += `
+                    <div class='container mt-3 mb-3 d-flex'>
+                        <div class='col-md-6'>
+                            <button id='btn-mark-as-owned' class='w-100 popupbtn import-button' onclick='$.post("/graph/markowned", {nodeID:"${nodeID}", owned:"${nodeOwned}"}, () => {location.reload();})'>Mark/Unmark as Owned</button>
+                        </div>
+                        <div class='col-md-6'>
+                            <button id='btn-mark-as-high-value' class='w-100 popupbtn import-button' onclick='$.post("/graph/markhighvalue", {nodeID:"${nodeID}", highvalue:"${nodeHighValue}"}, () => {location.reload();})'>Mark/Unmark as High Value</button>
+                        </div>
+                    </div>
+                `
+
+                // Botón de shortest path from owned
+                content += nodeOwned === "true" ? `
+                    <div class='container mt-3 mb-3 d-flex'>
+                        <div class='col-md-12'>
+                            <a href="/graph/ShortestPathFromOwned?targetnode=${nodeID}"><button disabled id='btn-shortest-path-from-owned' class='w-100 popupbtn import-button' style="background-color: grey;">Shortest path from owned</button>
+                        </div>
+                    </div>
+                ` : `
+                    <div class='container mt-3 mb-3 d-flex'>
+                        <div class='col-md-12'>
+                            <a href="/graph/ShortestPathFromOwned?targetnode=${nodeID}"><button id='btn-shortest-path-from-owned' class='w-100 popupbtn import-button'>Shortest path from owned</button>
+                        </div>
+                    </div>
+                `
 
                 for(let [sectionKey, sectionValue] of Object.entries(detailedNode)){
 
                     // Omitimos el ID
                     if(sectionKey === "nodeID") continue;
+                    if (sectionKey === "user"){
+                        //userName = sectionValue;
+                        continue;
+                    }
+                    else if (sectionKey === "domain"){
+                        //userDomain = sectionValue;
+                        continue;
+                    }
+                    else if (sectionKey === "owned"){
+                        nodeOwned = sectionValue;
+                        continue;
+                    }
+                    else if (sectionKey === "highvalue"){
+                        nodeHighValue = sectionValue;
+                        continue;
+                    }
 
                     // Para cada sección, recorremos sus elementos y los introducimos
                     content += `<table class="mb-2" id="info-table">\n<thead>\n<tr>\n<th colspan="2">${sectionValue.display}</th>\n</tr>\n</thead>\n`;
                     for(let i = 0; i < sectionValue.elements.length; i++){
                         sectionElement = sectionValue.elements[i];
-                        content += `<tr>\n<td style="word-wrap: break-word;min-width: 200px;max-width: 200px;white-space:normal;">${sectionElement.display}</td>\n<td style="word-wrap: break-word;min-width: 280px;max-width: 280px;white-space:normal;">${sectionElement.value}</td>\n</tr>\n`;
+                        if(sectionElement.isEpoch === "True"){
+                            var dataValue = new Date(0);
+                            dataValue.setUTCSeconds(sectionElement.value);
+                        }
+                        else{
+                            var dataValue = sectionElement.value;
+                        }
+                        content += `<tr>\n<td style="word-wrap: break-word;min-width: 200px;max-width: 200px;white-space:normal;">${sectionElement.display}</td>\n<td style="word-wrap: break-word;min-width: 280px;max-width: 280px;white-space:normal;">${dataValue}</td>\n</tr>\n`;
                     }
                     content += "</table>\n"
 

@@ -123,13 +123,14 @@ class DomainUsers(db.Base):
         self.date = date
         self.owned = owned
 
-    def update(self,user=None,domain=None,sid=None,logon_server=None,logon_time=None,date=None):
+    def update(self,user=None,domain=None,sid=None,logon_server=None,logon_time=None,date=None,owned=None):
         self.user = user if user else self.user
         self.domain = domain if domain else self.domain
         self.sid = sid if sid else self.sid
         self.logon_server = logon_server if logon_server else self.logon_server
         self.logon_time = logon_time if logon_time else self.logon_time
         self.date = date if date else self.date
+        self.owned = owned if owned is not None else self.owned
         db.session.commit()
     
     # Devuelve la info de un usuario de dominio
@@ -156,6 +157,9 @@ class DomainUsers(db.Base):
     def get(user, domain):
         return db.session.query(DomainUsers).filter_by(user=user, domain=domain).first()
     
+    def getInsensitive(user, domain):
+        return db.session.query(DomainUsers).filter(DomainUsers.user.ilike(user), DomainUsers.domain.ilike(domain)).first()
+
     def getById(id):
         return db.session.query(DomainUsers).filter_by(id=id).first()
     
@@ -484,6 +488,19 @@ class Tickets(db.Base):
         self.end_time = end_time
         self.renew_time = renew_time
         self.date = date 
+
+    def update(self, service=None, domainuser_id=None, ticket_type=None, ticket_name=None, ticket_data=None, service_name=None, target_name=None, start_time=None, end_time=None, renew_time=None, date=None):
+        self.service = service if service else self.service
+        self.domainuser_id = domainuser_id if domainuser_id else self.domainuser_id
+        self.ticket_type = ticket_type if ticket_type else self.ticket_type
+        self.ticket_name = ticket_name if ticket_name else self.ticket_name
+        self.ticket_data = ticket_data if ticket_data else self.ticket_data
+        self.service_name = service_name if service_name else self.service_name
+        self.target_name = target_name if target_name else self.target_name
+        self.start_time = start_time if start_time else self.start_time
+        self.end_time = end_time if end_time else self.end_time
+        self.renew_time = renew_time if renew_time else self.renew_time
+        self.date = date if date else self.date
 
     def get(ticket_name, user_id):
         return db.session.query(Tickets).filter_by(ticket_name=ticket_name, domainuser_id=user_id).first()

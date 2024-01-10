@@ -7,7 +7,7 @@
 <h1>Import data</h1>
 <div class="row">
     <!-- Tarjeta modulos -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <!-- Formulario de subida de ficheros -->
         <form action="/import/tickets" method="POST" enctype="multipart/form-data">
 
@@ -39,7 +39,7 @@
         </form>
     </div>
     <!-- Tarjeta modulos -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <!-- Formulario de subida de ficheros -->
         <form action="/import/upload" method="POST" enctype="multipart/form-data">
 
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Tarjeta dump AD -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <!-- Formulario de subida de ficheros -->
         <form action="/import/graph" method="POST" enctype="multipart/form-data">
 
@@ -109,6 +109,39 @@
                 </div>
                 <!-- Boton upload -->
                 <button class="popupbtn import-button" type="submit">Upload</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Tarjeta modulos -->
+    <div class="col-md-3">
+        <!-- Formulario de subida de ficheros -->
+        <form action="/import/nmapxml" method="POST" enctype="multipart/form-data">
+
+            <!-- Tarjeta formulario con subida de fichero -->
+            <div class="tarjeta-import card shadow mb-4 h-100 tarjeta-import">
+                <div class="chart-title">
+                    <h4>Nmap Targets</h4>
+                </div>
+                <!-- Description -->
+                <p class="styled-p">Upload here the different outputs of the XML obtained from the network's NMAP</p>
+                <br>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileNmaps" name="dataFileNmaps" multiple="multiple" hidden>
+                    <label for="dataFileNmaps" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-nmaps">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-nmaps"></span>
+                        </div>
+                    </label>
+                </div>
+                <!-- Boton upload -->
+                <!-- <div class="container d-flex justify-content-center pt-4 pb-2"> -->
+                <button class="popupbtn import-button" type="submit">Upload</button>
+                <!-- </div> -->
             </div>
 
         </form>

@@ -1,0 +1,10 @@
+{
+    "Paths": {
+        "ShortestPathFromOwned": {
+            "description": "Shortest path to here from owned",
+            "query": "MATCH (n{owned:true}),(m),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) WHERE ID(m) = TARGET_ID RETURN p",
+            "required": [],
+            "categroy": "Paths"
+        }
+    }
+}

@@ -1,16 +1,96 @@
 {% extends 'core/tables/tabla_template.html' %}
 {% block title %}{{title}}{% endblock %}
 {% block titulo_h1 %}{{title}}{% endblock %}
+
+{% block botones %}
+<div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    <button type="button" id="dnsrsv" class="btn">DNS resolver import</button>
+    <!-- <button type="button" id="hashcat" class="btn">Import from hashcat</button> -->
+</div>
+
+{% endblock %}
+
 {% block filas %}
 {% for row in rows %}
 <tr>
     <!-- -->
     <td class="short">{{row.hostname}}</td>
     <td class="short"><a href="{{url_for('core.table_data',t='domain', id=row.domain)}}">{{row.domain}}</a></td>
+    <td class="short">{{row.ip}}</td>
     <td class="large">{{row.ntlm}}</td>
     <td class="large">{{row.aes256}}</td>
     <td class="medium">{{row.date}}</td>
 
 </tr>
 {% endfor %}
+{% endblock %}
+
+{% block popups %}
+<!-- codigo del POPUP de new_pass -->
+<div id="machinesPopup" class="popup">
+    <span class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">Import from DNS resolver</p>
+    <div class="popup-content" style="width: auto; text-align: center;">
+        <form action="{{url_for('core.machines_dnsresolver')}}" method="POST" enctype="multipart/form-data">
+            <div class="box1">
+                <br>
+                <!-- File upload -->
+                <div class="container-import">
+                    <input type="file" id="dataFileDNSrsv" name="dataFileDNSrsv" hidden>
+                    <label for="dataFileDNSrsv" class="drop-area">
+                        <div class="drop-area-view" id="drop-area-dnsrsv">
+                            <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
+                            <p>Drag and drop or click here<br>to upload the file</p>
+                            <span class="drop-area-span-file" id="drop-area-span-file-dnsrsv"></span>
+                        </div>
+                    </label>
+                </div>
+                <script>
+                    // dnsrsv
+                    var dropArea = document.getElementById("drop-area-dnsrsv");
+                    var inputFile = document.getElementById("dataFileDNSrsv");
+                    var spanFile = document.getElementById("drop-area-span-file-dnsrsv");
+
+                    inputFile.addEventListener("change", function () {
+                        if (inputFile.files.length > 1) {
+                            spanFile.textContent = inputFile.files.length + " files selected";
+                        } else {
+                            spanFile.textContent = inputFile.files[0].name;
+
+                        }
+                    });
+
+                    dropArea.addEventListener("dragover", function (e) {
+                        e.preventDefault();
+                        dropArea.addEventListener("drop", function (e) {
+                            e.preventDefault();
+                            inputFile.files = e.dataTransfer.files;
+                            if (inputFile.files.length > 1) {
+                                spanFile.textContent = inputFile.files.length + " files selected";
+                            } else {
+                                spanFile.textContent = inputFile.files[0].name;
+
+                            }
+
+                        });
+                    });
+                </script>
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Import</button>
+        </form>
+    </div>
+</div>
+<!-- FIN POPUP new_pass -->
+
+<script>
+    // dnsrsv
+    const popupContainerMachines = document.getElementById('machinesPopup');
+    const openMachinePopupButton = document.getElementById('dnsrsv');
+    openMachinePopupButton.addEventListener('click', () => {
+        popupContainerMachines.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+</script>
 {% endblock %}
