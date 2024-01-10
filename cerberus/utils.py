@@ -210,6 +210,31 @@ def readFileHashcat(input_data):
 
     return cracked
 
+#############################################
+#                                           #
+#   Funcion para leer el fichero de import  #
+#                 de dnsresolver            #
+#                                           #
+#############################################
+# Leer el input_file
+
+def readFileDNSResolver(input_data):
+    # Read the content from BytesIO and decode as string
+    input_data.seek(0)
+    content = input_data.read().decode('utf-8')
+
+    # Split the input data into lines
+    lines = content.split('\n')
+
+    results = []
+
+    for line in enumerate(lines):
+        # Agregar los valores separados a la lista
+        line=line[1]
+        results.append(line.strip().split('->'))
+
+    return results
+
 #*******************************************#
 #                                           #
 #   Funciones para parsear ficheros de      #
@@ -270,14 +295,24 @@ def checkneo4j():
         print(e)
         return False
 
-
-def userAsOwned(user):
+def neo4jNodeAsOwned(nodeID, value="true"):
     from neo4j import GraphDatabase
     from flask import g
     # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
     try:
         with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
-            driver.execute_query(f"MATCH (n:User) WHERE n.samaccountname='{user.user}' SET n.owned = true")
+            driver.execute_query(f"MATCH (n) WHERE ID(n) = {nodeID} SET n.owned = {value}")
+    except Exception as e:
+        print("Error al actualizar neo4j")
+        print(e)
+
+def userAsOwned(user, value="true"):
+    from neo4j import GraphDatabase
+    from flask import g
+    # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
+    try:
+        with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
+            driver.execute_query(f"MATCH (n:User) WHERE n.samaccountname='{user.user}' SET n.owned = {value}")
     except Exception as e:
         print("Error al actualizar neo4j")
         print(e)
@@ -300,6 +335,17 @@ def usersAsOwned(users):
         return ("danger", "Neo4j connection error")
     
     return ("success", "Neo4j synced successfully")
+
+def nodeAsHighValue(nodeID, value="true"):
+    from neo4j import GraphDatabase
+    from flask import g
+    # URI examples: "neo4j://localhost", "neo4j+s://xxx.databases.neo4j.io"
+    try:
+        with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
+            driver.execute_query(f"MATCH (n) WHERE ID(n) = {nodeID} SET n.highvalue = {value}")
+    except Exception as e:
+        print("Error al actualizar neo4j")
+        print(e)
 
 """
     Nombre: neo4j Graph DashBoard

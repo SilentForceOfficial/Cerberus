@@ -1,9 +1,11 @@
 <!-- <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+    <label for="pass0">Current password</label>
+    <input type="password" name="pass0" id="pass0" required>
+    <label for="pass1">New password</label>
+    <input type="password" name="pass1" id="pass1" required>
+    <label for="pass2">Confirm password</label>
+    <input type="password" name="pass2" id="pass2" required>
+    <input type="submit" value="Register">
   </form> -->
 
 <html lang="en">
@@ -12,7 +14,7 @@
 
   <meta charset="UTF-8">
 
-  <title>Cerberus</title>
+  <title>Change password - cerberus</title>
 
   <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}"> -->
   <link rel="icon" type="image/png" href="{{ url_for('static', filename= 'img/cerberus.png') }}">
@@ -60,7 +62,7 @@
 
       <div class="content">
 
-        <h2>Welcome to Cerberus</h2>
+        <h2>Change password</h2>
 
         <div class="card-container">
 
@@ -72,19 +74,25 @@
 
             <div class="inputBox">
 
-              <input id="username" name="username" type="text" required> <i>Username</i>
+              <input id="pass0" name="pass0" type="password" required> <i>Current password</i>
 
             </div>
 
             <div class="inputBox">
 
-              <input id="password" name="password" type="password" required> <i>Password</i>
+              <input id="pass1" name="pass1" type="password" required> <i>New password</i>
 
             </div>
 
             <div class="inputBox">
 
-              <input type="submit" value="Login">
+              <input id="pass2" name="pass2" type="password" required> <i>Confirm password</i>
+
+            </div>
+
+            <div class="inputBox">
+
+              <input type="submit" value="Change password">
 
             </div>
 

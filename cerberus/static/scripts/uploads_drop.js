@@ -13,6 +13,11 @@ var dropArea3 = document.getElementById("drop-area-dump");
 var inputFile3 = document.getElementById("dataFileDump");
 var spanFile3 = document.getElementById("drop-area-span-file-dump");
 
+// NMAPXML
+var dropArea3 = document.getElementById("drop-area-dump");
+var inputFile3 = document.getElementById("dataFileNmaps");
+var spanFile3 = document.getElementById("drop-area-span-file-nmaps");
+
 // function changeSpan(inputFile,spanFile) {
 //     if (inputFile.files.length > 1) {
 //         spanFile.textContent = inputFile.files.length + " files selected";

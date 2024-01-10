@@ -7,11 +7,24 @@ from cerberus.db import get_db,close_db
 
 from . import auth
 
+import functools
 
+# Requerir auth en otras vistas
+def login_required_local(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
 # -------------------------------------------------------------------------------------------
 # REGISTER
 @auth.route('/register', methods=('GET', 'POST'))
+@login_required_local
 def register():
+    # return "HOLA"
     # if request.method == 'POST':
     #     username = request.form['username']
     #     password = request.form['password']
@@ -41,6 +54,47 @@ def register():
     # return render_template('auth/register.html')
     flash("Registration is disabled.", "warning")
     return redirect(url_for("auth.login"))
+
+# CHANGE PASSWORD
+@auth.route('/reset_password', methods=('GET', 'POST'))
+@login_required_local
+def resetpass():
+
+    if request.method == 'POST':
+        password_actual = request.form['pass0']
+        password_new = request.form['pass1']
+        password_new2 = request.form['pass2']
+        db = get_db()
+        error = None
+        if not password_actual or not password_new or not password_new2:
+            error = 'Fill in all fields'
+        elif not check_password_hash(g.user['password'], password_actual):
+            error = 'Incorrect password'
+        elif password_new != password_new2:
+            error = 'Passwords do not match'
+        elif password_actual == password_new:
+            error = 'New password must be different from current password'
+
+        if error is None:
+            try:
+                db.execute(
+                    "UPDATE user SET password = ? WHERE username = ?",
+                    (generate_password_hash(password_new), g.user['username'])),
+                
+                db.commit()   
+            except db.IntegrityError:
+                # error = f"User {username} is already registered."
+                pass
+            else:
+                close_db()
+                flash("Password changed successfully", "success")
+                return redirect(url_for("core.dashboard"))
+
+        flash(error,"danger")
+
+        return render_template('auth/resetpass.html')
+    elif request.method == 'GET':
+        return render_template('auth/resetpass.html')
 
 
 # LOGIN

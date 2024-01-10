@@ -30,6 +30,7 @@
   --body-font: 'Nunito', sans-serif;
   --normal-font-size: 1rem;
   --z-fixed: 100;
+  --z-fixed-total: 1000;
   --orange-color: #F89011;
   --gris-claro-color: #35363A;
 }
@@ -410,7 +411,8 @@ canvas {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: var(--z-fixed + 50);
+  /* z-index: var(--z-fixed + 50); */
+  z-index: var(--z-fixed-total);
   background-color: rgba(41, 41, 42, 0.724);
   color: white;
 

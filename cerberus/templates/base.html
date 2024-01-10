@@ -7,11 +7,13 @@
   <title>{% block title %} {% endblock %}</title>
   <link rel="icon" type="image/png" href="{{ url_for('static', filename= 'img/cerberus.png') }}">
   <link href="{{ url_for('static', filename= 'external_modules/front/bootstrap.min.css') }}" rel='stylesheet'>
-  <link href="{{ url_for('static', filename= 'external_modules/front/boxicons-2.1.4/css/boxicons.min.css') }}" rel='stylesheet'>
+  <link href="{{ url_for('static', filename= 'external_modules/front/boxicons-2.1.4/css/boxicons.min.css') }}"
+    rel='stylesheet'>
   <link rel="stylesheet" href="{{ url_for('static', filename= 'styles/style_core.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename= 'styles/uploads_drop.css') }}">
 
-  <script type="text/javascript" src="{{url_for('static', filename='external_modules/front/jquery-3.7.0.js')}}"></script>
+  <script type="text/javascript"
+    src="{{url_for('static', filename='external_modules/front/jquery-3.7.0.js')}}"></script>
 
   {% block styles %} {% endblock %}
 </head>
@@ -26,17 +28,17 @@
 
     <div class="alert alert-{{ category }} mt-3 alert-dismissible">
       {% if category == 'success' %}
-        <img src="{{ url_for('static',filename='img/flash/success.svg') }}" alt="">
+      <img src="{{ url_for('static',filename='img/flash/success.svg') }}" alt="">
       {% elif category == 'warning' %}
-        <img src="{{ url_for('static',filename='img/flash/warning.svg') }}" alt="">
+      <img src="{{ url_for('static',filename='img/flash/warning.svg') }}" alt="">
       {% elif category == 'danger' %}
-        <img src="{{ url_for('static',filename='img/flash/danger.svg') }}" alt="">
+      <img src="{{ url_for('static',filename='img/flash/danger.svg') }}" alt="">
       {% else %}
-        {{category}}
+      {{category}}
       {% endif %}
-      
+
       <!-- <i class='bx bx-error-alt'></i> -->
-       - {{ message }}
+      - {{ message }}
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
@@ -163,8 +165,19 @@
         if (document.readyState == "complete") {
           document.querySelector(
             "#loader").style.display = "none";
-          // document.querySelector(
-          //   "body").style.visibility = "visible";
+          // Animacion de carga en todos los forms
+          var forms = document.querySelectorAll('form');
+
+          forms.forEach(function (form) {
+            // console.log(form)
+            form.addEventListener('submit', function (e) {
+              e.preventDefault();
+
+              document.querySelector("#loader").style.display = "flex";
+              // spinner.style.display = 'flex';
+              form.submit();
+            })
+          })
         }
       };
     </script>
@@ -189,8 +202,8 @@
     <span id="closePopupButton" class="close-button">&times;</span>
     <p class="popuptitle">Create new project</p>
     <div class="popup-content">
-      
-      
+
+
       <form action="/projects/new/" method="POST">
         <div class="box1">
           <label for="project">Project:</label>
@@ -210,9 +223,9 @@
   <!-- codigo del POPUP de settings -->
   <div id="settingsPopup" class="popup">
     <span id="closeSettingsPopup2" class="close-button">&times;</span>
-      <p class="popuptitle">Settings</p>
+    <p class="popuptitle">Settings</p>
     <div class="popup-content">
-      
+      <a href="{{ url_for('auth.resetpass') }}" style="color: var(--orange-color);">Change your password</a>
       <form action="/settings" method="POST">
         <div class="box1">
           <label>URL:</label>
@@ -222,8 +235,8 @@
           {% else %}
           <input type="text" id="url" name="url" placeholder="database url">
           {% endif %}
-          </div>
-          <div class="box1">
+        </div>
+        <div class="box1">
           <label>User:</label>
           <br>
           {% if g.user['neo4j_user'] %}

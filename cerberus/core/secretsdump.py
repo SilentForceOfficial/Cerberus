@@ -160,7 +160,7 @@ def parse_secretsdump(data, session):
     pass
     
 
-    # # Insertamos la maquina en la bbdd
+    # Insertamos la maquina en la bbdd
     
     machine_acc=m.Machines.get(hostname=d_template["machine"])
     if machine_acc is None:
@@ -168,6 +168,7 @@ def parse_secretsdump(data, session):
         session.add(machine_acc)
         session.commit()
     else:
+        domain=d_template["domain"]
         if machine_acc.aes128 is None:
             machine_acc.aes128=d_template["aes128"]
         if machine_acc.aes256 is None:

@@ -1,57 +1,130 @@
 {
-    "kerberoast":{
-        "description": "Find all Kerberoastable Users",
-        "query": "MATCH (n:User)WHERE n.hasspn=true RETURN n",
-        "required": []
+    "Kerberos": {
+        "kerberoast":{
+            "description": "Find all Kerberoastable Users",
+            "query": "MATCH (n:User)WHERE n.hasspn=true RETURN n",
+            "required": []
+        },
+        "kerberoastToDA":{
+            "description": "Kerberoastable Users with a path to DA",
+            "query": "MATCH (u:User {hasspn:true}) MATCH (g:Group) WHERE g.name CONTAINS 'DOMAIN ADMINS GROUP' MATCH p = shortestPath( (u)-[*1..]->(g) ) RETURN p",
+            "required": ["dagroup"]
+        },
+        "asproasting":{
+            "description": "Find users that doesn't require kerberos pre-authentication (AS-REP Roasting)",
+            "query": "MATCH (u:User {dontreqpreauth: true}) RETURN u",
+            "required": []
+        }
     },
-    "kerberoastToDA":{
-        "description": "Kerberoastable Users with a path to DA",
-        "query": "MATCH (u:User {hasspn:true}) MATCH (g:Group) WHERE g.name CONTAINS 'DOMAIN ADMINS GROUP' MATCH p = shortestPath( (u)-[*1..]->(g) ) RETURN p",
-        "required": ["dagroup"]
+    "Computers": {
+        "unconstraint":{
+            "description": "Find all computers with Unconstrained Delegation",
+            "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",
+            "required": []
+        },
+        "unsopportedOS":{
+            "description": "Find unsupported OSs",
+            "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '(?i).*(2000|2003|2008|xp|vista|me|7).*' RETURN H",
+            "required": []
+        },
+        "unconstraint":{
+            "description": "Find all computers with Unconstrained Delegation",
+            "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",
+            "required": []
+        },
+        "unsopportedOS":{
+            "description": "Find unsupported OSs",
+            "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '(?i).*(2000|2003|2008|xp|vista|me|7).*' RETURN H",
+            "required": []
+        },
+        "NmapTargets": {
+            "description": "Find all machines found in the nmap output",
+            "query": "MATCH (m:Computer) WHERE m.nmapTarget=True RETURN m;",
+            "required": []
+        },
+        "NmapTargetOutPut": {
+            "description": "Find all machines found in the nmap output in a expecifit output",
+            "query": "MATCH (file:File {fileName: 'NMAPFILE'})<-[:SALIDA_DE]-(m:Computer)RETURN m;",
+            "required": ["nmapFile"]
+        }
     },
-    "unconstraint":{
-        "description": "Find all computers with Unconstrained Delegation",
-        "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",
-        "required": []
+    "Domain Admins": {
+        "DomainAdmins":{
+            "description": "Find all Domain Admins",
+            "query": "MATCH (n:User),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+            "required": ["dagroup"]
+        },
+        "DomainAdminPermissionsToGPO": {
+            "description": "Find if any domain user has interesting permissions against a GPO (Limited to 25)",
+            "query": "MATCH p=(u:User)-[r:AllExtendedRights|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|GpLink*1..]->(g:GPO) RETURN p LIMIT 25",
+            "required": []
+        }
     },
-    "unsopportedOS":{
-        "description": "Find unsupported OSs",
-        "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '(?i).*(2000|2003|2008|xp|vista|me|7).*' RETURN H",
-        "required": []
+    "Users": {
+        "SQLSPN":{
+            "description": "Find SPNs with keyword SQL",
+            "query": "MATCH (u:User) WHERE ANY (x IN u.serviceprincipalnames WHERE toUpper(x) CONTAINS 'SQL')RETURN u",
+            "required": []
+        },
+        "UnprivilegedUsersCanAddGroup": {
+            "description": "Find if unprivileged users have rights to add members into groups (Limited to 100)",
+            "query": "MATCH (n:User {admincount:False}) MATCH p=allShortestPaths((n)-[r:AddMember*1..]->(m:Group)) RETURN p LIMIT 100",
+            "required": []
+        },
+        "UsersWithPathToHighValue": {
+            "description": "Unique users with a path to a node tagged as High Value",
+            "query": "MATCH (u:User) MATCH (g {highvalue:true}) MATCH p = shortestPath((u:User)-[r:AddMember|AdminTo|AllExtendedRights|AllowedToDelegate|CanRDP|Contains|ExecuteDCOM|ForceChangePassword|GenericAll|GenericWrite|GpLink|HasSession|MemberOf|Owns|ReadLAPSPassword|TrustedBy|WriteDacl|WriteOwner|GetChanges|GetChangesAll*1..]->(g)) RETURN p",
+            "required": []
+        },
+        "UsersInVPNGroups": {
+            "description": "Find all domain users members of VPN groups",
+            "query": "Match (u:User)-[:MemberOf]->(g:Group) WHERE g.name CONTAINS 'VPN' return u, g",
+            "required": []
+        },
+        "ActiveUsers": {
+            "description": "Find active users",
+            "query": "MATCH (n:User) WHERE n.enabled=TRUE RETURN n",
+            "required": []
+        }
     },
-    "asproasting":{
-        "description": "Find users that doesn't require kerberos pre-authentication (AS-REP Roasting)",
-        "query": "MATCH (u:User {dontreqpreauth: true}) RETURN u",
-        "required": []
+    "GPOs": {
+        "GPOs":{
+            "description": "Find GPOs",
+            "query": "MATCH (n:GPO) RETURN n",
+            "required": []
+        }
     },
-    "DomainAdmins":{
-        "description": "Find all Domain Admins",
-        "query": "MATCH (n:User),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
-        "required": ["dagroup"]
+    "Groups": {
+        "adminGroups":{
+            "description": "Find all Groups that contains the word 'admin'",
+            "query": "Match (n:Group) WHERE n.name CONTAINS 'ADMIN' return n",
+            "required": []
+        }
     },
-    "SQLSPN":{
-        "description": "Find SPNs with keyword SQL",
-        "query": "MATCH (u:User) WHERE ANY (x IN u.serviceprincipalnames WHERE toUpper(x) CONTAINS 'SQL')RETURN u",
-        "required": []
+    "Paths": {
+        "spDAGfromPC":{
+            "description": "Shortest paths to Domain Admins group from computers excluding potential DCs",
+            "query":"WITH '(?i)ldap/.*' as regex_one WITH '(?i)gc/.*' as regex_two MATCH (n:Computer) WHERE NOT ANY(item IN n.serviceprincipalnames WHERE item =~ regex_two OR item =~ regex_two ) MATCH(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+            "required": ["dagroup"]
+        },
+        "spDAGfromNPG":{
+            "description": "Shortest paths to Domain Admins group from non-privileged groups (AdminCount=false)  ",
+            "query": "MATCH (n:Group {admincount:false}),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
+            "required": ["dagroup"]
+        }
     },
-    "GPOs":{
-        "description": "Find GPOs",
-        "query": "MATCH (n:GPO) RETURN n",
-        "required": []
-    },
-    "adminGroups":{
-        "description": "Find all Groups that contains the word 'admin'",
-        "query": "Match (n:Group) WHERE n.name CONTAINS 'ADMIN' return n",
-        "required": []
-    },
-    "spDAGfromPC":{
-        "description": "Shortest paths to Domain Admins group from computers excluding potential DCs",
-        "query":"WITH '(?i)ldap/.*' as regex_one WITH '(?i)gc/.*' as regex_two MATCH (n:Computer) WHERE NOT ANY(item IN n.serviceprincipalnames WHERE item =~ regex_two OR item =~ regex_two ) MATCH(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
-        "required": ["dagroup"]
-    },
-    "spDAGfromNPG":{
-        "description": "Shortest paths to Domain Admins group from non-privileged groups (AdminCount=false)  ",
-        "query": "MATCH (n:Group {admincount:false}),(m:Group {name:'DOMAIN ADMINS GROUP'}),p=shortestPath((n)-[r:MemberOf|HasSession|AdminTo|AllExtendedRights|AddMember|ForceChangePassword|GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|CanRDP|ExecuteDCOM|AllowedToDelegate|ReadLAPSPassword|Contains|GpLink|AddAllowedToAct|AllowedToAct*1..]->(m)) RETURN p",
-        "required": ["dagroup"]
+    "User Passwords": {
+        "UsedUsersWithOldPasswords":
+        {
+            "description": "Find active users, logged in the last 90 days, with passwords older than 90 days",
+            "query": "MATCH (u:User) WHERE u.enabled AND u.lastlogon > (datetime().epochseconds - (90 * 86400)) and NOT u.lastlogon IN [-1.0, 0.0] AND u.pwdlastset < (datetime().epochseconds - (90 * 86400)) and NOT u.pwdlastset IN [-1.0, 0.0] RETURN u",
+            "required": []
+        },
+        "UsersWithoutPasswordExpiration":
+        {
+            "description": "Find users who does not need to change the password (Password never expires)",
+            "query": "MATCH (u:User) WHERE u.pwdneverexpires RETURN u",
+            "required": []
+        }
     }
 }

@@ -6,7 +6,7 @@ function project() {
     }
 }
 function redirigir(value) {
-    console.log(value);
+    // console.log(value);
     if (value !== undefined) {
         if (value === "new") {
             popupContainer.style.display = 'block';

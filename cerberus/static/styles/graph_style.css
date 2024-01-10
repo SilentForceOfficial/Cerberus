@@ -243,6 +243,9 @@
   #boton_upload{
     top: 110px;
   }
+  #boton_download{
+    top: 150px;
+  }
 /* Tabla info */
   #info {
     background-color: #333;
@@ -319,7 +322,25 @@
     flex-wrap: wrap;
   }
 
+  #files_box {
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+
   #dominios_box a {    
+    background-color: #212121;
+    width: 100%;
+    padding-top: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    text-align: center;  
+    border: 1px solid #444;
+    padding: 12px;
+  }
+
+  #files_box a {    
     background-color: #212121;
     width: 100%;
     padding-top: 10px;
