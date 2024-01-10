@@ -50,6 +50,9 @@ class Credentials(db.Base):
     def getById(id):
         return db.session.query(Credentials).filter_by(id=id).first()
     
+    def getCredentialsToCrack():
+        return db.session.query(Credentials.ntlm).filter(Credentials.plain == None).limit(100).all()
+    
     # Estadisticas
     def count_clear_passwords():
         return db.session.query(func.count()).select_from(Credentials).filter(Credentials.plain != None).scalar()

@@ -460,6 +460,36 @@ def machines_dnsresolver():
         return redirect(request.referrer)
 
 
+# EXPORTAR CONTRASEÑAS PARA CRACKEAR EN HASHCAT
+@core.route('/export/credentials/hashcat', methods=['GET'])
+@login_required
+@check_project
+def export_credentials_to_hashcat():
+
+    from cerberus import db2 as db
+    from functools import reduce
+    from flask import send_file
+    import io
+
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+    from cerberus import models as m
+
+    credsToCrack = m.Credentials.getCredentialsToCrack()
+    credsList = reduce(lambda x,y: f"{x}\n{y}", list(map(lambda x: x[0], credsToCrack)))
+    credsList += "\n"
+
+    credsFile = io.BytesIO(credsList.encode("utf-8"))
+    
+    return send_file(
+        credsFile,
+        as_attachment=True,
+        download_name="hashes.txt",
+        mimetype="text/plain"
+    )
+
+    """ return redirect(request.referrer) """
+
 # TABLAS
 @core.route('/info', methods=['GET'])
 @login_required
@@ -1257,7 +1287,7 @@ def get_computers():
     return send_file(
         io.BytesIO(resultados),
         as_attachment=True,
-        download_name="resultados.txt",
+        download_name="computers.txt",
         mimetype="text/plain"
     )
 
