@@ -314,11 +314,11 @@ h6 {
   .chart-container {
     background-color: rgba(40, 41, 45, 0.9);
 
-    min-height: calc(var(--content-height)/3);
-    /* max-height: calc(var(--content-height)*0.6); */
-    max-height: calc(var(--content-width)*.3);
-    /* height: calc(var(--content-width)*.2); */
-    /* width: 100%; */
+    /* min-height: calc(var(--content-height)/3); */
+    min-height: 41vH;
+    /* max-height: calc(var(--content-width)*.3); */
+    max-height: 41vH;
+
     border-radius: 10px;
   }
 
