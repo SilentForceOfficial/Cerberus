@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Upload{% endblock %}
+{% block title %}Local User Info{% endblock %}
 
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/uploads.css') }}">
@@ -72,8 +72,8 @@
             <tbody>
                 {% for cred in data[1] %}
                 <tr>
-                    <td class='medium'>{{cred[0]}}</td>
-                    <td class='medium'>{{cred[1]}}</td>
+                    <td class='medium'><a href="{{url_for('core.table_data',t='credentials', id=cred.id)}}">{{cred.plain}}</a></td>
+                    <td class='medium'><a href="{{url_for('core.table_data',t='credentials', id=cred.id)}}">{{cred.ntlm}}</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

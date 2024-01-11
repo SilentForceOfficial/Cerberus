@@ -214,9 +214,9 @@ def uploads_tickets_file():
             file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
             #Ruta del ticket, nombre del archivo y session en la base de datos
             upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
-            
+            os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
 
-
+        
         db.db_disconnect()
         flash(u'Tickets successfully uploaded', 'success')
         return redirect(url_for('core.import_data'))
@@ -524,6 +524,13 @@ def table_data():
             data.append(m.DomainUsers.getByDomain(id))
             data.append(m.Machines.getByDomain(id))
             template=f'domain.html'
+        elif tabla == "credentials":
+            data=[]
+            data.append(m.Credentials.getById(id))
+            data.append(m.CredsDomainUsers.get_users_by_cred_id(id))
+            data.append(m.CredsLocalUsers.get_users_by_cred_id(id))
+            print(data)
+            template=f'credentials.html'
         else:
             pass
         # cerrar la conexión a la bbdd

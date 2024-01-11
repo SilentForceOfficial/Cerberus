@@ -493,6 +493,7 @@ def upload_ticket(ticket_path=None,fileName=None,session=None):
         )
         session.add(ticket)
         session.commit()
+        os.remove(f"{tmp_path}tempTicket")
         print(f"[+] Ticket {data['ticketName']} created successfully")
     
 

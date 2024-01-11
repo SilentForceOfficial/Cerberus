@@ -23,7 +23,7 @@ Retorno
 """
 def parseXML(filePath):
     import xml.etree.ElementTree as ET
-    
+    import os
     try:
         # Crear un diccionario para almacenar la información
         data = {}
@@ -51,6 +51,7 @@ def parseXML(filePath):
     except Exception as e:
         # Lanzar una excepción con un mensaje de error
         file=filePath.split("/")[-1]
+        os.remove(filePath)
         raise Exception(f"Error al analizar el archivo XML: {file}")
 
 # ----------------------------- FIN DE PARSEXML-----------------------------------------

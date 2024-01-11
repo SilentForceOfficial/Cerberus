@@ -21,7 +21,7 @@
                 <br>
                 <!-- File upload -->
                 <div class="container-import">
-                    <input type="file" id="dataFileTickets" name="dataFileTickets" multiple="multiple" hidden>
+                    <input type="file" id="dataFileTickets" name="dataFileTickets"  accept=".ccache, .kirbi" multiple="multiple" hidden>
                     <label for="dataFileTickets" class="drop-area">
                         <div class="drop-area-view" id="drop-area-tickets">
                             <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
@@ -98,7 +98,7 @@
                 </div>
                 <!-- File upload -->
                 <div class="container-import">
-                    <input type="file" id="dataFileDump" name="dataFileDump" multiple="multiple" hidden>
+                    <input type="file" id="dataFileDump" name="dataFileDump" accept=".zip, .json, .dat" multiple="multiple" hidden>
                     <label for="dataFileDump" class="drop-area">
                         <div class="drop-area-view" id="drop-area-dump">
                             <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
@@ -129,7 +129,7 @@
                 <br>
                 <!-- File upload -->
                 <div class="container-import">
-                    <input type="file" id="dataFileNmaps" name="dataFileNmaps" multiple="multiple" hidden>
+                    <input type="file" id="dataFileNmaps" name="dataFileNmaps" accept=".xml" multiple="multiple" hidden>
                     <label for="dataFileNmaps" class="drop-area">
                         <div class="drop-area-view" id="drop-area-nmaps">
                             <img src="{{ url_for('static', filename= 'img/upload.svg') }}">
