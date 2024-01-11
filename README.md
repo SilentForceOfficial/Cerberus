@@ -1,3 +1,5 @@
+![logo](cerberus/static/img/readme_img/logo_with_text_dark.png#gh-light-mode-only)
+![logo](cerberus/static/img/readme_img/logo_with_text_light.png#gh-dark-mode-only)
 # Cerberus
 Cerberus is a tool designed to simplify the process of internal intrusion, allowing to prioritize the most relevant assets and additionally works as a storage of information from security tools such as Mimikatz or secretsdump, allowing to have all the information continuously updated. With Cerberus, users can collect all data extracted from these tools and store it in a centralized database for easy access and analysis.
 
@@ -17,11 +19,13 @@ Using Cerberus makes it possible to collect and analyze valuable information eff
 - Import of nmap output from the network, allowing to prioritize the next steps of the intrusion.
 - Upload the dns resolution information of the provided scripts
 
+<img src="cerberus/static/img/readme_img/dashboard.png" alt="dashboard" width="1000"/>
 
 # Modules
 ## Ingest
 
 This section shows the different modules implemented in the tool to ingest data and an example of the commands that can be used to collect the information in a correct format.
+<img src="cerberus/static/img/readme_img/import.png" alt="import" width="1000"/>
 
 The following actions can be performed from this module:
 - **Ticket import:** Allows the uploading of tickets in ccache and kirbi formats.
@@ -59,6 +63,8 @@ nmap <net> <options> -oX <output_file>
 ## Graph
 This feature allows you to graphically visualize the various assets of a domain along with important information to carry out an attack more effectively.
 
+<img src="cerberus/static/img/readme_img/graph.png" alt="graph" width="1000"/>
+
 The following actions can be performed from this module:
 - **Use of queries:** Query relevant data using a predefined list of queries.
 - **Display of node information:** It allows the visualization of the information of the elements of the domain.
@@ -70,6 +76,8 @@ This functionality is currently under development, which means that there may be
 
 ## Data
 The purpose of this section is to visualize all the data obtained. The different available subsections and their functionalities are described below:
+
+<img src="cerberus/static/img/readme_img/credentials.png" alt="import" width="1000"/>
 
 ### Machines
 This subsection shows the information obtained from the domain's computers, and also has the functionality to upload a file with the results of using the DNSResolver script, located in the project's scripts folder. This script will be in charge of resolving the provided assets, returning the results in the format required for this functionality.
