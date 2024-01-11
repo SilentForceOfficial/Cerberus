@@ -77,8 +77,8 @@
             <tbody>
                 {% for cred in data[1] %}
                 <tr>
-                    <td class='medium'>{{cred.plain}}</td>
-                    <td class='medium'>{{cred.ntlm}}</td>
+                    <td class='medium'><a href="{{url_for('core.table_data',t='credentials', id=cred.id)}}">{{cred.plain}}</a></td>
+                    <td class='medium'><a href="{{url_for('core.table_data',t='credentials', id=cred.id)}}">{{cred.ntlm}}</a></td>
                     <td class='medium'>{{cred.date}}</td>
                 </tr>
                 {% endfor %}

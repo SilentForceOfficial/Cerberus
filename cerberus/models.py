@@ -97,6 +97,7 @@ class Credentials(db.Base):
     def getHeaders():
         return Credentials.__table__.columns.keys()
     
+
     def __repr__(self):
         return f'Credentials({self.plain}, {self.ntlm})'
 
@@ -156,6 +157,7 @@ class DomainUsers(db.Base):
         #     resultados.append(_)
             
         return results
+    
 
     def get(user, domain):
         return db.session.query(DomainUsers).filter_by(user=user, domain=domain).first()
@@ -188,6 +190,7 @@ class DomainUsers(db.Base):
         return db.session.query(func.count()).select_from(DomainUsers) \
             .filter(DomainUsers.owned == True) \
             .scalar()
+
     
     def __repr__(self):
         return f'DomainUsers({self.user}, {self.domain})'
@@ -227,6 +230,19 @@ class CredsDomainUsers(db.Base):
         query = query.join(CredsDomainUsers, Credentials.id == CredsDomainUsers.cred_id)
         query = query.filter(CredsDomainUsers.domainuser_id == _id).filter(CredsDomainUsers.historical == 1).all()
         return query
+
+
+    
+    def get_users_by_cred_id(cred_id):
+        results = db.session.query(DomainUsers).\
+            join(CredsDomainUsers, DomainUsers.id == CredsDomainUsers.domainuser_id).\
+            filter(CredsDomainUsers.historical == 0).\
+            filter(CredsDomainUsers.cred_id == cred_id).\
+            all()
+
+        return results
+
+
 
     
     def __repr__(self):
@@ -365,7 +381,7 @@ class LocalUsers(db.Base):
         query = query.filter(LocalUsers.id == _id).first()
         data.append(query)
         #INFO CREDENCIALES
-        query2= db.session.query(Credentials.plain, Credentials.ntlm)
+        query2= db.session.query(Credentials.plain, Credentials.ntlm, Credentials.id)
         query2 = query2.select_from(LocalUsers).join(CredsLocalUsers, LocalUsers.id == CredsLocalUsers.localuser_id)
         query2 = query2.join(Credentials, Credentials.id == CredsLocalUsers.cred_id)
         query2 = query2.filter(LocalUsers.id == _id).all()
@@ -455,6 +471,15 @@ class CredsLocalUsers(db.Base):
     
     def getCredsByUserId(localuser_id):
         return db.session.query(CredsLocalUsers.cred_id,Credentials.plain,Credentials.ntlm).filter_by(localuser_id=localuser_id, cred_id=Credentials.id).join(Credentials).all()
+
+    def get_users_by_cred_id(cred_id):
+        results = db.session.query(LocalUsers, Machines).\
+            join(CredsLocalUsers, LocalUsers.id == CredsLocalUsers.localuser_id).\
+            join(Machines, Machines.id == LocalUsers.machine_id).\
+            filter(CredsLocalUsers.historical == 0).\
+            filter(CredsLocalUsers.cred_id == cred_id).\
+            all()
+        return results
 
     def __repr__(self):
         return f'CredsLocalUsers({self.cred_id}, {self.localuser_id})'
