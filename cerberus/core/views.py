@@ -211,6 +211,13 @@ def uploads_tickets_file():
 
         files = request.files.getlist('dataFileTickets')
 
+        if not os.path.isdir(f"{current_app.root_path}/static/uploads"):
+            os.mkdir(f"{current_app.root_path}/static/uploads")
+
+        if not os.path.isdir(f"{current_app.root_path}/static/uploads/tickets"):    
+            os.mkdir(f"{current_app.root_path}/static/uploads/tickets")
+
+
         #if files are empty then raise error
         if not files[0].filename:
             flash(u'No files selected', 'warning')
@@ -231,6 +238,7 @@ def uploads_tickets_file():
         flash(u'Tickets successfully uploaded', 'success')
         return redirect(url_for('core.import_data'))
     except Exception as e:
+        print(f"\n\n{e}\n\n")
         flash(u'Something went wrong', 'danger')
         return redirect(url_for('core.import_data'))
 
