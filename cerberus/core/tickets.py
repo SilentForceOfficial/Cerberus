@@ -431,7 +431,6 @@ def upload_ticket(ticket_path=None,fileName=None,session=None):
         # Comprobamos si existe la carpeta; si no, la creamos
         if not os.path.isdir(tickets_upload_path):
             os.mkdir(tickets_upload_path)
-
         # Comprobamos si existe el ticket
         if os.path.basename(ticket) in os.listdir(path):
             content_bytes = get_file_content(f"{path}{ticket}")

@@ -206,7 +206,6 @@ def uploads_tickets_file():
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
-
         tmpfiles=[]
 
         files = request.files.getlist('dataFileTickets')
