@@ -138,6 +138,7 @@ def import_upload_data():
     from .secretsdump import parse_secretsdump
 
 
+
     # Importado de bibliotecas
     from io import BytesIO
 
@@ -203,19 +204,41 @@ def uploads_tickets_file():
         allowed_extensions = {'ccache', 'kirbi'}
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
+    from werkzeug.utils import secure_filename
+
+    def allowed_file(filename):
+        allowed_extensions = {'ccache', 'kirbi'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
-
         tmpfiles=[]
 
         files = request.files.getlist('dataFileTickets')
+
+        if not os.path.isdir(f"{current_app.root_path}/static/uploads"):
+            os.mkdir(f"{current_app.root_path}/static/uploads")
+
+        if not os.path.isdir(f"{current_app.root_path}/static/uploads/tickets"):    
+            os.mkdir(f"{current_app.root_path}/static/uploads/tickets")
+
 
         #if files are empty then raise error
         if not files[0].filename:
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
+            filename = secure_filename(file.filename)
+            if(allowed_file(filename)):
+                file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+                #Ruta del ticket, nombre del archivo y session en la base de datos
+                upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
+                os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+            else:
+                flash(u'Something went wrong: Wrong Extension only ccache and kirbi: ' + filename, 'danger')
+                print(f"\n\nERROR {filename}\n\n")
+                return redirect(url_for('core.import_data'))
             filename = secure_filename(file.filename)
             if(allowed_file(filename)):
                 file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
@@ -248,9 +271,17 @@ def uploads_nmapxml_file():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
+    from werkzeug.utils import secure_filename
+    def allowed_file(filename):
+        allowed_extensions = {'xml'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
+
+    
 
     
         files = request.files.getlist('dataFileNmaps')
@@ -260,6 +291,16 @@ def uploads_nmapxml_file():
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
+            
+            filename = secure_filename(file.filename)
+            if(allowed_file(filename)):
+                file.save(f"{current_app.root_path}/static/.tmp/{file.filename}")
+                data = parseXML(f"{current_app.root_path}/static/.tmp/{file.filename}")
+                uploadDataNmap(data,db.session,file.filename)
+                os.remove(f"{current_app.root_path}/static/.tmp/{file.filename}")
+            else:
+                flash(u'Something went wrong: Wrong Extension only XML:' + filename, 'danger')
+                return redirect(url_for('core.import_data'))
             
             filename = secure_filename(file.filename)
             if(allowed_file(filename)):
@@ -294,6 +335,12 @@ def import_ad_file():
     from io import BytesIO
     import subprocess
     from cerberus.static.external_modules.adexplorersnapshot.importDatFile import importDatFile
+    from werkzeug.utils import secure_filename
+
+    def allowed_file(filename):
+        allowed_extensions = {'zip', 'json', 'dat'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    
     from werkzeug.utils import secure_filename
 
     def allowed_file(filename):
@@ -363,9 +410,47 @@ def import_ad_file():
         else:     
             flash(u'Something went wrong: Wrong Extension only .dat:' + filename, 'danger')
             return redirect(url_for('core.import_data'))
+        filename = secure_filename(files[0].filename)
+        if(allowed_file(filename)):
+            upload_path = f"cerberus/static/.tmp/{filename}"
+            stream = BytesIO(files[0].read())
+            utils.saveFile(stream, upload_path)
+            # Parseamos el .dat a formato interpretable
+            zip_path = f"cerberus/static/.tmp/{files[0].filename.split('.')[0]}.zip"
+            importDatFile(upload_path, zip_path)
+            # Importamos el zip generado
+            try:
+                asyncio.run(parse_files([zip_path]))
+            except Exception as e:
+                try:
+                    subprocess.Popen(['rm', upload_path])
+                    subprocess.Popen(['rm', zip_path])
+                except:
+                    pass
+                print(e)
+                flash(u'Error loading file', 'danger')
+                return redirect(url_for('core.import_data'))
+            try:
+                subprocess.Popen(['rm', upload_path])
+                subprocess.Popen(['rm', zip_path])
+            except:
+                pass
+        else:     
+            flash(u'Something went wrong: Wrong Extension only .dat:' + filename, 'danger')
+            return redirect(url_for('core.import_data'))
     else:
         # Save files
         for i in files:
+            filename = secure_filename(i.filename)
+            if(allowed_file(filename)):
+                upload_path = f"cerberus/static/.tmp/{filename}"
+                stream = BytesIO(i.read())
+                utils.saveFile(stream, upload_path)
+                files_names.append(upload_path)
+            else:
+                flash(u'Something went wrong: Wrong Extension only json or zip:' + filename, 'danger')
+                return redirect(url_for('core.import_data'))
+
             filename = secure_filename(i.filename)
             if(allowed_file(filename)):
                 upload_path = f"cerberus/static/.tmp/{filename}"
@@ -430,6 +515,7 @@ def hashcat_page():
         return redirect(request.referrer)
     except:
         flash(u'Error reading file', 'danger')
+        flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
         return redirect(request.referrer)
@@ -488,6 +574,7 @@ def machines_dnsresolver():
         db.db_disconnect()
         return redirect(request.referrer)
     except:
+        flash(u'Error reading file', 'danger')
         flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()

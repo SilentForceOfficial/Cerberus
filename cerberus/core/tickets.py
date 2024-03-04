@@ -136,15 +136,12 @@ def insert_tickets(data, session):
             with open(filePath, 'rb') as fp:
                 return base64.b64encode(fp.read()) # encode to base64
         # Comprobamos si existe la carpeta; si no, la creamos
-        if not os.path.isdir(tickets_upload_path):
-            os.mkdir(tickets_upload_path)
 
         # Comprobamos si existe el ticket
         if os.path.basename(ticket) in os.listdir(tickets_upload_path):
             content_bytes = get_file_content(f"{tickets_upload_path}/{ticket}")
             aux = content_bytes.decode('utf-8')
             print(f"[+] Ticket readed successfully")
-            os.remove(f"{tickets_upload_path}/{ticket}")
             return aux
         else:
             print(f"[!] Ticket not found")
@@ -434,13 +431,11 @@ def upload_ticket(ticket_path=None,fileName=None,session=None):
         # Comprobamos si existe la carpeta; si no, la creamos
         if not os.path.isdir(tickets_upload_path):
             os.mkdir(tickets_upload_path)
-
         # Comprobamos si existe el ticket
         if os.path.basename(ticket) in os.listdir(path):
             content_bytes = get_file_content(f"{path}{ticket}")
             aux = content_bytes.decode('utf-8')
             print(f"[+] Ticket readed successfully")
-            os.remove(f"{path}{ticket}")
             return aux
         else:
             print(f"[!] Ticket not found")
