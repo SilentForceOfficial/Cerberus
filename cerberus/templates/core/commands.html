@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+
+<!-- Importados -->
+<link rel="stylesheet" href="{{url_for('static',filename='styles/commands.css')}}">
+<script src="{{url_for('static',filename='scripts/autocomplete.js')}}"></script>
+
+<!-- Barra de navegación de los comandos -->
+<div class="commands-navbar d-flex d-none" data-bs-theme="dark" id="inputsDiv">
+
+</div>
+
+<!-- Tarjeta del comando -->
+<div class="card mt-3 mb-5 d-none" data-bs-theme="dark" id="commandDiv">
+    <div class="card-header">
+        Generated commands
+    </div>
+    <div class="card-body" id="commandDivBody">
+        Enter the information and generate the command
+    </div>
+</div>
+
+<!-- Título de comandos -->
+<div class="d-flex justify-content-center">
+    <h2>Commands palette</h2>
+</div>
+
+<!-- Lista de comandos a generar -->
+<div class="accordion" id="commandsAccordion" data-bs-theme="dark">
+    {% for commandsCategory in commandsCategories %}
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{commandsCategory.id}}" aria-expanded="false" aria-controls="{{commandsCategory.id}}">
+            {{commandsCategory.display}}
+          </button>
+        </h2>
+        <div id="{{commandsCategory.id}}" class="accordion-collapse collapse w-100" data-bs-parent="#commandsAccordion">
+            <div class="accordion-body">
+                <ul class="list-group list-group-flush">
+                    {% for command in commandsCategory.commands %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            {{command.display}}
+                            <button class="btn btn-primary" onclick="handleCommandClick('{{commandsCategory.id}}', '{{command.id}}')">Generate</button>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <script>
+
+    const handleCommandGeneration = (commandCategory, commandID, dataRequirements) => {
+
+        /* console.log($("#input_DC_IP").val());
+        console.log($("#input_DOMAIN").val());
+        console.log($("#input_USERNAME").val()); */
+
+        var requestData = {};
+
+        dataRequirements.map((requirement) => {
+
+            requestData[requirement] = $(`#input_${requirement}`).val()
+            return;
+
+        });
+
+        $.ajax({
+            type: "POST",
+            url: `/commands/generate/${commandCategory}/${commandID}`,
+            data: requestData,
+            success: (data, status) => {
+
+                if(status === "success"){
+
+                    console.log(data);
+
+                    // Creamos la lista de comandos a mostrar
+                    var generatedCommandContent = "";
+                    data.map((commandCategory) => {
+
+                        generatedCommandContent += `
+                            <h6>${commandCategory.display}</h6>
+                            <ol>
+                        `;
+
+                        commandCategory.commands.map((command) => {
+
+                            generatedCommandContent += `
+                                <li>${command}</li>
+                            `;
+                            return;
+
+                        });
+
+                        generatedCommandContent += `</ol>`;
+
+                        return;
+
+                    });
+
+                    // Introducimos la lista de comandos en la tarjeta de comandos generados
+                    document.getElementById("commandDivBody").innerHTML = generatedCommandContent;
+
+                }
+
+            }
+        });
+
+    }
+
+    const handleCommandClick = (commandCategory, commandID) => {
+
+        $.get(`/commands/getform/${commandCategory}/${commandID}`, (data, status) => {
+
+            if(status === "success"){
+
+                // Introducimos todos los inputs requeridos
+                //console.log(data);
+                var formContent = "<div class='d-flex col-md-11'>";
+                var inputsWithAutocomplete = [];
+
+                const dataRequirements = Object.keys(data.requirements);
+
+                // Recorremos la lista de requerimientos insertando cada uno de los inputs
+                dataRequirements.map((requirement) => {
+
+                    switch(data.requirements[requirement].type){
+
+                        case "text":
+                            formContent += `
+                                <input type="text" class="form-control m-2" id="input_${requirement}" name="input_${requirement}" placeholder="${data.requirements[requirement].display}">
+                            `;
+                            break;
+                        
+                        case "select":
+
+                            var selectData = [];
+
+                            if(requirement === "DOMAIN" && dataRequirements.includes("USERNAME")){
+                                selectData = Array.from(new Set(data.requirementsData.USERNAME.map((currentUser) => currentUser.split("@")[1])));
+                            }
+                            else{
+                                selectData = data.requirementsData[requirement];
+                            }
+
+                            formContent += `
+                                <select class="form-control m-2" id="input_${requirement}" name="input_${requirement}" aria-placeholder="${data.requirements[requirement].display}">
+                            `;
+                            selectData.map((currentData) => {
+                                formContent += `
+                                    <option>${currentData}</option>
+                                `;
+                                return;
+                            });
+                            formContent += `</select>`;
+
+                            break;
+                        
+                        case "autocomplete":
+                            formContent += `
+                                <div class="w-100 m-2">
+                                <input type="text" class="form-control" id="input_${requirement}" name="input_${requirement}" placeholder="${data.requirements[requirement].display}">
+                                <div class="position-absolute invisible" id="input_${requirement}_complete" style="z-index: 10000;"></div>
+                                </div>
+                            `;
+                            inputsWithAutocomplete.push(requirement);
+                            break;
+                        
+                        default:
+                            break;
+
+                    }
+
+                    return;
+
+                });
+                formContent += "</div>";
+
+                // Insertamos el botón
+                formContent += `
+                    <div class="d-flex col-md-1">
+                        <button type="button" class="btn btn-outline-success m-2 w-100" id="generationButton">Generate</button>
+                    </div>
+                `;
+
+                // Insertamos el HTML generado en el div de inputs y configuramos los autocomplete
+                document.getElementById("inputsDiv").innerHTML = formContent;
+                inputsWithAutocomplete.map((currentInput) => {
+
+                    set_autocomplete(`input_${currentInput}`, `input_${currentInput}_complete`, data.requirementsData[currentInput]);
+                    return;
+
+                });
+
+                $("#inputsDiv").removeClass("d-none");
+                $("#commandDiv").removeClass("d-none");
+                
+                $("#generationButton").on("click", () => handleCommandGeneration(commandCategory, commandID, dataRequirements.filter(requirement => data.requirements[requirement].type != "server")));
+
+            }
+
+        });
+
+    }
+
+  </script>
+
+{% endblock %}

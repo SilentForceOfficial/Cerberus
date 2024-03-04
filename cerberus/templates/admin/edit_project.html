@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+<div class="card-body row" style="margin:0px!important;">
+
+    <h3>Edit Project</h3>
+    <div class="col-lg-5">
+        <div class="row">
+            <table class="table-striped datatable">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                </tr>
+                <tr>
+                    <td>{{data[0]['id']}}</td>
+                    <td>{{data[0]['name']}}</td>
+                </tr>
+            </table>
+        </div>
+        <hr>
+        <div class="row">
+            <form action="{{url_for('admin.edit_project_add', id=data[0]['id'])}}" method="POST">
+                <div class="card shadow mb-4 h-100 bg-dark text-white">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>User:</label>
+                            <select name="user" class="form-control form-control-user">
+                                <option value="" selected="true" disabled>Select user</option>
+                                {% for user in data[2] %}
+                                <option value="{{ user.id }}">{{ user.username}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <br>
+                            <label>Role:</label>
+                            <select name="role" class="form-control form-control-user">
+                                <option value="" selected="true" disabled>Select role</option>
+                                <option value="0">Owner</option>
+                                <option value="1">Write</option>
+                                <option value="2">Read</option>
+                            </select>
+
+                        </div>
+                        <br>
+
+                        <button class="popupbtn" type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+</div>
+<div class="col-lg-7">
+    <table class="table-striped datatable">
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Admin</th>
+            <th>Role</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+        {% for user in data[1] %}
+        <tr>
+            <td>{{user['id']}}</td>
+            <td>{{user['username']}}</td>
+            <td>{{user['admin']}}</td>
+            <td>{{user['role']}}</td>
+
+            <td>
+                <a href="{{url_for('admin.edit_project_remove', id=data[0]['id'], id_user=user['id'])}}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+</div>
+
+
+<!-- <div style="margin-bottom: 4rem; width: 50%;">
+
+        <table class="table-striped datatable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            <tr>
+                <td>{{data[0]['id']}}</td>
+                <td>{{data[0]['name']}}</td>
+            </tr>
+        </table>
+
+
+
+
+        <br>
+
+        <form action="{{url_for('admin.edit_project_add', id=data[0]['id'])}}" method="POST">
+            <div class="box1">
+                <label>User:</label>
+
+                <select name="user">
+                    <option value="" selected="true" disabled>Select user</option>
+                    {% for user in data[2] %}
+                    <option value="{{ user.id }}">{{ user.username}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label>Role:</label>
+                <select name="role">
+                    <option value="" selected="true" disabled>Select role</option>
+                    <option value="0">Owner</option>
+                    <option value="1">Write</option>
+                    <option value="2">Read</option>
+                </select>
+
+            </div>
+            <br>
+
+            <button class="popupbtn" type="submit">Add</button>
+        </form>
+    </div> -->
+<!-- <div style="margin-bottom: 4rem; width: 50%;">
+        <table class="table-striped datatable">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Admin</th>
+                <th>Role</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            {% for user in data[1] %}
+            <tr>
+                <td>{{user['id']}}</td>
+                <td>{{user['username']}}</td>
+                <td>{{user['admin']}}</td>
+                <td>{{user['role']}}</td>
+
+                <td>
+                    <a href="{{url_for('admin.edit_project_remove', id=data[0]['id'], id_user=user['id'])}}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div> -->
+
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+
+<!-- <table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Admin</th>
+
+    </tr>
+    {% for user in data[0] %}
+    <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.admin}}</td>
+        <td>
+            <a href="{{url_for('admin.edit_user', user_id=user.id)}}">Edit</a>
+            <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="4"><a href="{{url_for('admin.create_user')}}">Create User</a></td>
+    </tr>
+</table> -->

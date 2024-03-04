@@ -31,12 +31,23 @@ def init_db(user, password):
     # Crear usuario por defecto
     try:
         db.execute(
-            "INSERT INTO user (username, password) VALUES (?, ?)",
-            (user, generate_password_hash(password)),
+            "INSERT INTO user (username, password, admin) VALUES (?, ?, ?)",
+            (user, generate_password_hash(password), 1),
         )
-        db.commit()   
+        db.commit()
     except db.IntegrityError:
         error = f"User is already registered."
+    try:
+        from cerberus import projects
+        for i in projects:
+            db.execute(
+                "INSERT INTO projects (name) VALUES (?)",
+                (i,),
+            )
+        db.commit()
+
+    except db.IntegrityError:
+        error = f"Project {i} is already registered."
     else:
         # db.close()
         close_db()
@@ -54,3 +65,74 @@ def init_db_command(user, password):
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+
+
+# Other functions
+def get_projects():
+    db = get_db()
+    projects = db.execute(
+        # "SELECT id, name FROM projects"
+        '''
+        SELECT projects.id, projects.name, COALESCE(user_count, 0) AS user_count
+        FROM projects
+        LEFT JOIN (
+            SELECT id_project, COUNT(id_user) AS user_count
+            FROM user_projects
+            GROUP BY id_project
+        ) AS project_user_count ON projects.id = project_user_count.id_project;
+
+    '''
+    ).fetchall()
+    return projects
+
+def get_project(id):
+    db = get_db()
+    project = db.execute(
+        "SELECT id, name FROM projects WHERE id = ?", (id,)
+    ).fetchone()
+    return project
+
+def get_users():
+    db = get_db()
+    users = db.execute(
+        '''SELECT user.id, user.username, user.admin, COALESCE(COUNT(user_projects.id_user), 0) AS project_count 
+            FROM user 
+            LEFT JOIN user_projects ON user_projects.id_user = user.id 
+            GROUP BY user.id, user.username, user.admin
+        '''
+    ).fetchall()
+    return users
+def get_users_by_project(id):
+    db = get_db()
+    users = db.execute(
+        '''SELECT user.id, user.username, user.admin, user_projects.role
+        FROM user_projects
+        JOIN user ON user_projects.id_user = user.id
+        WHERE user_projects.id_project = ?
+        ''', (id,)
+    ).fetchall()
+    return users
+
+def get_user(id):
+    db = get_db()
+    user = db.execute(
+        '''SELECT user.id, user.username, user.admin, COALESCE(COUNT(user_projects.id_user), 0) AS project_count 
+            FROM user 
+            LEFT JOIN user_projects ON user_projects.id_user = user.id
+            WHERE user.id = ?
+            GROUP BY user.id, user.username, user.admin
+        ''', (id,)
+    ).fetchone()
+    return user
+
+# Obtener los proyectos de un usuario, con el nombre del proyecto y el rol del usuario en ese proeycto
+def get_user_projects_info(user_id):
+    db = get_db()
+    projects = db.execute(
+        # "SELECT project.id, projects.name, user_projects.role, FROM user_projects JOIN projects ON user_projects.id_project = projects.id WHERE user_projects.id_user = ?", (user_id,)
+        '''SELECT projects.id, projects.name, user_projects.role
+            FROM user_projects
+            JOIN projects ON user_projects.id_project = projects.id
+            WHERE user_projects.id_user = ?''', (user_id,)
+    ).fetchall()
+    return projects

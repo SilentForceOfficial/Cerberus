@@ -20,9 +20,10 @@ def check_project(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         p=request.cookies.get('project')
-        if p not in projects:
+        print(g.projects)
+        if p not in g.projects:
             return render_template('core/empty.html',
-                                   projects=projects)
+                                   projects=g.projects)
         return view(**kwargs)
 
     return wrapped_view
@@ -99,10 +100,9 @@ def dashboard():
             data.update({'resultNeo4j':-1})
     else:
         data.update({'resultNeo4j':-1})
-
     db.db_disconnect()
     return render_template('core/dashboard.html',
-                           projects=projects,
+                           projects=g.projects,
                            title='Dashboard',
                            data=data)
 
@@ -112,7 +112,7 @@ def dashboard():
 @check_project
 def import_data():
     return render_template('core/import.html',
-                           projects=projects,
+                           projects=g.projects,
                            title='Import data',
                            data_types=[
                                "logonpasswords",
@@ -137,7 +137,7 @@ def import_upload_data():
     from .tickets import parse_tickets, insert_tickets
     from .secretsdump import parse_secretsdump
 
-    
+
     # Importado de bibliotecas
     from io import BytesIO
 
@@ -197,7 +197,12 @@ def uploads_tickets_file():
     import os
     from cerberus.core.tickets import upload_ticket
     from cerberus import db2 as db
-    
+    from werkzeug.utils import secure_filename
+
+    def allowed_file(filename):
+        allowed_extensions = {'ccache', 'kirbi'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
@@ -211,17 +216,22 @@ def uploads_tickets_file():
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
-            file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
-            #Ruta del ticket, nombre del archivo y session en la base de datos
-            upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
-            os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
-
+            filename = secure_filename(file.filename)
+            if(allowed_file(filename)):
+                file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+                #Ruta del ticket, nombre del archivo y session en la base de datos
+                upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
+                os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+            else:
+                flash(u'Something went wrong: Wrong Extension only ccache and kirbi: ' + filename, 'danger')
+                print(f"\n\nERROR {filename}\n\n")
+                return redirect(url_for('core.import_data'))
         
         db.db_disconnect()
         flash(u'Tickets successfully uploaded', 'success')
         return redirect(url_for('core.import_data'))
     except Exception as e:
-        flash(u'Something went wrong', 'error')
+        flash(u'Something went wrong', 'danger')
         return redirect(url_for('core.import_data'))
 
 @core.route('/import/nmapxml', methods=['POST'])
@@ -232,13 +242,17 @@ def uploads_nmapxml_file():
     import os
     from cerberus.core.nmapxml import parseXML,uploadDataNmap
     from cerberus import db2 as db
-    
+    from werkzeug.utils import secure_filename
+    def allowed_file(filename):
+        allowed_extensions = {'xml'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
 
-        
-
+    
         files = request.files.getlist('dataFileNmaps')
 
         #if files are empty then raise error
@@ -246,12 +260,16 @@ def uploads_nmapxml_file():
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
-            file.save(f"{current_app.root_path}/static/.tmp/{file.filename}")
-            data = parseXML(f"{current_app.root_path}/static/.tmp/{file.filename}")
-            uploadDataNmap(data,db.session,file.filename)
-            os.remove(f"{current_app.root_path}/static/.tmp/{file.filename}")
             
-        
+            filename = secure_filename(file.filename)
+            if(allowed_file(filename)):
+                file.save(f"{current_app.root_path}/static/.tmp/{file.filename}")
+                data = parseXML(f"{current_app.root_path}/static/.tmp/{file.filename}")
+                uploadDataNmap(data,db.session,file.filename)
+                os.remove(f"{current_app.root_path}/static/.tmp/{file.filename}")
+            else:
+                flash(u'Something went wrong: Wrong Extension only XML:' + filename, 'danger')
+                return redirect(url_for('core.import_data'))
 
         db.db_disconnect()
         flash(u'Nmap successfully uploaded', 'success')
@@ -276,7 +294,12 @@ def import_ad_file():
     from io import BytesIO
     import subprocess
     from cerberus.static.external_modules.adexplorersnapshot.importDatFile import importDatFile
+    from werkzeug.utils import secure_filename
 
+    def allowed_file(filename):
+        allowed_extensions = {'zip', 'json', 'dat'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    
     async def parse_files(files):
         driver = database.init_driver(g.user["neo4j_url"], g.user["neo4j_user"], g.user["neo4j_password"])
         try:
@@ -312,36 +335,47 @@ def import_ad_file():
         return redirect(url_for('core.import_data'))
     
     if ".dat" in fileType:
-        upload_path = f"cerberus/static/.tmp/{files[0].filename}"
-        stream = BytesIO(files[0].read())
-        utils.saveFile(stream, upload_path)
-        # Parseamos el .dat a formato interpretable
-        zip_path = f"cerberus/static/.tmp/{files[0].filename.split('.')[0]}.zip"
-        importDatFile(upload_path, zip_path)
-        # Importamos el zip generado
-        try:
-            asyncio.run(parse_files([zip_path]))
-        except Exception as e:
+        filename = secure_filename(files[0].filename)
+        if(allowed_file(filename)):
+            upload_path = f"cerberus/static/.tmp/{filename}"
+            stream = BytesIO(files[0].read())
+            utils.saveFile(stream, upload_path)
+            # Parseamos el .dat a formato interpretable
+            zip_path = f"cerberus/static/.tmp/{files[0].filename.split('.')[0]}.zip"
+            importDatFile(upload_path, zip_path)
+            # Importamos el zip generado
+            try:
+                asyncio.run(parse_files([zip_path]))
+            except Exception as e:
+                try:
+                    subprocess.Popen(['rm', upload_path])
+                    subprocess.Popen(['rm', zip_path])
+                except:
+                    pass
+                print(e)
+                flash(u'Error loading file', 'danger')
+                return redirect(url_for('core.import_data'))
             try:
                 subprocess.Popen(['rm', upload_path])
                 subprocess.Popen(['rm', zip_path])
             except:
                 pass
-            print(e)
-            flash(u'Error loading file', 'danger')
+        else:     
+            flash(u'Something went wrong: Wrong Extension only .dat:' + filename, 'danger')
             return redirect(url_for('core.import_data'))
-        try:
-            subprocess.Popen(['rm', upload_path])
-            subprocess.Popen(['rm', zip_path])
-        except:
-            pass
     else:
         # Save files
         for i in files:
-            upload_path = f"cerberus/static/.tmp/{i.filename}"
-            stream = BytesIO(i.read())
-            utils.saveFile(stream, upload_path)
-            files_names.append(upload_path)
+            filename = secure_filename(i.filename)
+            if(allowed_file(filename)):
+                upload_path = f"cerberus/static/.tmp/{filename}"
+                stream = BytesIO(i.read())
+                utils.saveFile(stream, upload_path)
+                files_names.append(upload_path)
+            else:
+                flash(u'Something went wrong: Wrong Extension only json or zip:' + filename, 'danger')
+                return redirect(url_for('core.import_data'))
+
         # Parse files
         #try:
         asyncio.run(parse_files(files_names))
@@ -395,7 +429,7 @@ def hashcat_page():
         db.db_disconnect()
         return redirect(request.referrer)
     except:
-        flash(u'Error reading file', 'error')
+        flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
         return redirect(request.referrer)
@@ -454,7 +488,7 @@ def machines_dnsresolver():
         db.db_disconnect()
         return redirect(request.referrer)
     except:
-        flash(u'Error reading file', 'error')
+        flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
         return redirect(request.referrer)
@@ -537,7 +571,7 @@ def table_data():
         db.db_disconnect()
         return render_template(f'core/tables/intermediate/{template}',
                             data=data,
-                            projects=projects)
+                            projects=g.projects)
     else:
     
 
@@ -575,7 +609,7 @@ def table_data():
         db.db_disconnect()
     # FIN operaciones de BBDD
     return render_template(template,
-                           projects=projects,
+                           projects=g.projects,
                            headers=headers,
                            rows=rows,
                            title=title)
@@ -682,6 +716,21 @@ def new_project():
 
     projects.append(project)
     flash("Project successfully created", "success")
+    db = get_db()
+    bbdd=db.execute(
+        "INSERT INTO projects (name) VALUES (?)",
+        (project,),
+    )
+    print()
+    print(bbdd.lastrowid)
+    print()
+    
+    db.execute(
+        "INSERT INTO user_projects (id_user, id_project, role) VALUES (?,?,?)",
+        (g.user['id'],bbdd.lastrowid,0),
+    )
+    db.commit()
+    
     response = make_response(redirect(url_for('core.import_data')))
     response.set_cookie('project',project)
     return response
@@ -751,6 +800,179 @@ def download_file(tipo, id):
 
     # Enviar el archivo como una respuesta para su descarga
     return send_file(file_obj, mimetype='application/octet-stream', download_name=f'{ticket_name}', as_attachment=True)
+
+
+# GENERACIÓN DE COMANDOS
+@core.route('/commands', methods=['GET'])
+@login_required
+@check_project
+def command_generation():
+
+    # Obtenemos los comandos del JSON
+    commandsPalette = json.load(open('cerberus/static/commands.json'))
+    commandsCategories = [*commandsPalette]
+
+    categoriesToFrontend = []
+
+    # Recorremos las categorias
+    for commandCategory in commandsCategories:
+
+        # Nos quedamos solamente con la info a mostrar antes de generar los comandos
+        newCategoryToFrontend = dict()
+        newCategoryToFrontend["id"] = commandCategory
+        newCategoryToFrontend["display"] = commandsPalette[commandCategory]["display"]
+        newCategoryToFrontend["commands"] = []
+
+        for command in [*commandsPalette[commandCategory]["commands"]]:
+            newCategoryToFrontend["commands"].append({
+                "id": command,
+                "display": commandsPalette[commandCategory]["commands"][command]["display"]
+            })
+
+        categoriesToFrontend.append(newCategoryToFrontend)
+
+    print(categoriesToFrontend)
+
+    return render_template('core/commands.html',
+                                projects=g.projects, 
+                                title="Command generation",
+                                commandsCategories=categoriesToFrontend
+                           )
+
+@core.route('/commands/getform/<commandCategory>/<commandID>', methods=['GET'])
+@login_required
+@check_project
+def command_generation_getform(commandCategory, commandID):
+
+    # Obtenemos los comandos del JSON
+    commandsPalette = json.load(open('cerberus/static/commands.json'))
+
+    requirements = dict()
+    requirementsData = dict()
+    dataToReturn = dict()
+
+    # Elaboramos una lista con los requerimientos necesarios
+    for categoryCommand in commandsPalette[commandCategory]["commands"][commandID]["commands"]:
+        for command in categoryCommand["commands"]:
+            for requirement in command["requirements"]:
+                requirements[[*requirement][0]] = requirement[[*requirement][0]]
+
+    project=request.cookies.get('project')
+    from cerberus import db2 as db
+    db.db_link(project)
+    db.db_connect()
+    from cerberus import models as m
+
+    # Mandamos la información necesaria para algunos de los campos
+    for requirement in requirements:
+        # Solo enviamos los datos de los campos que sean select o autocomplete
+        domainsAndUsersSituation = True if "USERNAME" in requirements and "DOMAIN" in requirements else False
+        domainsAndUsersSituationHandled = False
+        if requirements[requirement]["type"] in ["select", "autocomplete"]:
+
+            # Pedimos el tipo de dato que corresponda y lo almacenamos para devolverlo
+            if requirement == "USERNAME" or (domainsAndUsersSituation and not domainsAndUsersSituationHandled):
+                usersWithDomain = m.DomainUsers.get_username_with_domain()
+                usersWithDomain = [f"{userWithDomain[0]}@{userWithDomain[1]}" for userWithDomain in usersWithDomain]
+                requirementsData["USERNAME"] = usersWithDomain
+            elif requirement == "DOMAIN":
+                if domainsAndUsersSituation:
+                    continue
+                domains = m.DomainUsers.get_domains()
+                domains = [domain[0] for domain in domains]
+                requirementsData[requirement] = domains
+    
+    # Preparamos los datos para devolverlos
+    dataToReturn["requirements"] = requirements
+    dataToReturn["requirementsData"] = requirementsData
+
+    return dataToReturn
+
+@core.route('/commands/generate/<commandCategory>/<commandID>', methods=['POST'])
+@login_required
+@check_project
+def command_generation_generate(commandCategory, commandID):
+
+    # Obtenemos los comandos del JSON
+    commandsPalette = json.load(open('cerberus/static/commands.json'))
+
+    requirements = dict()
+    completedRequirements = dict()
+
+    # Obtenemos la lista de requisitos del comando
+    for categoryCommand in commandsPalette[commandCategory]["commands"][commandID]["commands"]:
+        for command in categoryCommand["commands"]:
+            for requirement in command["requirements"]:
+                requirements[[*requirement][0]] = requirement[[*requirement][0]]
+    
+    # Recogemos los requisitos introducidos por el usuario
+    for requirement in requirements:
+        if requirements[requirement]["type"] != "server":
+            if request.form[requirement] and request.form[requirement] != "":
+                completedRequirements[requirement] = request.form[requirement]
+    
+    # Normalizamos el usuario
+    if "USERNAME" in completedRequirements and "@" in completedRequirements["USERNAME"]:
+        completedRequirements["USERNAME"], userDomain = completedRequirements["USERNAME"].split("@")
+
+    project=request.cookies.get('project')
+    from cerberus import db2 as db
+    db.db_link(project)
+    db.db_connect()
+    from cerberus import models as m
+
+    # Agregamos los requisitos de servidor
+    for requirement in requirements:
+        if requirements[requirement]["type"] == "server":
+
+            if requirement == "PASSWORD":
+                user, domain = [completedRequirements["USERNAME"], completedRequirements["DOMAIN"] if "DOMAIN" in completedRequirements else userDomain]
+                data = m.DomainUsers.getWithCredentials(user, domain)
+                if data.Credentials.plain:
+                    completedRequirements[requirement] = data.Credentials.plain
+
+            elif requirement == "NTLM":
+                user, domain = [completedRequirements["USERNAME"], completedRequirements["DOMAIN"] if "DOMAIN" in completedRequirements else userDomain]
+                data = m.DomainUsers.getWithCredentials(user, domain)
+                if data.Credentials.ntlm:
+                    completedRequirements[requirement] = data.Credentials.ntlm
+
+    # Recorremos los comandos comprobando sus requisitos para ver si se muestra o no
+    commands = []
+    for categoryCommand in commandsPalette[commandCategory]["commands"][commandID]["commands"]:
+
+        # Para cada comando (Acción general), comprobamos si tenemos todos los requisitos de todos los subcomandos
+        commandCanBeDesplayed = True
+        for command in categoryCommand["commands"]:
+            for requirement in command["requirements"]:
+                if [*requirement][0] not in completedRequirements:
+                    commandCanBeDesplayed = False
+                    break
+            if not commandCanBeDesplayed:
+                break
+        
+        # Si se puede generar el comando, lo parseamos
+        if commandCanBeDesplayed:
+            newCommand = dict()
+            newCommand["display"] = categoryCommand["display"]
+            newCommand["commands"] = []
+            
+            for command in categoryCommand["commands"]:
+                commandToParse = command["command"]
+                for requirement in command["requirements"]:
+                    commandToParse = commandToParse.replace(f"<{[*requirement][0]}>", completedRequirements[[*requirement][0]])
+                newCommand["commands"].append(commandToParse)
+            
+            commands.append(newCommand)
+    
+    # Si ningún comando es válido mostramos el error
+    if len(commands) == 0:
+        errorCommand = dict()
+        errorCommand["display"] = "ERROR: The command can't be generated with the specified arguments."
+        errorCommand["commands"] = []
+        commands.append(errorCommand)
+
+    return commands
 
 # -------------------------------------------------------------------------------------------
 # GRAPH
@@ -1215,17 +1437,11 @@ def get_graph(query):
                 x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode)
                 n,e,o,d=draw(x)
         else:
-
-            if file is not None:
-                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode).replace("NMAPFILE",file)
-                n,e,o,d=draw(x)
-            else:
-                x=allQueries[queryCategory][query]["query"].replace("DOMAIN ADMINS GROUP", dag).replace("DOMAIN ADMINS@DOMAIN.GR", dag).replace("TARGET_ID", targetNode)
-                n,e,o,d=draw(x)
+            x=query
         print (f"\n\n{x}\n\n")
         n,e,o,d=draw(x)
         return render_template('core/graph_template.html',
-                                projects=projects,
+                                projects=g.projects,
                                 title="Graph",
                                 nodes=n,
                                 edges=e,
@@ -1297,5 +1513,16 @@ def get_computers():
         download_name="computers.txt",
         mimetype="text/plain"
     )
+
+@core.route('/graph/customquery', methods=['POST'])
+@login_required
+@check_neo4j
+def graph_custom_query():
+
+    # Obtenemos la query
+    customQuery = request.form["customQuery"]
+    print(f"Custom query: {customQuery}")
+
+    return redirect(url_for('core.get_graph', query=customQuery))
 
 # -------------------------------------------------------------------------------------------

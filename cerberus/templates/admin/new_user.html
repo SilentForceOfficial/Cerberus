@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+<form action="{{url_for('admin.new_user')}}" method="POST">
+    <label for="username" style="color: white;">Nombre de Usuario:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+    <input type="submit" value="Crear Usuario">
+</form>
+{% endblock %}

@@ -162,6 +162,11 @@ class DomainUsers(db.Base):
     def get(user, domain):
         return db.session.query(DomainUsers).filter_by(user=user, domain=domain).first()
     
+    def getWithCredentials(user, domain):
+        return db.session.query(DomainUsers, Credentials).join(CredsDomainUsers, DomainUsers.id == CredsDomainUsers.domainuser_id).\
+        join(Credentials, CredsDomainUsers.cred_id == Credentials.id).\
+        filter(CredsDomainUsers.historical == 0, DomainUsers.user == user, DomainUsers.domain == domain).first()
+    
     def getInsensitive(user, domain):
         return db.session.query(DomainUsers).filter(DomainUsers.user.ilike(user), DomainUsers.domain.ilike(domain)).first()
 
@@ -185,6 +190,15 @@ class DomainUsers(db.Base):
     def get_owned():
         return db.session.query(DomainUsers) \
             .filter(DomainUsers.owned == True).all()
+
+    def get_domains():
+        return db.session.query(DomainUsers.domain).distinct(DomainUsers.domain).all()
+
+    def get_usernames():
+        return db.session.query(DomainUsers.user).all()
+    
+    def get_username_with_domain():
+        return db.session.query(DomainUsers.user, DomainUsers.domain).all()
     
     def count_owned():
         return db.session.query(func.count()).select_from(DomainUsers) \

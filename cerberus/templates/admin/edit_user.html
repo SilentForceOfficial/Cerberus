@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+<div class="card-body row" style="margin:0px!important;">
+
+    <h3>Edit User</h3>
+    <div class="col-lg-5">
+        <div class="row">
+            <form action="{{url_for('admin.edit_user', id=data[0]['id'])}}" method="POST">
+                <div class="card shadow mb-4 h-100 bg-dark text-white">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Username:</label>
+                            <input type="text" id="username" name="username" placeholder="{{data[0]['username']}}"
+                                value="{{data[0]['username']}}" class="form-control form-control-user">
+                        </div>
+                        <div class="form-check form-switch">
+                            <label class="form-check-label" for="adminSwitch">Administrator</label>
+                            {% if data[0]['admin'] %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin"
+                                checked>
+                            {% else %}
+                            <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin">
+                            {% endif %}
+
+                        </div>
+                        <button class="btn btn-primary btn-user btn-block" type="submit">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <hr>
+        <div class="row">
+            <form action="{{url_for('admin.edit_user_add', id=data[0]['id'])}}" method="POST">
+                <div class="card shadow mb-4 h-100 bg-dark text-white">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Project:</label>
+                            <select name="project" class="form-control form-control-user">
+                                <option value="" selected="true" disabled>Select project</option>
+                                {% for project in projects %}
+                                <option value="{{ project }}">{{ project}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Role:</label>
+                            <select name="role" class="form-control form-control-user">
+                                <option value="" selected="true" disabled>Select role</option>
+                                <option value="0">Owner</option>
+                                <option value="1">Write</option>
+                                <option value="2">Read</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-user btn-block" type="submit">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+
+    <div class="col-lg-7">
+        <div class="mb-4 h-100">
+            <div class="card-body">
+                <table class="table-striped datatable">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                    {% for project in data[1] %}
+                    <tr>
+                        <td>{{project['id']}}</td>
+                        <td>{{project['name']}}</td>
+                        <td>{{project['role']}}</td>
+                        <td>
+                            <a href="{{url_for('admin.edit_user_remove', id=data[0]['id'], id_project=project['id'])}}">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <div style="margin-bottom: 4rem; width: 50%;">
+
+        <form action="{{url_for('admin.edit_user', id=data[0]['id'])}}" method="POST">
+
+            <div class="tarjeta-import card shadow mb-4 h-100">
+                <div class="box1">
+                    <label>Username:</label>
+                    <br>
+                    <input type="text" id="username" name="username" placeholder="{{data[0]['username']}}"
+                        value="{{data[0]['username']}}">
+    
+                </div>
+                <div class="box1">
+
+
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="adminSwitch">Administrator</label>
+                        {% if data[0]['admin'] %}
+                        <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin" checked>
+                        {% else %}
+                        <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin">
+                        {% endif %}
+    
+                    </div>
+                </div>
+                <br>
+    
+                <button class="popupbtn" type="submit">Save</button>
+                <hr style="color: black;">
+                <h3>mamawebo</h3>
+            </div>
+
+            
+            <div class="box1">
+                <label>Username:</label>
+                <br>
+                <input type="text" id="username" name="username" placeholder="{{data[0]['username']}}"
+                    value="{{data[0]['username']}}">
+
+            </div>
+            <div class="box1">
+
+
+                <div class="form-check form-switch">
+                    <label class="form-check-label" for="adminSwitch">Administrator</label>
+                    {% if data[0]['admin'] %}
+                    <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin" checked>
+                    {% else %}
+                    <input class="form-check-input" type="checkbox" role="switch" id="adminSwitch" name="admin">
+                    {% endif %}
+
+                </div>
+            </div>
+            <br>
+
+            <button class="popupbtn" type="submit">Save</button>
+        </form>
+        <br>
+
+        <form action="{{url_for('admin.edit_user_add', id=data[0]['id'])}}" method="POST">
+            <div class="box1">
+                <label>Project:</label>
+
+                <select name="project">
+                    <option value="" selected="true" disabled>Select project</option>
+                    {% for project in projects %}
+                    <option value="{{ project }}">{{ project}}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label>Role:</label>
+                <select name="role">
+                    <option value="" selected="true" disabled>Select role</option>
+                    <option value="0">Owner</option>
+                    <option value="1">Write</option>
+                    <option value="2">Read</option>
+                </select>
+
+            </div>
+            <br>
+
+            <button class="popupbtn" type="submit">Add</button>
+        </form>
+    </div>
+    <div style="margin-bottom: 4rem; width: 50%;">
+        <table class="table-striped datatable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Role</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            {% for project in data[1] %}
+            <tr>
+                <td>{{project['id']}}</td>
+                <td>{{project['name']}}</td>
+                <td>{{project['role']}}</td>
+
+                <td>
+                    <a href="{{url_for('admin.edit_user_remove', id=data[0]['id'], id_project=project['id'])}}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div> -->
+
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+
+<!-- <table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Admin</th>
+
+    </tr>
+    {% for user in data[0] %}
+    <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.admin}}</td>
+        <td>
+            <a href="{{url_for('admin.edit_user', user_id=user.id)}}">Edit</a>
+            <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="4"><a href="{{url_for('admin.create_user')}}">Create User</a></td>
+    </tr>
+</table> -->

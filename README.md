@@ -17,7 +17,8 @@ Using Cerberus makes it possible to collect and analyze valuable information eff
 - Synchronization of the collected data with a neo4j database, allowing to automatically mark compromised users.
 - Graph section, allowing to visualize relevant domain information.
 - Import of nmap output from the network, allowing to prioritize the next steps of the intrusion.
-- Upload the dns resolution information of the provided scripts
+- Upload the dns resolution information of the provided scripts.
+- Craft most commonly used commands.
 
 <img src="cerberus/static/img/readme_img/dashboard.png" alt="dashboard" width="1000"/>
 
@@ -87,6 +88,12 @@ This subsection shows all the credentials obtained, as well as the option of add
 It allows the visualization of the different stored tickets, allowing you to download them in ccache and kirbi formats, or copy their information in base64. Additionally, it allows you to create silver and golden tickets from keys.
 ### Local / Domain Users
 These subsections allow the display of the collected users.
+
+## Commands
+
+This section allows you to craft the most used commands in Impacket, Mimikatz and Rubeus.
+
+<img src="cerberus/static/img/readme_img/commands.png" alt="graph" width="1000"/>
 
 ## Scripts
 In the project scripts folder you can find the different external scripts. Currently there are DNSResolver scripts, both in python, bash and powershell.

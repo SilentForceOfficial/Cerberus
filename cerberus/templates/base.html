@@ -58,7 +58,7 @@
       <select id="projects" name="p" onchange="redirigir(this.value)">
         <option value="" selected="true" disabled>Select project</option>
         {% for project in projects %}
-        <option value="{{ project }}">{{ project }}</option>
+        <option value="{{ project }}">{{ project}}</option>
         {% endfor %}
         <option value="new" class="new">+ New Project</option>
       </select>
@@ -68,7 +68,9 @@
     <div class="header_user">
       <!-- <img src="https://i.imgur.com/hczKIze.jpg" alt=""> -->
       {% if g.user %}
-      <span>{{ g.user['username'] }} ( <a href="{{ url_for('auth.logout') }}">Log Out</a> )</span>
+
+      <span>{{ g.user['username'] }} </span>
+      <span> </span>
       <!-- <button id="openPopupButton2"></button> -->
       <i class='bx bxs-cog' id="openPopupSettings"></i>
       {% else %}
@@ -104,6 +106,11 @@
             %}">
             <i class='bx bxl-graphql nav_icon nav_icon'></i>
             <span class="nav_name">Graph</span>
+          </a>
+          <a href="{{url_for('core.command_generation')}}" title="Command generation" class="nav_link {% if title =='Command generation' %}selected{% endif
+            %}">
+            <i class='bx bxs-terminal nav_icon'></i>
+            <span class="nav_name">Commands</span>
           </a>
           <a id="id_data" title="Data" class="nav_link {% if title in ['Credentials','Local Users', 'Domain Users'
             , 'Tickets' , 'Machines' ] %}selected{% endif %}">
@@ -194,79 +201,103 @@
     <script type='text/javascript' src='#'></script>
     <script type='text/javascript' src='#'></script> -->
 
+  <!-- Codigo menu de opciones -->
+  {% if g.user %}
+  <div id="options_menu" class="settings_menu dropdown-menu shadow animated--grow-in">
+    {% if g.user['admin']%}
+    <a class="dropdown-item" href="{{url_for('admin.index')}}"><i class='bx bx-diamond'></i> ADMIN</a>
+    <!-- <a class="dropdown-item"><i class='bx bx-cog'></i> Manage project</a> -->
+    <hr>
+    {% endif %}
 
-
-  <!-- codigo del POPUP de new project -->
-  <!-- <button id="openPopupButton">Open Pop-up</button> -->
-  <div id="popupContainer" class="popup">
-    <span id="closePopupButton" class="close-button">&times;</span>
-    <p class="popuptitle">Create new project</p>
-    <div class="popup-content">
-
-
-      <form action="/projects/new/" method="POST">
-        <div class="box1">
-          <label for="project">Project:</label>
-          <br>
-          <input type="text" id="project" name="project" required placeholder="Name of project">
-        </div>
-        <br>
-
-        <button class="popupbtn" type="submit">Submit</button>
-      </form>
-    </div>
+    <a class="dropdown-item" href="{{ url_for('auth.resetpass') }}">
+      <i class='bx bx-lock-open'></i>
+      Change your password
+    </a>
+    <a class="dropdown-item" id="openNeo4jSettings">
+      <i class='bx bx-data'></i>
+      Neo4j settings
+    </a>
+    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+      <i class='bx bx-log-out'></i>
+      Log out
+    </a>
   </div>
-  <div class="overlay"></div>
 
-  <!-- FIN codigo del POPUP de new project -->
+    {% endif %}
 
-  <!-- codigo del POPUP de settings -->
-  <div id="settingsPopup" class="popup">
-    <span id="closeSettingsPopup2" class="close-button">&times;</span>
-    <p class="popuptitle">Settings</p>
-    <div class="popup-content">
-      <a href="{{ url_for('auth.resetpass') }}" style="color: var(--orange-color);">Change your password</a>
-      <form action="/settings" method="POST">
-        <div class="box1">
-          <label>URL:</label>
-          <br>
-          {% if g.user['neo4j_url'] %}
-          <input type="text" id="url" name="url" placeholder="{{g.user['neo4j_url']}}" value="{{g.user['neo4j_url']}}">
-          {% else %}
-          <input type="text" id="url" name="url" placeholder="database url">
-          {% endif %}
-        </div>
-        <div class="box1">
-          <label>User:</label>
-          <br>
-          {% if g.user['neo4j_user'] %}
-          <input type="text" id="user" name="user" placeholder="{{g.user['neo4j_user']}}"
-            value="{{g.user['neo4j_user']}}">
-          {% else %}
-          <input type="text" id="user" name="user" placeholder="user">
-          {% endif %}
-        </div>
-        <div class="box1">
-          <label for="project">Password:</label>
-          <br>
-          {% if g.user['neo4j_password'] %}
-          <input type="password" id="password" name="password" placeholder="********">
-          {% else %}
-          <input type="password" id="password" name="password" placeholder="password">
-          {% endif %}
-        </div>
-        <br>
+    <!-- codigo del POPUP de new project -->
+    <!-- <button id="openPopupButton">Open Pop-up</button> -->
+    <div id="popupContainer" class="popup">
+      <span id="closePopupButton" class="close-button">&times;</span>
+      <p class="popuptitle">Create new project</p>
+      <div class="popup-content">
 
-        <button class="popupbtn" type="submit">Save</button>
-      </form>
+
+        <form action="/projects/new/" method="POST">
+          <div class="box1">
+            <label for="project">Project:</label>
+            <br>
+            <input type="text" id="project" name="project" required placeholder="Name of project">
+          </div>
+          <br>
+
+          <button class="popupbtn" type="submit">Submit</button>
+        </form>
+      </div>
     </div>
-  </div>
-  <!-- FIN POPUP settings -->
+    <div class="overlay"></div>
+    <div class="overlay_trasparente"></div>
 
-  <script src="{{ url_for('static', filename= 'scripts/popup.js') }}"></script>
+    <!-- FIN codigo del POPUP de new project -->
 
-  <script src="{{ url_for('static', filename= 'scripts/base_js.js') }}"></script>
-  {% block scripts %} {% endblock %}
+    <!-- codigo del POPUP de settings -->
+    <div id="settingsNeo4jPopup" class="popup">
+      <span id="closeSettingsPopup2" class="close-button">&times;</span>
+      <p class="popuptitle">Settings</p>
+      <div class="popup-content">
+        <form action="/settings" method="POST">
+          <div class="box1">
+            <label>URL:</label>
+            <br>
+            {% if g.user['neo4j_url'] %}
+            <input type="text" id="url" name="url" placeholder="{{g.user['neo4j_url']}}"
+              value="{{g.user['neo4j_url']}}">
+            {% else %}
+            <input type="text" id="url" name="url" placeholder="database url">
+            {% endif %}
+          </div>
+          <div class="box1">
+            <label>User:</label>
+            <br>
+            {% if g.user['neo4j_user'] %}
+            <input type="text" id="user" name="user" placeholder="{{g.user['neo4j_user']}}"
+              value="{{g.user['neo4j_user']}}">
+            {% else %}
+            <input type="text" id="user" name="user" placeholder="user">
+            {% endif %}
+          </div>
+          <div class="box1">
+            <label for="project">Password:</label>
+            <br>
+            {% if g.user['neo4j_password'] %}
+            <input type="password" id="password" name="password" placeholder="********">
+            {% else %}
+            <input type="password" id="password" name="password" placeholder="password">
+            {% endif %}
+          </div>
+          <br>
+
+          <button class="popupbtn" type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+    <!-- FIN POPUP settings -->
+
+    <script src="{{ url_for('static', filename= 'scripts/popup.js') }}"></script>
+
+    <script src="{{ url_for('static', filename= 'scripts/base_js.js') }}"></script>
+    {% block scripts %} {% endblock %}
 
 </body>
 

@@ -55,4 +55,8 @@ def create_app():
     # /
     app.register_blueprint(core)
 
+    from .admin import admin
+    # /admin
+    app.register_blueprint(admin)
+
     return app

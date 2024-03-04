@@ -356,15 +356,17 @@ async def parse_zipfile(filename: str, driver: neo4j.Driver):
     """
     with ZipFile(filename) as zip_file:
        for file in zip_file.namelist():
-            if not file.endswith('.json'):
-                logging.info("File does not appear to be JSON, skipping: %s", file)
-                continue
+            try:
+                if not file.endswith('.json'):
+                    logging.info("File does not appear to be JSON, skipping: %s", file)
+                    continue
 
-            with NamedTemporaryFile(suffix=basename(file)) as temp:
-                temp.write(zip_file.read(file))
-                temp.flush()
-                await parse_file(temp.name, driver)
-
+                with NamedTemporaryFile(suffix=basename(file)) as temp:
+                    temp.write(zip_file.read(file))
+                    temp.flush()
+                    await parse_file(temp.name, driver)
+            except Exception as e:
+                print(f"ERROR: An error was found when processing the file '{file}'.\nException:{e}")
 
 async def parse_file(filename: str, driver: neo4j.AsyncDriver):
     """Parse a bloodhound file.

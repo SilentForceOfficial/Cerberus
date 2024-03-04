@@ -1,0 +1,10 @@
+
+
+.commands-navbar{
+    background-color: var(--first-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 25px;
+    padding: 20px;
+}

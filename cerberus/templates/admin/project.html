@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block content %}
+<div class="card-body row" style="margin:0px!important;">
+
+    <div style="margin-bottom: 4rem; width: 50%;">
+        <h3>Project</h3>
+        <table class="table-striped datatable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+
+                <th>Actions</th>
+            </tr>
+
+            <tr>
+                <td>{{data[0]['id']}}</td>
+                <td>{{data[0]['name']}}</td>
+                <td>
+                    <a href="">Edit</a>
+                    <a href="">Delete</a>
+                </td>
+            </tr>
+
+        
+        </table>
+    </div>
+    <div style="margin-bottom: 4rem; width: 50%;">
+        <h3>Users</h3>
+        <table class="table-striped datatable">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Admin</th>
+                <th>Role</th>
+                <th>Actions</th>
+        
+            </tr>
+            {% for user in data[1] %}
+            <tr>
+                <td>{{user['id']}}</td>
+                <td>{{user['username']}}</td>
+                <td>{{user['admin']}}</td>
+                <td>{{user['role']}}</td>
+                <td>
+                    <a href="">Edit</a>
+                    <a href="">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+    </div>
+    
+
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+
+<!-- <table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Admin</th>
+
+    </tr>
+    {% for user in data[0] %}
+    <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.admin}}</td>
+        <td>
+            <a href="{{url_for('admin.edit_user', user_id=user.id)}}">Edit</a>
+            <a href="{{url_for('admin.delete_user', user_id=user.id)}}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="4"><a href="{{url_for('admin.create_user')}}">Create User</a></td>
+    </tr>
+</table> -->

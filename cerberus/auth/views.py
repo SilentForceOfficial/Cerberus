@@ -19,41 +19,52 @@ def login_required_local(view):
         return view(**kwargs)
 
     return wrapped_view
+
+def admin_required_local(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not g.user['admin']:
+            flash("You do not have permission to access this page.", "warning")
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
 # -------------------------------------------------------------------------------------------
 # REGISTER
 @auth.route('/register', methods=('GET', 'POST'))
 @login_required_local
+@admin_required_local
 def register():
-    # return "HOLA"
-    # if request.method == 'POST':
-    #     username = request.form['username']
-    #     password = request.form['password']
-    #     db = get_db()
-    #     error = None
-    #     if not username:
-    #         error = 'Username is required.'
-    #     elif not password:
-    #         error = 'Password is required.'
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        db = get_db()
+        error = None
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
 
-    #     if error is None:
-    #         try:
-    #             db.execute(
-    #                 "INSERT INTO user (username, password) VALUES (?, ?)",
-    #                 (username, generate_password_hash(password)),
-    #             )
-    #             db.commit()   
-    #         except db.IntegrityError:
-    #             error = f"User {username} is already registered."
-    #         else:
-    #             # db.close()
-    #             close_db()
-    #             return redirect(url_for("auth.login"))
+        if error is None:
+            try:
+                db.execute(
+                    "INSERT INTO user (username, password) VALUES (?, ?)",
+                    (username, generate_password_hash(password)),
+                )
+                db.commit()   
+            except db.IntegrityError:
+                error = f"User {username} is already registered."
+            else:
+                # db.close()
+                close_db()
+                return redirect(url_for("auth.login"))
 
-    #     flash(error)
+        flash(error)
 
-    # return render_template('auth/register.html')
-    flash("Registration is disabled.", "warning")
-    return redirect(url_for("auth.login"))
+    return render_template('auth/register.html')
+    # flash("Registration is disabled.", "warning")
+    # return redirect(url_for("auth.login"))
 
 # CHANGE PASSWORD
 @auth.route('/reset_password', methods=('GET', 'POST'))
@@ -141,6 +152,19 @@ def load_logged_in_user():
         g.user = db.execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
-        # close_db()
+        
+        if g.user["admin"]:
+            from cerberus import projects
+            g.projects = projects
+        else:
+            # Proyectos del usuario
+            _ = db.execute(
+                '''SELECT projects.name 
+                    FROM projects 
+                    INNER JOIN user_projects ON projects.id = user_projects.id_project
+                    INNER JOIN user ON user.id = user_projects.id_user
+                    WHERE user.username = ?''', (g.user["username"],)
+            ).fetchall()
+            g.projects = [i[0] for i in _]
         
 
