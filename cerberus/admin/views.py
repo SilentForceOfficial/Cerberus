@@ -8,6 +8,7 @@ from cerberus.auth import check_conn, login_required
 
 from . import admin
 from cerberus import projects
+from cerberus.core.views import user_has_write_permission
 
 def admin_required_local(view):
     @functools.wraps(view)
@@ -30,7 +31,8 @@ def index():
     return render_template('admin/index.html',
                         projects=projects,
                         title='Admin',
-                        data=data)
+                        data=data,
+                        writePermission=user_has_write_permission())
 
 # Info usuario (usuario y proyectos asociados)
 @admin.route('/user/<int:id>')
@@ -42,7 +44,8 @@ def user(id):
     return render_template('admin/user.html',
                         projects=projects,
                         title='Admin',
-                        data=data)
+                        data=data,
+                        writePermission=user_has_write_permission())
 
 # Edit user
 @login_required
@@ -82,7 +85,8 @@ def edit_user(id):
     return render_template('admin/edit_user.html',
         projects=projects,
         title='Admin',
-        data=data)
+        data=data,
+        writePermission=user_has_write_permission())
 
 # Edit user
 @login_required
@@ -165,7 +169,8 @@ def project(id):
     return render_template('admin/project.html',
                         projects=projects,
                         title='Admin',
-                        data=data)
+                        data=data,
+                        writePermission=user_has_write_permission())
 
 # Info proyecto (proyecto y usuarios asociados)
 @admin.route('/project/<int:id>/edit')
@@ -179,7 +184,8 @@ def edit_project(id):
     return render_template('admin/edit_project.html',
         projects=projects,
         title='Admin',
-        data=data)
+        data=data,
+        writePermission=user_has_write_permission())
 
 @login_required
 @admin_required_local
@@ -225,7 +231,7 @@ def edit_project_remove(id, id_user):
 
 @login_required
 @admin_required_local
-@admin.route('/user/new', methods=['GET','POST'])
+@admin.route('/user/new', methods=['POST'])
 def new_user():
     from cerberus.db import get_user_projects_info, get_users, get_user, get_projects, get_project
     from cerberus.utils import generate_random_password
@@ -256,7 +262,4 @@ def new_user():
         else:
             flash(error,"danger")
 
-    return render_template('admin/new_user.html',
-                            projects=projects,
-                            title='Admin'
-                            )
+    return redirect(request.referrer)

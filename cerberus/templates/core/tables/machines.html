@@ -4,7 +4,11 @@
 
 {% block botones %}
 <div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    {% if writePermission %}
     <button type="button" id="dnsrsv" class="btn">DNS resolver import</button>
+    {% else %}
+    <button type="button" id="dnsrsv" class="btn" style="color: #6c757d; border-color: #6c757d;" disabled>DNS resolver import</button>
+    {% endif %}
     <!-- <button type="button" id="hashcat" class="btn">Import from hashcat</button> -->
 </div>
 

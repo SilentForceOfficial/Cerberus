@@ -1,6 +1,44 @@
 {% extends 'base.html' %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
+
+<!-- codigo del POPUP de Create User -->
+<div id="createUserPopup" class="popup">
+    <span id="closeCreateUserPopup" class="close-button">&times;</span>
+    <p class="popuptitle">Create user</p>
+    <div class="popup-content d-flex">
+      <form action="{{url_for('admin.new_user')}}" method="POST">
+        <div class="box1">
+          <label for="username">Username:</label>
+          <br>
+          <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        <br>
+
+        <div class="d-flex justify-content-center">
+            <button class="popupbtn" type="submit">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- FIN POPUP de Create User -->
+
+  <!-- codigo del POPUP de Delete User -->
+<div id="deleteUserPopup" class="popup">
+    <span id="closeDeleteUserPopup" class="close-button">&times;</span>
+    <p class="popuptitle">Delete user</p>
+    <div>
+        <p id="deleteMessage"></p>
+        <br>
+
+        <div>
+            <a id="closeDeleteUserPopup2" class="popupbtn" style="cursor: pointer;">No</a>
+            <a id="deleteButton" class="popupbtn" href="">Delete</a>
+        </div>
+    </div>
+  </div>
+  <!-- FIN POPUP de Delete User -->
+
 <div class="card-body row" style="margin:0px!important;">
     <div style="margin-bottom: 4rem; width: 50%;">
         <h3>Users</h3>
@@ -21,12 +59,13 @@
                 <td>{{user.project_count}}</td>
                 <td>
                     <a href="{{url_for('admin.edit_user', id=user.id)}}">Edit</a>
-                    <a href="{{url_for('admin.delete_user', id=user.id)}}">Delete</a>
+                    <a style="cursor: pointer;" onclick="onDeleteUserButtonClick('{{user.username}}', '{{user.id}}')">Delete</a>
+                    <!-- <a href="{{url_for('admin.delete_user', id=user.id)}}">Delete</a> -->
                 </td>
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="5"><a href="{{url_for('admin.new_user')}}" style="color: var(--orange-color);">+ Create User</a></td>
+                <td colspan="5"><a id="openCreateUserPopup" style="color: var(--orange-color); cursor: pointer;">+ Create User</a></td>
             </tr>
         </table>
     </div>
@@ -54,5 +93,53 @@
     </div>
 
 </div>
+
+<script>
+
+    const closeCreateUserPopup = document.getElementById('closeCreateUserPopup');
+    const closeDeleteUserPopup = document.getElementById('closeDeleteUserPopup');
+    const closeDeleteUserPopup2 = document.getElementById('closeDeleteUserPopup2');
+
+    const createUserPopup = document.getElementById('createUserPopup');
+    const deleteUserPopup = document.getElementById('deleteUserPopup');
+
+    const openCreateUserPopup = document.getElementById('openCreateUserPopup');
+
+    openCreateUserPopup.addEventListener("click", () => {
+        createUserPopup.style.display = "block";
+        overlay.style.display = "block";
+    });
+    const openDeleteUserPopup = () => {
+        deleteUserPopup.style.display = "block";
+        overlay.style.display = "block";
+    }
+
+    closeCreateUserPopup.addEventListener("click", () => {
+        createUserPopup.style.display = "none";
+        overlay.style.display = "none";
+    });
+    closeDeleteUserPopup.addEventListener("click", () => {
+        deleteUserPopup.style.display = "none";
+        overlay.style.display = "none";
+    });
+    closeDeleteUserPopup2.addEventListener("click", () => {
+        deleteUserPopup.style.display = "none";
+        overlay.style.display = "none";
+    });
+
+    const onDeleteUserButtonClick = (username, userID) => {
+
+        // Obtenemos el mensaje y el botón del popup
+        const deleteMessage = document.getElementById("deleteMessage");
+        const deleteButton = document.getElementById("deleteButton");
+
+        // Modificamos el mensaje y el botón del popup
+        deleteMessage.innerHTML = `Are you sure you want to delete the user '${username}'?`;
+        deleteButton.setAttribute("href", `/admin/user/${userID}/delete`);
+
+        openDeleteUserPopup();
+
+    }
+</script>
 
 {% endblock %}

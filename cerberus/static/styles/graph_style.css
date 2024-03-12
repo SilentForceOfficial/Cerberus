@@ -246,6 +246,9 @@
   #boton_download{
     top: 150px;
   }
+  #boton_delete{
+    top: 190px;
+  }
 
 /* Input query */
 #customquery {

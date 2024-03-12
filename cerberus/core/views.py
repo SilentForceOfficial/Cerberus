@@ -5,10 +5,14 @@ from flask import (
 )
 from cerberus.auth import check_conn, login_required
 from cerberus.utils import checkneo4j,neo4jGraphDashBoard
-from cerberus.db import get_db, close_db
+from cerberus.db import get_db, close_db, get_user_project_role
 
 from . import core
 from cerberus import projects
+
+OWNER_ROLE_ID = 0
+WRITE_ROLE_ID = 1
+READ_ROLE_ID = 2
 
 # -----------------------------------------
 #   Coger de la carpeta de proyectos los
@@ -27,6 +31,40 @@ def check_project(view):
         return view(**kwargs)
 
     return wrapped_view
+
+def check_write_permission(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+
+        # Obtenemos el proyecto y el usuario actual y comprobamos el rol
+        currentProject = request.cookies.get("project")
+        currentUserID = g.user[0]
+        currentRole = get_user_project_role(projectName=currentProject, userID=currentUserID)
+        if currentRole:
+            currentRole = currentRole[0]
+
+        # Si el usuario tiene el rol de lectura no tiene permisos para escribir sobre el proyecto, mostramos error
+        if not user_has_write_permission():
+            flash('This user does not have enough permissions to execute this action', 'danger')
+            return render_template("core/empty.html", projects=g.projects)
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+def user_has_write_permission():
+
+    # Obtenemos el proyecto y el usuario actual
+    currentProject = request.cookies.get("project")
+    currentUserID = g.user[0]
+
+    # Obtenemos el rol del usuario para el proyecto actual
+    currentRole = get_user_project_role(projectName=currentProject, userID=currentUserID)
+    currentRole = currentRole[0] if currentRole else READ_ROLE_ID
+
+    return g.user["admin"] or currentRole == OWNER_ROLE_ID or currentRole == WRITE_ROLE_ID
+
+
 
 # -------------------------------------------------------------------------------------------
 # Check conexion de neo4j
@@ -104,12 +142,14 @@ def dashboard():
     return render_template('core/dashboard.html',
                            projects=g.projects,
                            title='Dashboard',
-                           data=data)
+                           data=data,
+                           writePermission=user_has_write_permission())
 
 # IMPORT DATA
 @core.route('/import', methods=['GET'])
 @login_required
 @check_project
+@check_write_permission
 def import_data():
     return render_template('core/import.html',
                            projects=g.projects,
@@ -123,20 +163,21 @@ def import_data():
                            file_types=[
                                ".zip / .json",
                                ".dat"
-                           ]
+                           ],
+                           writePermission=user_has_write_permission()
                            )
 
 # Upload data to import
 @core.route('/import/upload', methods=['POST'])
 @login_required
 @check_project
+@check_write_permission
 def import_upload_data():
     from cerberus import utils
     from .logonpasswords import parse_logonpasswords, insert_longonpasswords
     from .lsadump import parse_lsadump, insert_lsadump
     from .tickets import parse_tickets, insert_tickets
     from .secretsdump import parse_secretsdump
-
 
 
     # Importado de bibliotecas
@@ -194,6 +235,7 @@ def import_upload_data():
 @core.route('/import/tickets', methods=['POST'])
 @login_required
 @check_project
+@check_write_permission
 def uploads_tickets_file():
     import os
     from cerberus.core.tickets import upload_ticket
@@ -204,41 +246,19 @@ def uploads_tickets_file():
         allowed_extensions = {'ccache', 'kirbi'}
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
-    from werkzeug.utils import secure_filename
-
-    def allowed_file(filename):
-        allowed_extensions = {'ccache', 'kirbi'}
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-
     try:
         db.db_link(request.cookies.get('project'))
         db.db_connect()
+
         tmpfiles=[]
 
         files = request.files.getlist('dataFileTickets')
-
-        if not os.path.isdir(f"{current_app.root_path}/static/uploads"):
-            os.mkdir(f"{current_app.root_path}/static/uploads")
-
-        if not os.path.isdir(f"{current_app.root_path}/static/uploads/tickets"):    
-            os.mkdir(f"{current_app.root_path}/static/uploads/tickets")
-
 
         #if files are empty then raise error
         if not files[0].filename:
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
-            filename = secure_filename(file.filename)
-            if(allowed_file(filename)):
-                file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
-                #Ruta del ticket, nombre del archivo y session en la base de datos
-                upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
-                os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
-            else:
-                flash(u'Something went wrong: Wrong Extension only ccache and kirbi: ' + filename, 'danger')
-                print(f"\n\nERROR {filename}\n\n")
-                return redirect(url_for('core.import_data'))
             filename = secure_filename(file.filename)
             if(allowed_file(filename)):
                 file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
@@ -261,16 +281,11 @@ def uploads_tickets_file():
 @login_required
 @check_project
 @check_neo4j
+@check_write_permission
 def uploads_nmapxml_file():
     import os
     from cerberus.core.nmapxml import parseXML,uploadDataNmap
     from cerberus import db2 as db
-    from werkzeug.utils import secure_filename
-    def allowed_file(filename):
-        allowed_extensions = {'xml'}
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-
-
     from werkzeug.utils import secure_filename
     def allowed_file(filename):
         allowed_extensions = {'xml'}
@@ -282,8 +297,6 @@ def uploads_nmapxml_file():
         db.db_connect()
 
     
-
-    
         files = request.files.getlist('dataFileNmaps')
 
         #if files are empty then raise error
@@ -291,16 +304,6 @@ def uploads_nmapxml_file():
             flash(u'No files selected', 'warning')
             return redirect(url_for('core.import_data'))
         for file in files:
-            
-            filename = secure_filename(file.filename)
-            if(allowed_file(filename)):
-                file.save(f"{current_app.root_path}/static/.tmp/{file.filename}")
-                data = parseXML(f"{current_app.root_path}/static/.tmp/{file.filename}")
-                uploadDataNmap(data,db.session,file.filename)
-                os.remove(f"{current_app.root_path}/static/.tmp/{file.filename}")
-            else:
-                flash(u'Something went wrong: Wrong Extension only XML:' + filename, 'danger')
-                return redirect(url_for('core.import_data'))
             
             filename = secure_filename(file.filename)
             if(allowed_file(filename)):
@@ -326,6 +329,7 @@ def uploads_nmapxml_file():
 @login_required
 @check_project
 @check_neo4j
+@check_write_permission
 def import_ad_file():
     from cerberus import utils
     import asyncio
@@ -335,12 +339,6 @@ def import_ad_file():
     from io import BytesIO
     import subprocess
     from cerberus.static.external_modules.adexplorersnapshot.importDatFile import importDatFile
-    from werkzeug.utils import secure_filename
-
-    def allowed_file(filename):
-        allowed_extensions = {'zip', 'json', 'dat'}
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-    
     from werkzeug.utils import secure_filename
 
     def allowed_file(filename):
@@ -410,47 +408,9 @@ def import_ad_file():
         else:     
             flash(u'Something went wrong: Wrong Extension only .dat:' + filename, 'danger')
             return redirect(url_for('core.import_data'))
-        filename = secure_filename(files[0].filename)
-        if(allowed_file(filename)):
-            upload_path = f"cerberus/static/.tmp/{filename}"
-            stream = BytesIO(files[0].read())
-            utils.saveFile(stream, upload_path)
-            # Parseamos el .dat a formato interpretable
-            zip_path = f"cerberus/static/.tmp/{files[0].filename.split('.')[0]}.zip"
-            importDatFile(upload_path, zip_path)
-            # Importamos el zip generado
-            try:
-                asyncio.run(parse_files([zip_path]))
-            except Exception as e:
-                try:
-                    subprocess.Popen(['rm', upload_path])
-                    subprocess.Popen(['rm', zip_path])
-                except:
-                    pass
-                print(e)
-                flash(u'Error loading file', 'danger')
-                return redirect(url_for('core.import_data'))
-            try:
-                subprocess.Popen(['rm', upload_path])
-                subprocess.Popen(['rm', zip_path])
-            except:
-                pass
-        else:     
-            flash(u'Something went wrong: Wrong Extension only .dat:' + filename, 'danger')
-            return redirect(url_for('core.import_data'))
     else:
         # Save files
         for i in files:
-            filename = secure_filename(i.filename)
-            if(allowed_file(filename)):
-                upload_path = f"cerberus/static/.tmp/{filename}"
-                stream = BytesIO(i.read())
-                utils.saveFile(stream, upload_path)
-                files_names.append(upload_path)
-            else:
-                flash(u'Something went wrong: Wrong Extension only json or zip:' + filename, 'danger')
-                return redirect(url_for('core.import_data'))
-
             filename = secure_filename(i.filename)
             if(allowed_file(filename)):
                 upload_path = f"cerberus/static/.tmp/{filename}"
@@ -482,6 +442,7 @@ def import_ad_file():
 @core.route('/import/hashcat', methods=['POST'])
 @login_required
 @check_project
+@check_write_permission
 def hashcat_page():
     from cerberus import db2 as db
     from cerberus.utils import readFileHashcat
@@ -515,7 +476,6 @@ def hashcat_page():
         return redirect(request.referrer)
     except:
         flash(u'Error reading file', 'danger')
-        flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
         return redirect(request.referrer)
@@ -524,6 +484,7 @@ def hashcat_page():
 @core.route('/import/machines', methods=['POST'])
 @login_required
 @check_project
+@check_write_permission
 def machines_dnsresolver():
     from cerberus import db2 as db
     from cerberus.utils import readFileDNSResolver
@@ -574,7 +535,6 @@ def machines_dnsresolver():
         db.db_disconnect()
         return redirect(request.referrer)
     except:
-        flash(u'Error reading file', 'danger')
         flash(u'Error reading file', 'danger')
         # cerrar la conexión a la bbdd
         db.db_disconnect()
@@ -658,7 +618,8 @@ def table_data():
         db.db_disconnect()
         return render_template(f'core/tables/intermediate/{template}',
                             data=data,
-                            projects=g.projects)
+                            projects=g.projects,
+                            writePermission=user_has_write_permission())
     else:
     
 
@@ -699,12 +660,14 @@ def table_data():
                            projects=g.projects,
                            headers=headers,
                            rows=rows,
-                           title=title)
+                           title=title,
+                           writePermission=user_has_write_permission())
 
 # New credential
 @core.route('/info/newcred', methods=['GET', 'POST'])
 @login_required
 @check_project
+@check_write_permission
 def new_cred():
     from cerberus.utils import calculate_ntlm
     from .newcred import insert_new_cred
@@ -733,6 +696,7 @@ def new_cred():
 @core.route('/info/newtgs', methods=['GET', 'POST'])
 @login_required
 @check_project
+@check_write_permission
 def new_tgs():
     import io
     from .tickets import create_ticket
@@ -755,6 +719,7 @@ def new_tgs():
 @core.route('/info/newtgt', methods=['GET', 'POST'])
 @login_required
 @check_project
+@check_write_permission
 def new_tgt():
     import io
     from .tickets import create_ticket
@@ -923,7 +888,8 @@ def command_generation():
     return render_template('core/commands.html',
                                 projects=g.projects, 
                                 title="Command generation",
-                                commandsCategories=categoriesToFrontend
+                                commandsCategories=categoriesToFrontend,
+                                writePermission=user_has_write_permission()
                            )
 
 @core.route('/commands/getform/<commandCategory>/<commandID>', methods=['GET'])
@@ -1536,7 +1502,8 @@ def get_graph(query):
                                 detailedNodes=d,
                                 links=my_dict,
                                 da_group=da_group,
-                                nmapFile=nmapFile
+                                nmapFile=nmapFile,
+                                writePermission=user_has_write_permission()
                                     )
     except Exception as e:
         print(e)
@@ -1608,8 +1575,33 @@ def graph_custom_query():
 
     # Obtenemos la query
     customQuery = request.form["customQuery"]
-    print(f"Custom query: {customQuery}")
 
-    return redirect(url_for('core.get_graph', query=customQuery))
+    # Si hay query la ejecutamos, sino mostramos el error
+    if customQuery:
+        print(f"Custom query: {customQuery}")
+        return redirect(url_for('core.get_graph', query=customQuery))
+    else:
+        print("No query")
+        flash("ERROR: Query not found, you have to enter a query before clicking the execute button", "danger")
+        return redirect(request.referrer)
+
+@core.route('/graph/dropgraphdatabase', methods=['GET'])
+@login_required
+@check_neo4j
+def drop_graph_database():
+
+    from neo4j import GraphDatabase
+
+    try:
+        with GraphDatabase.driver(uri=g.user[3], auth=(g.user[4], g.user[5])) as driver:
+            query = "MATCH (n) DETACH DELETE n"
+            with driver.session() as graphDB_Session:
+                graphDB_Session.run(query)
+        flash('The Neo4J databse has been deleted successfully', 'success')
+    except Exception as e:
+        print(f"ERROR: {e}")
+        flash('There was an error while trying to delete the Neo4J database', 'danger')
+    
+    return redirect(url_for("core.dashboard"))
 
 # -------------------------------------------------------------------------------------------

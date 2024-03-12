@@ -132,20 +132,34 @@
     <!-- FIN codigo del POPUP de select domain admins group-->
 
     <!-- Botones dentro del grafo -->
-    <i id="botonn" class="bx bx-menu-alt-right botones_graph left_boton"></i>
-    <i id="boton_maximizar" class='bx bx-expand botones_graph rigth_boton'></i>
-    <a href="{{ url_for('core.sync_neo4j') }}"><i id="boton_sync" class='bx bx-sync  botones_graph rigth_boton'></i></a>
-    <i id="boton_upload" class='bx bx-upload botones_graph rigth_boton'></i>
-    <a href="{{ url_for('core.get_computers') }}"><i id="boton_download" class='bx bxs-file-export botones_graph rigth_boton'></i></a>
+    <i id="botonn" class="bx bx-menu-alt-right botones_graph left_boton" title="Neo4J queries" style="cursor: pointer;"></i>
+    <i id="boton_maximizar" class='bx bx-expand botones_graph rigth_boton' title="Maximize / Minimize graph" style="cursor: pointer;"></i>
+    <a href="{{ url_for('core.sync_neo4j') }}"><i id="boton_sync" class='bx bx-sync  botones_graph rigth_boton' title="Resync Neo4J"></i></a>
+    <i id="boton_upload" class='bx bx-upload botones_graph rigth_boton' title="Upload" style="cursor: pointer;"></i>
+    <a href="{{ url_for('core.get_computers') }}"><i id="boton_download" class='bx bxs-file-export botones_graph rigth_boton' title="Get computers"></i></a>
+    <form action="{{ url_for('core.drop_graph_database') }}" method="get">
+        <button type="submit" style="cursor: pointer;"><i id="boton_delete" class='bx bxs-trash botones_graph rigth_boton' title="Delete Neo4J Info"></i></button>
+    </form>
     <!-- FIN Botones dentro del grafo -->
 
     <!-- Custom queries -->
-    <form id="customquery" class="d-flex" data-bs-theme="dark" action="/graph/customquery" method="post">
-        <div class="d-flex col-sm-10">
-            <input type="text" class="form-control s-2" id="customQuery" name="customQuery" placeholder="Enter custom Neo4J query...">
+    <form id="customquery" class="d-flex" action="/graph/customquery" method="post" style="background: transparent;">
+        <div class="d-flex col-sm-10 me-1">
+            <input type="text" class="form-control s-2" data-bs-theme="dark" id="customQuery" name="customQuery" placeholder="Enter custom Neo4J query...">
         </div>
         <div class="d-flex col-sm-2">
-            <button type="submit" class="btn btn-outline-success s-2 w-100">Execute query</button>
+            <style>
+                .orangeButton {
+                    border-color: var(--orange-color);
+                    color: var(--orange-color);
+                }
+                .orangeButton:hover {
+                    background-color: var(--orange-color);
+                    border-color: var(--orange-color);
+                    color: white;
+                }
+            </style>
+            <button type="submit" class="btn btn-outline-success s-2 w-100 orangeButton" data-bs-theme="dark">Execute query</button>
         </div>
     </form>
 
@@ -160,7 +174,7 @@
             {% for i in links %}
             <div style="width: 100%; margin-top: 20px;">
                 <div style="margin: auto; width: 100%;">
-                    <h5 style="margin: auto; width: 100%; display: flex; justify-content: center;">{{ i }}</h5>
+                    <h5 style="margin: auto; width: 100%; display: flex; justify-content: center; color: rgb(248, 144, 17);">{{ i }}</h5>
                 </div>
             </div>
             {% for k in links[i] %}

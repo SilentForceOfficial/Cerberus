@@ -14,9 +14,9 @@ var inputFile3 = document.getElementById("dataFileDump");
 var spanFile3 = document.getElementById("drop-area-span-file-dump");
 
 // NMAPXML
-var dropArea3 = document.getElementById("drop-area-dump");
-var inputFile3 = document.getElementById("dataFileNmaps");
-var spanFile3 = document.getElementById("drop-area-span-file-nmaps");
+var dropArea4 = document.getElementById("drop-area-nmaps");
+var inputFile4 = document.getElementById("dataFileNmaps");
+var spanFile4 = document.getElementById("drop-area-span-file-nmaps");
 
 // function changeSpan(inputFile,spanFile) {
 //     if (inputFile.files.length > 1) {
@@ -95,6 +95,31 @@ window.addEventListener('load', function () {
                 spanFile3.textContent = inputFile3.files.length + " files selected";
             } else {
                 spanFile3.textContent = inputFile3.files[0].name;
+        
+            }
+
+        });
+    });
+
+    // 4
+    inputFile4.addEventListener("change", function (){
+        if (inputFile4.files.length > 1) {
+            spanFile4.textContent = inputFile4.files.length + " files selected";
+        } else {
+            spanFile4.textContent = inputFile3.files[0].name;
+    
+        }
+    });
+
+    dropArea4.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropArea4.addEventListener("drop", function (e) {
+            e.preventDefault();
+            inputFile4.files = e.dataTransfer.files;
+            if (inputFile4.files.length > 1) {
+                spanFile4.textContent = inputFile4.files.length + " files selected";
+            } else {
+                spanFile4.textContent = inputFile4.files[0].name;
         
             }
 

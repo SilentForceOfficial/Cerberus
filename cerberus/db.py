@@ -136,3 +136,13 @@ def get_user_projects_info(user_id):
             WHERE user_projects.id_user = ?''', (user_id,)
     ).fetchall()
     return projects
+
+def get_user_project_role(projectName, userID):
+    db = get_db()
+    role = db.execute(
+        '''SELECT user_projects.role
+            FROM user_projects
+            INNER JOIN projects ON user_projects.id_project = projects.id
+            WHERE projects.name = ? and user_projects.id_user = ?''', (projectName, userID,)
+    ).fetchone()
+    return role

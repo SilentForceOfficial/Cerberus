@@ -4,8 +4,13 @@
 
 {% block botones %}
 <div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    {% if writePermission %}
     <button type="button" id="newtgs" class="btn">New TGS</button>
     <button type="button" id="newtgt" class="btn">New TGT</button>
+    {% else %}
+    <button type="button" id="newtgs" class="btn" style="color: #6c757d; border-color: #6c757d;" disabled>New TGS</button>
+    <button type="button" id="newtgt" class="btn" style="color: #6c757d; border-color: #6c757d;" disabled>New TGT</button>
+    {% endif %}
 </div>
 {% endblock %}
 

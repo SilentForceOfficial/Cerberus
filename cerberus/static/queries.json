@@ -1,4 +1,16 @@
 {
+    "Owned": {
+        "ownedUsers": {
+            "description": "Find all users marked as owned",
+            "query": "MATCH (u:User {owned:true}) RETURN u",
+            "required": []
+        },
+        "ownedComputers": {
+            "description": "Find all computers marked as owned",
+            "query": "MATCH (c:Computer {owned:true}) RETURN c",
+            "required": []
+        }
+    },
     "Kerberos": {
         "kerberoast":{
             "description": "Find all Kerberoastable Users",
@@ -17,16 +29,6 @@
         }
     },
     "Computers": {
-        "unconstraint":{
-            "description": "Find all computers with Unconstrained Delegation",
-            "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",
-            "required": []
-        },
-        "unsopportedOS":{
-            "description": "Find unsupported OSs",
-            "query": "MATCH (H:Computer) WHERE H.operatingsystem =~ '(?i).*(2000|2003|2008|xp|vista|me|7).*' RETURN H",
-            "required": []
-        },
         "unconstraint":{
             "description": "Find all computers with Unconstrained Delegation",
             "query": "MATCH (c:Computer {unconstraineddelegation:true}) return c",

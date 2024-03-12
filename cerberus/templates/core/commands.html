@@ -6,6 +6,19 @@
 <link rel="stylesheet" href="{{url_for('static',filename='styles/commands.css')}}">
 <script src="{{url_for('static',filename='scripts/autocomplete.js')}}"></script>
 
+<style>
+    .commandsButton {
+        color: #F89011;
+        border-color: #F89011;
+        background-color: transparent;
+    }
+    .commandsButton:hover{
+        color: white;
+        border-color: #F89011;
+        background-color: #F89011;
+    }
+</style>
+
 <!-- Barra de navegación de los comandos -->
 <div class="commands-navbar d-flex d-none" data-bs-theme="dark" id="inputsDiv">
 
@@ -27,7 +40,7 @@
 </div>
 
 <!-- Lista de comandos a generar -->
-<div class="accordion" id="commandsAccordion" data-bs-theme="dark">
+<div class="accordion" id="commandsAccordion" data-bs-theme="dark" style="--bs-accordion-active-color: white; --bs-accordion-active-bg: #F89011;">
     {% for commandsCategory in commandsCategories %}
     <div class="accordion-item">
         <h2 class="accordion-header">
@@ -42,7 +55,7 @@
                     <li class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
                             {{command.display}}
-                            <button class="btn btn-primary" onclick="handleCommandClick('{{commandsCategory.id}}', '{{command.id}}')">Generate</button>
+                            <button class="btn commandsButton" onclick="handleCommandClick('{{commandsCategory.id}}', '{{command.id}}')">Generate</button>
                         </div>
                     </li>
                     {% endfor %}
@@ -85,7 +98,7 @@
                     data.map((commandCategory) => {
 
                         generatedCommandContent += `
-                            <h6>${commandCategory.display}</h6>
+                            <h6 style="color: #F89011; font-weight: bold;">${commandCategory.display}</h6>
                             <ol>
                         `;
 
@@ -185,7 +198,7 @@
                 // Insertamos el botón
                 formContent += `
                     <div class="d-flex col-md-1">
-                        <button type="button" class="btn btn-outline-success m-2 w-100" id="generationButton">Generate</button>
+                        <button type="button" class="btn commandsButton m-2 w-100" id="generationButton">Generate</button>
                     </div>
                 `;
 
