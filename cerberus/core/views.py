@@ -264,7 +264,7 @@ def uploads_tickets_file():
                 file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
                 #Ruta del ticket, nombre del archivo y session en la base de datos
                 upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
-                os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
+                
             else:
                 flash(u'Something went wrong: Wrong Extension only ccache and kirbi: ' + filename, 'danger')
                 print(f"\n\nERROR {filename}\n\n")
