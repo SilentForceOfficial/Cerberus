@@ -9,6 +9,8 @@
   <link href="{{ url_for('static', filename= 'external_modules/front/bootstrap.min.css') }}" rel='stylesheet'>
   <link href="{{ url_for('static', filename= 'external_modules/front/boxicons-2.1.4/css/boxicons.min.css') }}"
     rel='stylesheet'>
+  <link href="{{ url_for('static', filename= 'external_modules/front/fontawesome/css/all.min.css') }}"
+    rel='stylesheet'>
   <link rel="stylesheet" href="{{ url_for('static', filename= 'styles/style_core.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename= 'styles/uploads_drop.css') }}">
 
@@ -49,6 +51,7 @@
   <!-- Barra superior -->
   <header class="header" id="header">
     <div class="header_toggle">
+      <i class='bx bx-chevron-left' ></i>
       <i class='bx bx-menu' id="header-toggle" style="color: var(--white-color);"></i>
     </div>
 
@@ -65,7 +68,14 @@
       <!-- Fin opciones para los proyectos (+ Script base) -->
     </div>
 
-    <div class="header_user">
+    <div class="header_user d-flex justify-content-between">
+
+      <!-- Contenedores -->
+      <div class="containersHeader me-4">
+        <span id="connectionsSpan" style="cursor: pointer;">Connections</span>
+        <i class='bx bx-sitemap' id="connectionsIcon" style="cursor: pointer;"></i>
+      </div>
+
       <!-- <img src="https://i.imgur.com/hczKIze.jpg" alt=""> -->
       {% if g.user %}
 
@@ -81,7 +91,7 @@
   </header>
   <!-- Fin barra superior -->
 
-  <!-- Barra lateral -->
+  <!-- Barra lateral izquierda -->
   <div class="l-navbar" id="nav-bar">
     <nav class="nav">
       <div>
@@ -121,35 +131,74 @@
             <i class='bx bxs-terminal nav_icon'></i>
             <span class="nav_name">Command generation</span>
           </a>
+          <a href="{{url_for('core.technologies')}}" title="Technologies" class="nav_link {% if title =='Technologies' %}selected{% endif
+            %}">
+            <i class="fa-solid fa-microchip nav_icon"></i>
+            <span class="nav_name">Technologies</span>
+          </a>
+
+        
+          <!-- Data Selector-->
           <a id="id_data" title="Data" class="nav_link {% if title in ['Credentials','Local Users', 'Domain Users'
             , 'Tickets' , 'Machines' ] %}selected{% endif %}" style="cursor: pointer;">
             <i class='bx bx-bar-chart-alt-2 nav_icon'></i>
-            <span class="nav_name">Data</span>
+            <span class="nav_name">Credentials  <i id="data-arrow" class="fa-solid fa-caret-down"></i></span>
           </a>
 
           <!-- Subenlaces -->
           <!-- <li  class="nav_link"> -->
-          <a href="/info?t=machines" class="nav_link sublink {% if title =='Machines' %}selected{% endif %}">
-            <i class='bx bx-server nav_icon'></i>
-            <span class="nav_name">Machines</span>
+          <div class="hideSubLink hideSubLinkData" style="display: none;">
+            <a href="/info?t=machines" class="nav_link sublink {% if title =='Machines' %}selected{% endif %}">
+              <i class='bx bx-server nav_icon'></i>
+              <span class="nav_name">Machines</span>
+            </a>
+            <!-- </li> -->
+            <a href="/info?t=credentials" class="nav_link sublink {% if title =='Credentials' %}selected{% endif %}">
+              <i class='bx bx-key nav_icon'></i>
+              <span class="nav_name">Passwords</span>
+            </a>
+            <a href="/info?t=tickets" class="nav_link sublink {% if title =='Tickets' %}selected{% endif %}">
+              <i class='bx bxs-coupon nav_icon'></i>
+              <span class="nav_name">Tickets</span>
+            </a>
+            <a href="/info?t=domainusers" class="nav_link sublink {% if title =='Domain Users' %}selected{% endif %}">
+              <i class='bx bxs-user nav_icon'></i>
+              <span class="nav_name">Domain Users</span>
+            </a>
+            <a href="/info?t=localusers" class="nav_link sublink {% if title =='Local Users' %}selected{% endif %}">
+              <i class='bx bx-user nav_icon'></i>
+              <span class="nav_name">Local Users</span>
+            </a>
+          </div>
+          <!-- Fin Data Selector-->
+
+          <!-- Vulnerabilities Selector-->
+          <a id="id_vulnerabilities" title="Vulnerabilities" class="nav_link {% if title in ['Web','Services'] %}selected{% endif %}" style="cursor: pointer; ">
+            <i class="fa-solid fa-bug nav_icon"></i>
+            <span class="nav_name">Vulnerabilities  <i id="vuln-arrow" class="fa-solid fa-caret-down"></i></span>
           </a>
-          <!-- </li> -->
-          <a href="/info?t=credentials" class="nav_link sublink {% if title =='Credentials' %}selected{% endif %}">
-            <i class='bx bx-key nav_icon'></i>
-            <span class="nav_name">Credentials</span>
-          </a>
-          <a href="/info?t=tickets" class="nav_link sublink {% if title =='Tickets' %}selected{% endif %}">
-            <i class='bx bxs-coupon nav_icon'></i>
-            <span class="nav_name">Tickets</span>
-          </a>
-          <a href="/info?t=domainusers" class="nav_link sublink {% if title =='Domain Users' %}selected{% endif %}">
-            <i class='bx bxs-user nav_icon'></i>
-            <span class="nav_name">Domain Users</span>
-          </a>
-          <a href="/info?t=localusers" class="nav_link sublink {% if title =='Local Users' %}selected{% endif %}">
-            <i class='bx bx-user nav_icon'></i>
-            <span class="nav_name">Local Users</span>
-          </a>
+
+          <!-- Subenlaces -->
+          <!-- <li  class="nav_link"> -->
+          <div class="hideSubLink hideSubLinkVuln" style="display: none;">
+
+            <a href="{{url_for('core.vuln_web_technologies')}}" title="Web" class="nav_link sublink {% if title =='Web' %}selected{% endif
+              %}">
+              
+              <i class="fa-solid fa-globe nav_icon"></i>
+              <span class="nav_name">Web</span>
+            </a>
+            
+            <a href="{{url_for('core.vuln_services')}}" title="Services" class="nav_link sublink {% if title =='Services' %}selected{% endif
+              %}">
+              
+              <i class="fa-solid fa-ethernet nav_icon"></i> 
+              <span class="nav_name">Services</span>
+            </a>
+
+          </div>
+          <!-- Fin Vulnerabilities Selector-->
+
         </div>
       </div>
       <!-- <img src="logo-b-05.png" alt="Tu Icono Personalizado" class="nav_icon" style="background-color: white;"> -->
@@ -160,6 +209,105 @@
           class="nav_name"> </a>
     </nav>
   </div>
+
+  <!-- Barra lateral derecha -->
+  <div class="right-nav-container">
+    <nav id="right-nav" class="right-nav-hide">
+      <h4 style="text-align: center;">Neo4j connections</h2>
+      <ul id="containersList">
+        <li>
+          <div class="connectionContainer rounded d-flex justify-content-between p-2" style="position: relative;">
+            <div class="d-flex">
+              <div class="d-flex justify-content-center align-middle" style="align-items: center; width: 25px;">
+                <div class="active-indicator"></div>
+                <div class="active-indicator-behind"></div>
+              </div>
+              <p class="connectionContainerText ms-3" style="text-align: start;">Contenedor 1</p>
+            </div>
+            <div class="d-flex justify-content-end align-middle" style="align-items: center;">
+              <div class="col-md-9 d-flex me-3">
+                <i class='bx bx-play connectionContainerDisabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-pause connectionContainerEnabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-revision' style="font-size: 25px;"></i>
+              </div>
+              <div class="col-md-3 d-flex align-middle">
+                <i class='bx bx-trash' style="font-size: 25px;"></i>
+              </div>
+            </div>
+          </div>
+        </li>
+        
+        <li>
+          <div class="connectionContainer rounded d-flex justify-content-between p-2" style="position: relative;">
+            <div class="d-flex">
+              <div class="d-flex justify-content-center align-middle" style="align-items: center; width: 25px;">
+                <div class="dead-indicator"></div>
+              </div>
+              <p class="connectionContainerText ms-3" style="text-align: start;">Sin</p>
+            </div>
+            <div class="d-flex justify-content-end align-middle" style="align-items: center;">
+              <div class="col-md-9 d-flex me-3">
+                <i class='bx bx-play connectionContainerDisabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-pause connectionContainerEnabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-revision' style="font-size: 25px;"></i>
+              </div>
+              <div class="col-md-3 d-flex align-middle">
+                <i class='bx bx-trash' style="font-size: 25px;"></i>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      
+      
+      <h4 class="mt-5" style="text-align: center;">Connections to create</h2>
+      <ul id="containersToCreateList">
+        <li>
+          <div class="connectionContainer rounded d-flex justify-content-between p-2" style="position: relative;">
+            <div class="d-flex">
+              <div class="d-flex justify-content-center align-middle" style="align-items: center; width: 25px;">
+                <div class="active-indicator"></div>
+                <div class="active-indicator-behind"></div>
+              </div>
+              <p class="connectionContainerText ms-3" style="text-align: start;">Contenedor 1</p>
+            </div>
+            <div class="d-flex justify-content-end align-middle" style="align-items: center;">
+              <div class="col-md-9 d-flex me-3">
+                <i class='bx bx-play connectionContainerDisabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-pause connectionContainerEnabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-revision' style="font-size: 25px;"></i>
+              </div>
+              <div class="col-md-3 d-flex align-middle">
+                <i class='bx bx-trash' style="font-size: 25px;"></i>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="connectionContainer rounded d-flex justify-content-between p-2" style="position: relative;">
+            <div class="d-flex">
+              <div class="d-flex justify-content-center align-middle" style="align-items: center; width: 25px;">
+                <div class="dead-indicator"></div>
+              </div>
+              <p class="connectionContainerText ms-3" style="text-align: start;">Sin</p>
+            </div>
+            <div class="d-flex justify-content-end align-middle" style="align-items: center;">
+              <div class="col-md-9 d-flex me-3">
+                <i class='bx bx-play connectionContainerDisabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-pause connectionContainerEnabledButton' style="font-size: 25px;"></i>
+                <i class='bx bx-revision' style="font-size: 25px;"></i>
+              </div>
+              <div class="col-md-3 d-flex align-middle">
+                <i class='bx bx-trash' style="font-size: 25px;"></i>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
   <!-- Fin barra superior -->
 
   <!--Container Main start-->
@@ -223,10 +371,10 @@
       <i class='bx bx-lock-open'></i>
       Change your password
     </a>
-    <a class="dropdown-item" id="openNeo4jSettings">
+    <!-- <a class="dropdown-item" id="openNeo4jSettings">
       <i class='bx bx-data'></i>
       Neo4j settings
-    </a>
+    </a> -->
     <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
       <i class='bx bx-log-out'></i>
       Log out
@@ -309,5 +457,108 @@
     {% block scripts %} {% endblock %}
 
 </body>
+
+<script>
+
+  const onConnectionsClick = () => {
+
+    // Variables necesarias
+    const rightNavbar = document.getElementById("right-nav");
+    const connectionsIcon = document.getElementById("connectionsIcon");
+    
+    // Si estamos mostrando las conexiones en vez de esconderlas obtenemos la lista de contenedores del back
+    if(connectionsIcon.classList.contains("bx-sitemap")){
+      
+      $.get("/containers/get", (data) => {
+
+        // Variables necesarias
+        const activeContainerDot = `
+          <div class="active-indicator"></div>
+          <div class="active-indicator-behind"></div>
+        `;
+        const deadContainerDot = `<div class="dead-indicator"></div>`;
+
+        var containersListContent = "";
+        var containersToCreateListContent = "";
+
+        // Recorremos la lista de contenedores obtenida y los vamos insertando en su correspondiente string
+        for(let i = 0; i < data.length; i++){
+
+          var newElement = `
+            <li>
+              <div class="connectionContainer rounded d-flex justify-content-between p-2" style="position: relative;">
+                <div class="d-flex">
+                  <div class="d-flex justify-content-center align-middle" style="align-items: center; width: 25px;">
+                    ${data[i]["containerIsActive"] ? activeContainerDot : deadContainerDot}
+                  </div>
+                  <p class="connectionContainerText ms-3" style="text-align: start;">${data[i]["containerName"]}</p>
+                </div>
+                <div class="d-flex justify-content-end align-middle" style="align-items: center;">
+                  <div class="col-md-9 d-flex me-3">
+                    ${
+                      data[i]["containerIsActive"] ? 
+                        "<i class='bx bx-play connectionContainerDisabledButton' style='font-size: 25px;'></i></button></form>"
+                      : 
+                        "<form action='/containers/start/" + data[i]["containerName"] + "' method='GET'><button type='submit' style='border: none; background: none; padding: 0;'>" +
+                        "<i class='bx bx-play connectionContainerEnabledButton' style='font-size: 25px;'></i></button></form>"
+                    }
+                    ${
+                      data[i]["containerIsActive"] ?
+                        "<form action='/containers/stop/" + data[i]["containerName"] + "' method='GET'><button type='submit' style='border: none; background: none; padding: 0;'>" +
+                        "<i class='bx bx-pause connectionContainerEnabledButton' style='font-size: 25px;'></i></button></form>"
+                      :
+                        "<i class='bx bx-pause connectionContainerDisabledButton' style='font-size: 25px;'></i>"
+                    }
+                    ${
+                      data[i]["containerIsActive"] ?
+                        "<form action='/containers/restart/" + data[i]["containerName"] + "' method='GET'><button type='submit' style='border: none; background: none; padding: 0;'>" +
+                        "<i class='bx bx-revision connectionContainerEnabledButton' style='font-size: 25px;'></i></button></form>"
+                      :
+                        "<i class='bx bx-revision connectionContainerDisabledButton' style='font-size: 25px;'></i>"
+                    }
+                  </div>
+                  <div class="col-md-3 d-flex align-middle">
+                    ${
+                      !data[i]["containerIsActive"] && data[i]["userHasOwnerPermissions"] === 1 ?
+                        "<form action='/containers/delete/" + data[i]["containerName"] + "' method='GET'><button type='submit' style='border: none; background: none; padding: 0;'>" +
+                        "<i class='bx bx-trash connectionContainerEnabledButton' style='font-size: 25px;'></i></button></form>"
+                      :
+                        "<i class='bx bx-trash connectionContainerDisabledButton' style='font-size: 25px;'></i>"
+                    }
+                  </div>
+                </div>
+              </div>
+            </li>
+          `;
+
+          if(data[i]["containerIsCreated"])
+            containersListContent += newElement;
+          else
+            containersToCreateListContent += newElement;
+
+        }
+
+        // Agregamos el contenido a las listas
+        document.getElementById("containersList").innerHTML = containersListContent;
+        document.getElementById("containersToCreateList").innerHTML = containersToCreateListContent;
+
+      })
+      
+    }
+    
+    // Mostramos el navbar derecho
+    rightNavbar.classList.toggle("right-nav-show");
+    rightNavbar.classList.toggle("right-nav-hide");
+
+    // Cambiamos el icono de las conexiones
+    connectionsIcon.classList.toggle("bx-sitemap");
+    connectionsIcon.classList.toggle("bx-x");  
+
+  }
+
+  document.getElementById("connectionsSpan").addEventListener("click", onConnectionsClick);
+  document.getElementById("connectionsIcon").addEventListener("click", onConnectionsClick);
+
+</script>
 
 </html>

@@ -146,3 +146,22 @@ def get_user_project_role(projectName, userID):
             WHERE projects.name = ? and user_projects.id_user = ?''', (projectName, userID,)
     ).fetchone()
     return role
+
+
+
+def get_projects_neo4j():
+    db = get_db()
+    projects = db.execute(
+        # "SELECT id, name FROM projects"
+        '''SELECT *
+            FROM projects
+        '''
+    ).fetchall()
+    return projects
+
+def get_project_by_name(name):
+    db = get_db()
+    project = db.execute(
+        "SELECT id, name, neo4j_username, neo4j_password FROM projects WHERE name = ?", (name,)
+    ).fetchone()
+    return project

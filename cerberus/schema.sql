@@ -14,7 +14,10 @@ CREATE TABLE user (
 );
 CREATE TABLE projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT UNIQUE NOT NULL
+  name TEXT UNIQUE NOT NULL,
+  neo4j_username TEXT DEFAULT 'neo4j',
+  neo4j_password TEXT DEFAULT 'password'
+
 );
 CREATE TABLE user_projects (
   id_user INTEGER,

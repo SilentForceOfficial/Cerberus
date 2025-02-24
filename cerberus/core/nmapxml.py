@@ -118,16 +118,4 @@ def machineAsNmapTarget(machine,filename):
         print("Error al actualizar neo4j")
         print(e)
 
-
-
-
-
-
-        
-        
-
-
-
-
-
 # ----------------------------- FIN DE uploadDataNMAP-----------------------------------------

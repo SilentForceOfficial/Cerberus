@@ -30,6 +30,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
             bodypd = document.getElementById(bodyId),
             headerpd = document.getElementById(headerId),
             tables_info = document.getElementById(tablesId)
+            
+        const vuln_info = document.getElementById("id_vulnerabilities")
+        const data_info = document.getElementById("id_data")
+        const data_arrow=document.getElementById("data-arrow");
+        const vuln_arrow=document.getElementById("vuln-arrow");
 
         // Validate that all variables exist
         if (toggle && nav && bodypd && headerpd) {
@@ -37,22 +42,77 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 // show navbar
                 nav.classList.toggle('show')
                 // change icon
-                toggle.classList.toggle('bx-x')
+               
+                toggle.classList.toggle('bx-chevron-left')
+                toggle.classList.toggle('bx-menu')
+
                 // add padding to body
                 bodypd.classList.toggle('body-pd')
                 // add padding to header
                 headerpd.classList.toggle('body-pd')
+                vuln_arrow.classList.remove("fa-caret-up");
+                vuln_arrow.classList.add("fa-caret-down");
+                data_arrow.classList.remove("fa-caret-up");
+                data_arrow.classList.add("fa-caret-down");
+                // show/hide all elements with class "hideSubLink"
+                const hideSubLinks = document.getElementsByClassName("hideSubLink");
+                for (let i = 0; i < hideSubLinks.length; i++) {
+                    const element = hideSubLinks[i];
+                    element.style.display = "none";
+                }
             })
-            tables_info.addEventListener('click', () => {
-                // show navbar
-                nav.classList.add('show')
-                // change icon
-                toggle.classList.add('bx-x')
-                // add padding to body
-                bodypd.classList.add('body-pd')
-                // add padding to header
-                headerpd.classList.add('body-pd')
+
+            vuln_info.addEventListener('click', () => {
+                    // Establecer la visualización de nav
+                
+                if (!nav.classList.contains('show')) {
+                    nav.classList.toggle('show')
+                    toggle.classList.toggle('bx-chevron-left')
+                    toggle.classList.toggle('bx-menu')
+                    // add padding to body
+                    bodypd.classList.toggle('body-pd')
+                    // add padding to header
+                    headerpd.classList.toggle('body-pd')
+                    vuln_arrow.classList.remove("fa-caret-up");
+                    vuln_arrow.classList.add("fa-caret-down");
+                } 
+                vuln_arrow.classList.toggle("fa-caret-down");
+                vuln_arrow.classList.toggle("fa-caret-up");
+                // show/hide all elements with class "hideSubLink"
+                const hideSubLinks = document.getElementsByClassName("hideSubLinkVuln");
+                for (let i = 0; i < hideSubLinks.length; i++) {
+                    const element = hideSubLinks[i];
+                    element.style.display = (element.style.display === "none") ? "block" : "none";
+                }
             })
+
+            data_info.addEventListener('click', () => {
+                
+            
+                if (!nav.classList.contains('show')) {
+                    nav.classList.toggle('show')
+                    toggle.classList.toggle('bx-chevron-left')
+                    toggle.classList.toggle('bx-menu')
+                    // add padding to body
+                    bodypd.classList.toggle('body-pd')
+                    // add padding to header
+                    headerpd.classList.toggle('body-pd')
+                    data_arrow.classList.remove("fa-caret-up");
+                    data_arrow.classList.add("fa-caret-down");
+                } 
+                // show/hide all elements with class "hideSubLink"
+                
+                data_arrow.classList.toggle("fa-caret-down");
+                data_arrow.classList.toggle("fa-caret-up");
+                const hideSubLinks = document.getElementsByClassName("hideSubLinkData");
+                for (let i = 0; i < hideSubLinks.length; i++) {
+                    const element = hideSubLinks[i];
+                    element.style.display = (element.style.display === "none") ? "block" : "none";
+                }
+            })
+
+
+
         }
     }
 

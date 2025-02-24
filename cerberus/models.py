@@ -543,6 +543,7 @@ class Tickets(db.Base):
         self.end_time = end_time if end_time else self.end_time
         self.renew_time = renew_time if renew_time else self.renew_time
         self.date = date if date else self.date
+        db.session.commit()
 
     def get(ticket_name, user_id):
         return db.session.query(Tickets).filter_by(ticket_name=ticket_name, domainuser_id=user_id).first()
@@ -575,3 +576,116 @@ class Tickets(db.Base):
         return self.service
 # ---------fin class Tickets----------------
 
+# Class Technologies
+    
+class Technologies(db.Base):
+    __tablename__ = 'technologies'
+
+    id = Column(Integer, primary_key=True)
+    ip_target = Column(String, nullable=False)
+    hostname_target = Column(String, nullable=True)
+    port = Column(String, nullable=False)
+    vendor = Column(String, nullable=False)
+    product = Column(String, nullable=False)
+    version = Column(String, nullable=False)
+    cve = Column(String, nullable=False)
+    risk = Column(String, nullable=False)
+
+    def __init__(self, ip_target, port, vendor, product, version, cve, risk, hostname_target=None):
+        self.ip_target = ip_target
+        self.port = port
+        self.vendor = vendor
+        self.product = product
+        self.version = version
+        self.cve = cve
+        self.risk = risk
+        self.hostname_target = hostname_target
+
+    def update(self, ip_target=None, port=None, vendor=None, product=None, version=None, cve=None, risk=None, hostname_target=None):
+        self.ip_target = ip_target if ip_target else self.ip_target
+        self.port = port if port else self.port 
+        self.vendor = vendor if vendor else self.vendor
+        self.product = product if product else self.product
+        self.version = version if version else  self.version
+        self.cve = cve if cve else self.cve
+        self.risk = risk if risk else self.risk
+        self.hostname_target = hostname_target if hostname_target else self.hostname_target
+        db.session.commit()
+
+    def getByIp(ip_target):
+        return db.session.query(Technologies).filter(Technologies.ip_target == ip_target).all()
+    
+    def getNmapScan():
+        return db.session.query(Technologies).filter(Technologies.port != None).filter(Technologies.port != '').filter(Technologies.cve != None).filter(Technologies.cve != '').all()
+    
+    def getWappalyzerScan():
+        return db.session.query(Technologies).filter((Technologies.port == None) | (Technologies.port == '')).filter(Technologies.cve != None).all()
+
+    def getServiceScan():
+        return db.session.query(Technologies).filter(
+            Technologies.port.isnot(None), 
+            Technologies.port != ''
+        ).all()
+    def count():
+        return db.session.query(func.count()).select_from(Technologies).scalar()
+
+    def getUniqueTechnologies():
+        # Get all uniq Tech
+        return db.session.query(
+            Technologies.ip_target,
+            Technologies.port,
+            Technologies.vendor,
+            Technologies.product,
+            Technologies.version
+        ).distinct().group_by(
+            Technologies.ip_target,
+            Technologies.port,
+            Technologies.vendor,
+            Technologies.product,
+            Technologies.version
+        ).all()
+        
+    
+    def getHeaders():
+        return Technologies.__table__.columns.keys()
+
+# ---------fin class Technologies----------------
+    
+class Containers(db.Base):
+    __tablename__ = 'containers'
+
+    containerID = Column(Integer, primary_key=True, nullable=False)
+    containerName = Column(String, nullable=False)
+    containerAPIPort = Column(Integer, nullable=False)
+    containerWebPort = Column(Integer, nullable=False)
+    containerUsername = Column(String, nullable=False)
+    containerPassword = Column(String, nullable=False)
+
+    def __init__(self, containerID, containerName, containerAPIPort, containerWebPort, containerUsername, containerPassword):
+        self.containerID = containerID
+        self.containerName = containerName
+        self.containerAPIPort = containerAPIPort
+        self.containerWebPort = containerWebPort
+        self.containerUsername = containerUsername
+        self.containerPassword = containerPassword
+    
+    def update(self, containerID = None, containerName = None, containerAPIPort = None, containerWebPort = None, containerUsername = None, containerPassword = None):
+        self.containerID = containerID if containerID else self.containerID
+        self.containerName = containerName if containerName else self.containerName
+        self.containerAPIPort = containerAPIPort if containerAPIPort else self.containerAPIPort
+        self.containerWebPort = containerWebPort if containerWebPort else self.containerWebPort
+        self.containerUsername = containerUsername if containerUsername else self.containerUsername
+        self.containerPassword = containerPassword if containerPassword else self.containerPassword
+        
+        db.session.commit()
+
+    def getAll():
+        return db.session.query(Containers).all()
+    
+    def getByName(containerName):
+        return db.session.query(Containers).filter(Containers.containerName == containerName).all()
+
+    def getByID(containerID):
+        return db.session.query(Containers).filter(Containers.containerID == containerID).all()
+
+# ---------fin class Technologies----------------

@@ -1,5 +1,5 @@
 from neomodel import StructuredRel, StructuredNode
-from neomodel.relationship_manager import RelationshipManager
+from neomodel import RelationshipManager
 
 from cerberus.static.external_modules.neo4jvis.model.styled_node import StyledNode
 from cerberus.static.external_modules.neo4jvis.model.styled_edge import StyledEdge

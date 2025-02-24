@@ -1,0 +1,80 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+
+{% block botones %}
+<div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    {% if writePermission %}
+    <button type="button" id="newTechnology" class="btn">Add Technology</button>
+    
+    {% else %}
+    <button type="button" id="newTechnology" class="btn" style="color: #6c757d; border-color: #6c757d;" disabled>Add Technology</button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <td class="medium">{{row.ip_target}}</a></td>
+    <td class="medium">{{row.vendor}}</td>  
+    <td class="medium">{{row.product}}</td>
+    <td class="medium">{{row.version}}</td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+
+{% block popups %}
+<!-- codigo del POPUP de technology -->
+<div id="technologyPopup" class="popup">
+    <span class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">New Technology</p>
+    <div class="popup-content">
+        <form action="{{url_for('core.new_technology')}}" method="POST" enctype="multurlart/form-data">
+            <div class="box1">
+                <label for="url">URL:</label>
+                <br>
+                <input type="text" id="url" name="url" style="background-color: #fff!important;color: black!important;" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+            </div>
+            <div class="box1">
+                <label for="vendor">Vendor:</label>
+                <br>
+                <input type="text" id="vendor" name="vendor"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9]{32}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="product">Product:</label>
+                <br>
+                <input type="text" id="product" name="product"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9_\-]{1,10}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="version">Version:</label>
+                <br>
+                <input type="text" id="version" name="version"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9\-]{1,10}$"
+                    required>
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+<!-- FIN POPUP technology -->
+
+
+<script>
+    // New Technology
+    const popupContainerTechnology = document.getElementById('technologyPopup');
+    const openTechnologyPopupButton = document.getElementById('newTechnology');
+    openTechnologyPopupButton.addEventListener('click', () => {
+        popupContainerTechnology.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+
+</script>
+{% endblock %}

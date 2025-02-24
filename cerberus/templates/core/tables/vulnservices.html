@@ -1,0 +1,113 @@
+{% extends 'core/tables/tabla_template.html' %}
+{% block title %}{{title}}{% endblock %}
+{% block titulo_h1 %}{{title}}{% endblock %}
+
+{% block botones %}
+<div class="btn-group botones-superiores-container" role="group" aria-label="...">
+    {% if writePermission %}
+    <form action="/vulnerabilities/update" method="GET">
+        <button type="button" id="newService" class="btn">Add Service</button>
+        <button type="submit" id="updateVulnerabilities" class="btn">Update Vulnerabilities</button>
+    </form>
+    
+    {% else %}
+    <button type="button" id="newService" class="btn" style="color: #6c757d; border-color: #6c757d;" disabled>Add Service</button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block filas %}
+{% for row in rows %}
+<tr>
+    <td class="medium">{{row.ip_target}}</a></td>
+    <td class="medium">{{row.port}}</td>
+    <td class="medium">{{row.vendor}}</td>  
+    <td class="medium">{{row.product}}</td>
+    <td class="medium">{{row.version}}</td>
+    <td class="medium">{{row.cve}}</td>
+    <td class="medium">{{row.risk}}</td>
+
+</tr>
+{% endfor %}
+{% endblock %}
+
+
+{% block popups %}
+<!-- codigo del POPUP de service -->
+<div id="servicePopup" class="popup">
+    <span class="close-button button-popup-close">&times;</span>
+    <p class="popuptitle">New Service</p>
+    <div class="popup-content">
+        <form action="{{url_for('core.new_vuln_service')}}" method="POST" enctype="multipart/form-data">
+            <div class="box1">
+                <label for="ip">IP:</label>
+                <br>
+                <input type="text" id="ip" name="ip" style="background-color: #fff!important;color: black!important;" pattern="^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" required>
+            </div>
+            <div class="box1">
+                <label for="hostname_target">Hostname:</label>
+                <br>
+                <input type="text" id="domain" name="hostname_target"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9\-]{1,30}$" required>
+            </div>
+            <div class="box1">
+                <label for="port">Port:</label>
+                <br>
+                <input type="text" id="port" name="port"
+                    style="background-color: #fff!important;color: black!important;" pattern="^([1-9]\d{0,3}|[1-5]\d{4}|65535)$" required>
+            </div>
+            <div class="box1">
+                <label for="vendor">Vendor:</label>
+                <br>
+                <input type="text" id="vendor" name="vendor"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9]{32}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="product">Product:</label>
+                <br>
+                <input type="text" id="product" name="product"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9_\-]{1,10}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="version">Version:</label>
+                <br>
+                <input type="text" id="version" name="version"
+                    style="background-color: #fff!important;color: black!important;" pattern="^[a-zA-Z0-9\-]{1,10}$"
+                    required>
+            </div>
+            <div class="box1">
+                <label for="cve">CVE:</label>
+                <br>
+                <input type="text" id="cve" name="cve"
+                    style="background-color: #fff!important;color: black!important;" pattern="^(?i)CVE[\d-]+$" required>
+            </div>
+            <div class="box1">
+                <label for="cvs">Level:</label>
+                <br>
+                <input type="text" id="cvs" name="cvs"
+                    style="background-color: #fff!important;color: black!important;" required>
+            </div>
+            <br>
+            <button class="popupbtn" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+<!-- FIN POPUP service -->
+
+
+
+
+<script>
+    // New Service
+    const popupContainerService = document.getElementById('servicePopup');
+    const openServicePopupButton = document.getElementById('newService');
+    openServicePopupButton.addEventListener('click', () => {
+        popupContainerService.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+
+</script>
+{% endblock %}

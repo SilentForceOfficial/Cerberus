@@ -27,12 +27,12 @@ openPopupButton2.addEventListener('click', () => {
     settingsPopup.style.display = 'block';
     overlay_trasparente.style.display = 'block';
 });
-openPopupNeo4j.addEventListener('click', () => {
-    settingsNeo4jPopup.style.display = 'block';
-    overlay.style.display = 'block';
-    settingsPopup.style.display = 'none';
-    overlay_trasparente.style.display = 'none';
-});
+// openPopupNeo4j.addEventListener('click', () => {
+//     settingsNeo4jPopup.style.display = 'block';
+//     overlay.style.display = 'block';
+//     settingsPopup.style.display = 'none';
+//     overlay_trasparente.style.display = 'none';
+// });
 
 closeSettingsPopup2.addEventListener('click', () => {
     settingsNeo4jPopup.style.display = 'none';

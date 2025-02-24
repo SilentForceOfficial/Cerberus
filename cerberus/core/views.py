@@ -24,10 +24,11 @@ def check_project(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         p=request.cookies.get('project')
-        print(g.projects)
+        # print(g.projects)
         if p not in g.projects:
             return render_template('core/empty.html',
                                    projects=g.projects)
+        
         return view(**kwargs)
 
     return wrapped_view
@@ -64,6 +65,12 @@ def user_has_write_permission():
 
     return g.user["admin"] or currentRole == OWNER_ROLE_ID or currentRole == WRITE_ROLE_ID
 
+def user_is_owner(project):
+
+    currentRole = get_user_project_role(projectName=project, userID=g.user[0])
+    currentRole = currentRole[0] if currentRole else READ_ROLE_ID
+
+    return g.user["admin"] or currentRole == OWNER_ROLE_ID
 
 
 # -------------------------------------------------------------------------------------------
@@ -87,7 +94,8 @@ def check_neo4j(view):
                 flash('Error in neo4j database connection (AuthError)', 'danger')
                 return redirect(url_for('core.dashboard'))
 
-            return redirect(request.referrer)
+            # return redirect(request.referrer)
+            return redirect(url_for('core.dashboard'))
         
         return view(**kwargs)
 
@@ -264,7 +272,7 @@ def uploads_tickets_file():
                 file.save(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
                 #Ruta del ticket, nombre del archivo y session en la base de datos
                 upload_ticket(f"{current_app.root_path}/static/uploads/tickets/", file.filename ,db.session)
-                
+                os.remove(f"{current_app.root_path}/static/uploads/tickets/{file.filename}")
             else:
                 flash(u'Something went wrong: Wrong Extension only ccache and kirbi: ' + filename, 'danger')
                 print(f"\n\nERROR {filename}\n\n")
@@ -738,14 +746,32 @@ def new_tgt():
 
     flash(f'Ticket {a[1]} successfully created', 'success')
     return redirect(request.referrer)
-
+# SEGUIR AQUI (07/08/24)
 
 # Set Project
 @core.route('/projects/set/<project>', methods=['GET'])
 @login_required
 def set_project(project):
+    from cerberus import db
+
     response = make_response(redirect(request.referrer)) # We can also render new page with render_template
     response.set_cookie('project',project)
+
+    # Actualizamos los datos de neo4j con el proyecto selecionado (FIX IT!! CUTREE)
+    database = get_db()
+    contenedor=db.get_project_by_name(project)
+    print(int(contenedor['id']))
+    apiport = 28300+int(contenedor['id'])
+    url=f"neo4j://127.0.0.1:{apiport}"
+
+    database.execute(
+        "UPDATE user SET neo4j_url = ?, neo4j_user = ?, neo4j_password = ? WHERE id = ?",
+        (url, contenedor['neo4j_username'], contenedor['neo4j_password'], g.user['id']),
+    )
+    database.commit()
+    close_db()
+
+
     return response
 
 # New Project
@@ -1028,6 +1054,391 @@ def command_generation_generate(commandCategory, commandID):
     return commands
 
 # -------------------------------------------------------------------------------------------
+# TECHNOLOGIES
+@core.route('/technologies', methods=['GET'])
+@login_required
+@check_project
+def technologies():
+
+    from cerberus import db2 as db
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+    # Operaciones de BBDD
+    from cerberus import models as m
+
+    
+    _=m.Technologies.getHeaders()
+    headers=["Source","Port","Vendor","Product","Version"]
+    rows=m.Technologies.getUniqueTechnologies()
+    
+    template='core/tables/technologies.html'
+    
+
+    db.db_disconnect()
+    # FIN operaciones de BBDD
+    return render_template(template,
+                           projects=g.projects,
+                           headers=headers,
+                           rows=rows,
+                           title="Technologies",
+                           writePermission=user_has_write_permission())
+
+@core.route('/technologies', methods=['POST'])
+@login_required
+@check_project
+def new_technology():
+    return True
+
+#WEB 
+@core.route('/vuln-technologies', methods=['GET'])
+@login_required
+@check_project
+def vuln_web_technologies():
+
+    from cerberus import db2 as db
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+    # Operaciones de BBDD
+    from cerberus import models as m
+
+    
+    _=m.Technologies.getHeaders()
+    headers=["URL","Vendor","Product","Version","CVE","Risk"]
+    rows=m.Technologies.getWappalyzerScan()
+    
+    template='core/tables/vulnwebtechnologies.html'
+    
+
+    db.db_disconnect()
+    # FIN operaciones de BBDD
+    return render_template(template,
+                           projects=g.projects,
+                           headers=headers,
+                           rows=rows,
+                           title="Web",
+                           writePermission=user_has_write_permission())
+
+
+@core.route('/vuln-technologies', methods=['POST'])
+@login_required
+@check_project
+def new_web_technology():
+    return True
+
+
+# SERVICE SCAN
+@core.route('/vuln-services', methods=['GET'])
+@login_required
+@check_project
+def vuln_services():
+
+    from cerberus import db2 as db
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+    # Operaciones de BBDD
+    from cerberus import models as m
+
+    
+    
+    headers=["IP","Port","Vendor","Product","Version","CVE","Risk"]
+    #rows=m.Technologies.getServiceScan()
+    rows=m.Technologies.getNmapScan()
+    template='core/tables/vulnservices.html'
+    
+
+    db.db_disconnect()
+    # FIN operaciones de BBDD
+    return render_template(template,
+                           projects=g.projects,
+                           headers=headers,
+                           rows=rows,
+                           title="Services",
+                           writePermission=user_has_write_permission())
+
+@core.route('/vuln-services', methods=['POST'])
+@login_required
+@check_project
+def new_vuln_service():
+    return True
+
+# Update vulnerabilities
+@core.route('/vulnerabilities/update', methods=['GET'])
+@login_required
+@check_project
+@check_write_permission
+def update_vulnerabilities():
+    
+    from cerberus import db2 as db
+
+    db.db_link(request.cookies.get('project'))
+    db.db_connect()
+
+    from cerberus import models as m
+    from cerberus.core.technologies import getProductVulnerabilities, parseServicesTechnologies
+
+    # Variables necesarias
+    error = False
+    technologies = m.Technologies.getUniqueTechnologies()
+    newTechnologiesVulnerabilities = []
+    
+    for technology in technologies:
+        if(technology.vendor and technology.product):
+            newTechnologiesVulnerabilities.append(dict(
+                target = technology.ip_target,
+                productName = technology.product,
+                productVendor = technology.vendor,
+                productVersion = technology.version,
+                productVulnerabilities = getProductVulnerabilities(technology.vendor, technology.product, technology.version)
+            ))
+    
+    parseServicesTechnologies(db.session, json.dumps(dict(data = newTechnologiesVulnerabilities)))
+
+    return redirect(request.referrer)
+
+# Containers
+# Funcion para obtener mostrar los contenedores en el front
+@core.route('/containers/get', methods=["get"])
+@login_required
+def get_containers():
+    
+    import docker
+
+    # Obtenemos el listado de contenedores encendidos
+    client = docker.from_env()
+    activeContainers = []    
+
+    for currentContainer in client.containers.list():
+        if "cerberus" in currentContainer.name:
+            activeContainers.append(currentContainer.name.replace("cerberus_", ""))
+
+    # Obtenemos el listado de contenedores apagados
+    downContainers = []
+
+    for currentContainer in client.containers.list(all=True):
+        if "cerberus" in currentContainer.name:
+            currentContainerParsedName = currentContainer.name.replace("cerberus_", "")
+            if currentContainerParsedName not in activeContainers:
+                downContainers.append(currentContainerParsedName)
+
+    # Recorremos los proyectos comprobando sus contenedores y permisos
+    userContainers = []
+    for project in g.projects:
+        containerIsActive = project in activeContainers
+        containerIsCreated = containerIsActive or project in downContainers
+        hasOwnerPermissions = user_is_owner(project)
+        userContainers.append(dict(
+            containerName=project,
+            containerIsActive=containerIsActive,
+            containerIsCreated=containerIsCreated,
+            userHasOwnerPermissions=hasOwnerPermissions
+        ))
+    
+    # Devolvemos la lista de contenedores
+    return userContainers
+
+# Funcion play de los containers
+@core.route('/containers/start/<containerName>', methods=["get"])
+@login_required
+def start_container(containerName):
+
+    # Funcion para iniciar un contenedor ya creado anteriormente
+    def iniciar_container(name):
+        try:
+            container = client.containers.get(name)
+            container.start()
+            print(f"Contenedor {name} iniciado.")
+        except docker.errors.NotFound:
+            print(f"Contenedor {name} no encontrado.")
+        except Exception as e:
+            print(f"Error al iniciar el contenedor {name}: {e}")
+
+    # Funcion para crear un contenedor nuevo
+    def crear_container(apiport,username,password,name):
+        try:
+            client.containers.run(
+                'neo4j:latest',
+                detach=True,
+                ports={'7687/tcp': str(apiport)+'/tcp'},
+                environment={'NEO4J_AUTH': f'{username}/{password}'},
+                volumes=[f"{os.getcwd()}/{name}:/data"],
+                name=name
+            )
+        except docker.errors.NotFound:
+            print(f"Contenedor {name} no encontrado.")
+        except Exception as e:
+            print(f"Error al iniciar el contenedor {name}: {e}")
+
+
+    import docker, os
+    from cerberus import db
+    database=db.get_db()
+   
+    # Comprobamos si existe el contenedor
+    contenedor=db.get_project_by_name(containerName)
+    if not contenedor:
+        flash("This project do not exists or you don't have enaough permissions", "danger")
+
+    else:
+        # Comprobamos que el usuario tenga suficientes permisos
+        if user_is_owner(containerName):
+
+            apiport = 28300+int(contenedor['id'])
+            name=f"cerberus_{contenedor['name']}"
+            username=contenedor['neo4j_username']
+            password=contenedor['neo4j_password']
+
+            # Obtenemos el listado de contenedores encendidos
+            client = docker.from_env()
+            
+            if name in [i.name for i in client.containers.list()]:
+                # print("EXISTE y está levantado")
+                pass
+            else:
+                if name in [i.name for i in client.containers.list(all=True)]:
+                    # print("EXISTE pero no está levantado")
+                    iniciar_container(name)
+                else:
+                    # print("NO EXISTE")
+                    crear_container(apiport,username,password,name)
+                # Obtenemos los datos del contenedor de la base de datos        
+        else:
+            flash("You don't have enaough permissions on this project", "danger")
+    
+    db.close_db()
+    # Devolvemos la vista actual
+    return redirect(request.referrer)
+
+# Funcion stop de los containers
+@core.route('/containers/stop/<containerName>', methods=["get"])
+@login_required
+def stop_container(containerName):
+    import docker
+    from cerberus import db
+    database=db.get_db()
+   
+    # Comprobamos si existe el contenedor
+    contenedor=db.get_project_by_name(containerName)
+    if not contenedor:
+        flash("This project do not exists or you don't have enaough permissions", "danger")
+    else:
+        name=f"cerberus_{containerName}"
+        # Comprobamos que el usuario tenga suficientes permisos
+        if user_is_owner(containerName):
+            # Obtenemos el listado de contenedores encendidos
+            client = docker.from_env()            
+            if name in [i.name for i in client.containers.list()]:
+                # print("EXISTE y está levantado")
+                # Si el contenedor está levantado lo paramos
+                container = client.containers.get(name)
+                container.stop()
+        else:
+            flash("You don't have enaough permissions on this project", "danger")
+    
+    # Devolvemos la vista actual
+    return redirect(request.referrer)
+
+# Funcion delete de los containers
+@core.route('/containers/delete/<containerName>', methods=["get"])
+@login_required
+def delete_container(containerName):
+
+    import docker
+    from cerberus import db
+    database=db.get_db()
+   
+    # Comprobamos si existe el contenedor
+    contenedor=db.get_project_by_name(containerName)
+    if not contenedor:
+        flash("This project do not exists or you don't have enaough permissions", "danger")
+    else:
+        name=f"cerberus_{containerName}"
+        # Comprobamos que el usuario tenga suficientes permisos
+        if user_is_owner(containerName):
+            # Obtenemos el listado de contenedores encendidos
+            client = docker.from_env()            
+            if name in [i.name for i in client.containers.list()]:
+                # print("EXISTE y está levantado")
+                flash("Stop the container before removal", "warning")
+            elif name in [i.name for i in client.containers.list(all=True)]:
+                # Si el contenedor está levantado lo paramos
+                container = client.containers.get(name)
+                container.remove(v=True)
+                flash(f"{containerName} container deleted successfully", "success")
+
+        else:
+            flash("You don't have enaough permissions on this project", "danger")
+    
+    # Devolvemos la vista actual
+    return redirect(request.referrer)
+
+# Funcion restart de los containers
+@core.route('/containers/restart/<containerName>', methods=["get"])
+@login_required
+def restart_container(containerName):
+    import docker
+    from cerberus import db
+    database=db.get_db()
+   
+    # Comprobamos si existe el contenedor
+    contenedor=db.get_project_by_name(containerName)
+    if not contenedor:
+        flash("This project do not exists or you don't have enaough permissions", "danger")
+    else:
+        name=f"cerberus_{containerName}"
+        # Comprobamos que el usuario tenga suficientes permisos
+        if user_is_owner(containerName):
+            # Obtenemos el listado de contenedores encendidos
+            client = docker.from_env()            
+            if name in [i.name for i in client.containers.list()]:
+                # Parar contenedor
+                container = client.containers.get(name)
+                container.stop()
+
+            # Iniciar contenedor
+            container.start()
+            print(f"Contenedor {name} iniciado.")
+
+            flash(f"Container {name} restarted", "success")
+
+
+        else:
+            flash("You don't have enaough permissions on this project", "danger")
+    
+    # Devolvemos la vista actual
+    return redirect(request.referrer)
+
+#Agents Post
+@core.route('/agent/<project>', methods=['POST'])
+def agent(project):
+    
+    from flask import request, jsonify
+    from cerberus.core.technologies import parseServicesTechnologies
+    from cerberus import db2 as db
+    json_data = request.get_json()
+
+    # Get the DB of the url 
+    db.db_link(project)
+    db.db_connect()
+
+    if json_data:
+
+        
+        # Get and upload the Json to DB  
+        json_str = json.dumps(json_data)
+        result=parseServicesTechnologies(db.session,json_str)
+       
+        db.db_disconnect()
+        if result:
+            return jsonify({'message': 'JSON upload correctly'}), 200
+        else:
+            return jsonify({'error': 'Error uploading the json'}), 400
+    else:
+        db.db_disconnect()
+        return jsonify({'error': 'ERROR UPLOADING DATA'}), 400
+    
+
+# -------------------------------------------------------------------------------------------
+
 # GRAPH
 @core.route('/graph', methods=['GET'])
 @login_required
@@ -1507,7 +1918,7 @@ def get_graph(query):
                                     )
     except Exception as e:
         print(e)
-        flash('Error in neo4j database connection', 'danger')
+        flash('Error in neo4j database connection. Remember to import the Neo4j data before accessing the graph', 'danger')
         return redirect(url_for('core.dashboard'))
     
 @core.route('/graph/sync', methods=['GET'])

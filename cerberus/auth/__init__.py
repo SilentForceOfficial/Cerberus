@@ -37,7 +37,7 @@ def check_conn(view):
                 with GraphDatabase.driver(URI, auth=AUTH) as driver: 
                     driver.verify_connectivity()
             except:
-                flash("Error connecting to database", "warning")
+                flash("Error connecting to database. Is the database up?", "warning")
                 return redirect(url_for('core.dashboard'))
 
         return view(**kwargs)

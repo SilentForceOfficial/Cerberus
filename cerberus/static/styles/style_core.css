@@ -102,6 +102,111 @@ a {
   z-index: var(--z-fixed)
 }
 
+.right-nav-container{
+  position: relative;
+}
+
+#right-nav{
+  position: fixed;
+  top: var(--header-height);
+  width: 400px;
+  height: 100%;
+  background-color: var(--first-color);
+  padding-top: 50px;
+  transition: right 0.5s ease;
+  z-index: var(--z-fixed);
+}
+
+#right-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#right-nav ul li {
+  padding: 10px 0;
+  text-align: center;
+}
+
+#right-nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+}
+
+.connectionContainer{
+  width: 90%;
+  margin: 0 5% 0 5%;
+  background-color: var(--gris-claro-color);
+  color: var(--first-color-light);
+}
+
+.connectionContainerText{
+  margin-bottom: 0;
+}
+
+.dead-indicator {
+  position: relative;
+  display: inline-block;
+  left: 5px;
+  width: 5px;
+  height: 5px;
+  background-color: #BB0000;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.active-indicator {
+  position: relative;
+  display: inline-block;
+  left: 5px;
+  width: 5px;
+  height: 5px;
+  background-color: green;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.active-indicator-behind {
+  position: relative;
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background-color: rgba(0, 128, 0, 0.5); /* Dimmer green color */
+  border-radius: 50%;
+  z-index: 1;
+  transform: scale(1); /* Slightly smaller size */
+  animation: pulse-behind 2.5s infinite;
+}
+
+@keyframes pulse-behind {
+  0% {
+    transform: scale(1);
+	background-color: rgba(0, 128, 0, 0.5);
+  }
+  100% {
+    transform: scale(8);
+	background-color: transparent;
+  }
+}
+
+.connectionContainerDisabledButton {
+  color: grey;
+}
+
+.connectionContainerEnabledButton {
+  color: var(--orange-color);
+  cursor: pointer;
+}
+
+.right-nav-hide{
+  right: -450px;
+}
+
+.right-nav-show{
+  right: 0;
+}
+
 .nav {
   height: 100%;
   display: flex;
@@ -157,7 +262,7 @@ a {
 }
 
 .nav_link:hover {
-  color: var(--white-color)
+  color: var(--orange-color)
 }
 
 .nav_icon {
@@ -375,11 +480,9 @@ h6 {
 .chart-container {
   background-color: rgba(40, 41, 45, 0.9);
 
-  min-height: calc(var(--content-height)/2);
-  /* max-height: calc(var(--content-height)*0.6); */
-  max-height: calc(var(--content-width)*.3);
-  /* height: calc(var(--content-width)*.2); */
-  /* width: 100%; */
+  min-height: calc(80vH/2);
+  max-height: calc(80vH/2);
+
   border-radius: 10px;
 }
 
